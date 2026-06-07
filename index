@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8 font-weight: 500">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoStruct Pro - 15 Essential Geotechnical Formulas & Computational Solver</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Orbitron:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s; 
+        }
+        
+        h1, h2, h3, h4, p, span, label, button, input, div, i {
+            transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .cyber-font { font-family: 'Orbitron', sans-serif; }
+        .mono-font { font-family: 'JetBrains Mono', monospace; }
+        .formula-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: help; }
+        .formula-card:hover { transform: translateY(-4px); }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+
+        /* THEME CONFIGURATION DYNAMIC MAPPING */
+        .theme-dark {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-header: #020617;
+            --border-color: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --bg-input: #020617;
+            --scrollbar-track: #0f172a;
+            --scrollbar-thumb: #334155;
+            --neon-amber: rgba(245, 158, 11, 0.25);
+            --neon-emerald: rgba(16, 185, 129, 0.25);
+            --bg-tooltip: #020617;
+        }
+        
+        .theme-light {
+            --bg-main: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-header: #e2e8f0;
+            --border-color: #94a3b8;
+            --text-main: #020617; 
+            --text-muted: #334155; 
+            --bg-input: #f8fafc;
+            --scrollbar-track: #e2e8f0;
+            --scrollbar-thumb: #cbd5e1;
+            --neon-amber: rgba(245, 158, 11, 0.15);
+            --neon-emerald: rgba(16, 185, 129, 0.15);
+            --bg-tooltip: #ffffff;
+        }
+
+        .neon-border-amber {
+            box-shadow: 0 0 15px var(--neon-amber);
+            border: 1px solid var(--border-color);
+        }
+        .neon-border-emerald {
+            box-shadow: 0 0 20px var(--neon-emerald);
+            border: 1px solid var(--border-color);
+        }
+        .glow-text-amber { text-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
+        .drag-handle { cursor: move; user-select: none; }
+
+        .geo-custom-tooltip {
+            position: fixed;
+            pointer-events: none;
+            background: var(--bg-tooltip);
+            border: 2px solid #f59e0b;
+            color: var(--text-main);
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            max-width: 320px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+            line-height: 1.5;
+        }
+
+        .formula-desc {
+            font-weight: 600;
+            line-height: 1.6;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.7); }
+            50% { box-shadow: 0 0 25px rgba(245, 158, 11, 1); }
+        }
+        .chat-trigger-btn {
+            animation: pulse-glow 2s infinite;
+        }
+    </style>
+</head>
+<body class="theme-dark bg-[var(--bg-main)] text-[var(--text-main)] min-h-screen flex flex-col selection:bg-amber-500 selection:text-black" id="appBody">
+
+    <div class="h-1.5 w-full bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-400 shadow-[0_0_20px_rgba(245,158,11,0.6)]"></div>
+
+    <div class="geo-custom-tooltip font-mono" id="geoLiveTooltip"></div>
+
+    <header class="bg-[var(--bg-header)] border-b-2 border-[var(--border-color)] shadow-xl sticky top-0 z-50 backdrop-blur-md px-4 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-amber-500 text-slate-950 p-2.5 rounded-bl-xl rounded-tr-xl font-black text-xl tracking-wider cyber-font shadow-[0_0_15px_rgba(245,158,11,0.4)]">
+                    GEO<span class="text-orange-600">S</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black tracking-widest cyber-font text-[var(--text-main)]">
+                        GEOSTRUCT <span class="text-amber-500">PRO</span>
+                    </h1>
+                    <p class="text-xs text-amber-500 font-mono font-bold tracking-wider">15 CORE GEOTECHNICAL SOLVER // COMPLIANCE STATION</p>
+                </div>
+            </div>
+            
+            <div class="relative w-full md:w-72">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                </span>
+                <input class="w-full pl-9 pr-4 py-2 bg-[var(--bg-input)] border-2 border-[var(--border-color)] rounded-lg text-[var(--text-main)] placeholder-slate-400 focus:outline-none focus:border-amber-500 text-xs font-mono font-bold" id="searchInput" onkeyup="filterDatabase()" placeholder="Cari rumus atau parameter..." type="text" />
+            </div>
+
+            <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                <button class="bg-[var(--bg-input)] border-2 border-[var(--border-color)] text-xs font-mono font-black px-3 py-2 rounded-lg cursor-pointer transition-all shadow-md flex items-center gap-1.5 text-amber-500 hover:border-amber-500" onclick="toggleThemeInterface()" type="button">
+                    <i class="fa-solid fa-moon" id="themeIcon"></i> <span id="themeText">DARK MODE</span>
+                </button>
+
+                <button class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-xs font-mono font-black px-4 py-2 rounded-lg cursor-pointer transition-all shadow-lg flex items-center justify-center gap-1.5 hover:from-emerald-500 hover:to-teal-500" onclick="openHelpModal()" type="button">
+                    <i class="fa-solid fa-circle-question"></i> <span>HELP &amp; CREATOR</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8 flex flex-col lg:flex-row gap-6">
+        
+        <aside class="w-full lg:w-72 shrink-0">
+            <div class="bg-[var(--bg-card)] p-4 rounded-xl border-2 border-[var(--border-color)] sticky top-24 space-y-4 backdrop-blur-sm shadow-xl">
+                <div>
+                    <h2 class="text-xs font-black text-amber-500 font-mono uppercase tracking-wider mb-3 px-2">Kategori Modul Geoteknik</h2>
+                    <nav class="space-y-1.5" id="categoryNav">
+                        <button class="cat-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-mono font-bold bg-amber-500 text-slate-950 flex items-center justify-between transition-colors cursor-pointer" id="cat-all-btn" onclick="filterCategory('all')">
+                            <span><i class="fa-solid fa-layer-group mr-2 w-3.5"></i>Semua Rumus Inti</span>
+                            <span class="text-xs bg-slate-950/20 px-2 py-0.5 rounded-full font-black" id="count-all">15</span>
+                        </button>
+                        <button class="cat-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-mono font-bold text-[var(--text-muted)] hover:bg-amber-500/10 flex items-center justify-between transition-colors cursor-pointer" onclick="filterCategory('stress-strength')">
+                            <span><i class="fa-solid fa-bolt mr-2 w-3.5"></i>Stress &amp; Strength</span>
+                            <span class="text-xs bg-slate-400/20 text-[var(--text-main)] px-2 py-0.5 rounded-full font-black" id="count-stress-strength">0</span>
+                        </button>
+                        <button class="cat-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-mono font-bold text-[var(--text-muted)] hover:bg-amber-500/10 flex items-center justify-between transition-colors cursor-pointer" onclick="filterCategory('flow-seepage')">
+                            <span><i class="fa-solid fa-water mr-2 w-3.5"></i>Flow &amp; Seepage</span>
+                            <span class="text-xs bg-slate-400/20 text-[var(--text-main)] px-2 py-0.5 rounded-full font-black" id="count-flow-seepage">0</span>
+                        </button>
+                        <button class="cat-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-mono font-bold text-[var(--text-muted)] hover:bg-amber-500/10 flex items-center justify-between transition-colors cursor-pointer" onclick="filterCategory('settlement-consolidation')">
+                            <span><i class="fa-solid fa-arrow-down-long mr-2 w-3.5"></i>Settlement &amp; Consolidation</span>
+                            <span class="text-xs bg-slate-400/20 text-[var(--text-main)] px-2 py-0.5 rounded-full font-black" id="count-settlement-consolidation">0</span>
+                        </button>
+                        <button class="cat-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-mono font-bold text-[var(--text-muted)] hover:bg-amber-500/10 flex items-center justify-between transition-colors cursor-pointer" onclick="filterCategory('earth-pressure')">
+                            <span><i class="fa-solid fa-shield-halved mr-2 w-3.5"></i>Earth Pressure</span>
+                            <span class="text-xs bg-slate-400/20 text-[var(--text-main)] px-2 py-0.5 rounded-full font-black" id="count-earth-pressure">0</span>
+                        </button>
+                        <button class="cat-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-mono font-bold text-[var(--text-muted)] hover:bg-amber-500/10 flex items-center justify-between transition-colors cursor-pointer" onclick="filterCategory('stability-stress')">
+                            <span><i class="fa-solid fa-chart-line mr-2 w-3.5"></i>Stability &amp; Distribution</span>
+                            <span class="text-xs bg-slate-400/20 text-[var(--text-main)] px-2 py-0.5 rounded-full font-black" id="count-stability-stress">0</span>
+                        </button>
+                    </nav>
+                </div>
+                
+                <div class="bg-[var(--bg-input)] p-3 rounded-lg border-2 border-[var(--border-color)] text-xs font-mono text-[var(--text-muted)] space-y-2 leading-relaxed font-bold">
+                    <span class="font-black text-amber-500 block mb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Key Reminders:</span>
+                    <div class="flex items-start gap-1"><i class="fa-solid fa-check text-amber-500 mt-0.5 font-bold"></i><span>Selalu periksa nilai tegangan efektif sigma' dahulu.</span></div>
+                    <div class="flex items-start gap-1"><i class="fa-solid fa-check text-amber-500 mt-0.5 font-bold"></i><span>Jangan abaikan tekanan air pori u.</span></div>
+                    <div class="flex items-start gap-1"><i class="fa-solid fa-check text-amber-500 mt-0.5 font-bold"></i><span>Target SF ≥ 1.5 untuk stabilitas lereng aman.</span></div>
+                </div>
+            </div>
+        </aside>
+
+        <section class="flex-1 space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[var(--bg-card)] px-4 py-3 rounded-xl border-2 border-[var(--border-color)] gap-2 shadow-md">
+                <span class="text-xs font-black font-mono uppercase tracking-wider text-[var(--text-muted)]" id="currentCategoryTitle">Menampilkan Semua Formula</span>
+                <span class="text-xs text-amber-500 font-mono font-black glow-text-amber" id="itemCounter">0 Item Terdaftar</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="formulaContainer"></div>
+        </section>
+
+    </main>
+
+    <div class="fixed bottom-6 right-6 z-[60] font-mono flex flex-col items-end" id="floatingChatContainer">
+        <div class="hidden w-80 h-96 bg-slate-900 border-2 border-slate-700 rounded-xl shadow-2xl flex flex-col mb-4 overflow-hidden transition-all duration-300 neon-border-amber" id="chatWindow">
+            <div class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span class="text-xs font-bold text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-robot mr-1"></i> GeoBot Assistant</span>
+                </div>
+                <button class="text-slate-400 hover:text-rose-400 cursor-pointer p-1" onclick="toggleFloatingChat()">
+                    <i class="fa-solid fa-minus text-sm"></i>
+                </button>
+            </div>
+            
+            <div class="flex-1 p-3 overflow-y-auto space-y-2.5 text-[11px] bg-slate-950/40 text-slate-200" id="chatMessages">
+                <div class="bg-slate-800 text-slate-100 p-2.5 rounded-lg max-w-[85%] self-start border border-slate-700 font-medium">
+                    Halo! Saya <strong>GeoBot</strong>. Ada yang bisa saya bantu terkait kriteria formula geoteknik, parameter <strong>Kritis</strong>, atau penanganan kondisi <strong>Tidak Aman</strong>?
+                </div>
+            </div>
+
+            <div class="px-2 py-1.5 bg-slate-950/90 border-t border-slate-800 flex gap-1 overflow-x-auto whitespace-nowrap text-[9px]">
+                <button class="bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-100 font-bold px-2 py-1 rounded border border-slate-600 cursor-pointer" onclick="sendQuickQuestion('Berapa limit kritis untuk FOS Lereng?')">FOS Lereng</button>
+                <button class="bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-100 font-bold px-2 py-1 rounded border border-slate-600 cursor-pointer" onclick="sendQuickQuestion('Apa itu bahaya sand boiling?')">Sand Boiling</button>
+                <button class="bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-100 font-bold px-2 py-1 rounded border border-slate-600 cursor-pointer" onclick="sendQuickQuestion('Berapa batas penurunan lempung?')">Batas Sc</button>
+            </div>
+
+            <form class="p-2 bg-slate-950 border-t border-slate-800 flex gap-1.5" onsubmit="handleChatSubmit(event)">
+                <input autocomplete="off" class="flex-1 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-xs focus:outline-none focus:border-amber-500 font-medium" id="chatInput" placeholder="Tanya sesuatu..." type="text" />
+                <button class="bg-amber-500 hover:bg-amber-400 text-slate-950 p-2 rounded-lg flex items-center justify-center aspect-square w-8 cursor-pointer" type="submit">
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                </button>
+            </form>
+        </div>
+
+        <button class="chat-trigger-btn bg-amber-500 hover:bg-amber-400 text-slate-950 w-12 h-12 rounded-full flex items-center justify-center shadow-2xl cursor-pointer transition-transform hover:scale-110" onclick="toggleFloatingChat()">
+            <i class="fa-solid fa-comments text-lg" id="chatTriggerIcon"></i>
+        </button>
+    </div>
+
+    <footer class="bg-slate-950 border-t-2 border-slate-900 py-6 px-6 mt-auto text-slate-400">
+        <div class="max-w-7xl mx-auto text-xs font-mono flex flex-col md:flex-row justify-between items-center gap-4">
+            <p>© 2026 GeoStruct Pro Workspace // Core Solver Engine Stable.</p>
+            <div class="flex items-center gap-1 text-[11px]">
+                <span>Platform Framework Powered by</span>
+                <span class="text-amber-500 font-black"><i class="fa-solid fa-leaf text-emerald-500"></i> Mohamad Hartadi</span>
+            </div>
+            <p class="flex items-center gap-1.5 text-[10px]"><i class="fa-solid fa-microchip text-amber-500"></i> PLAXIS, GEO5, GeoStudio (SLOPE/W, SEEP/W) Verification.</p>
+        </div>
+    </footer>
+
+    <div class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" id="calcModal">
+        <div class="bg-slate-900 border-2 border-slate-700 rounded-xl max-w-2xl w-full overflow-hidden shadow-2xl flex flex-col transition-all neon-border-amber text-slate-100">
+            <div class="bg-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+                <div class="flex items-center gap-2 text-amber-400 font-bold font-mono text-xs">
+                    <i class="fa-solid fa-square-root-variable text-sm"></i>
+                    <h3 class="text-white font-black" id="modalTitle">Interactive Engineering Solver</h3>
+                </div>
+                <button class="text-slate-400 hover:text-rose-400 text-lg cursor-pointer p-1" onclick="closeCalculator()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto max-h-[80vh] space-y-4">
+                <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 font-mono flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider block mb-1">Persamaan Inti:</span>
+                        <code class="text-sm text-amber-400 font-black block overflow-x-auto py-1 glow-text-amber" id="modalMathExpression"></code>
+                    </div>
+                    <button type="button" onclick="askGeoBotAboutCurrentFormula()" class="shrink-0 bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black px-3 py-2 rounded shadow-md flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-robot"></i> Tanya GeoBot Rumus Ini
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 font-mono text-xs" id="dynamicInputs"></div>
+                
+                <div class="pt-4 border-t border-slate-800">
+                    <button class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono font-black tracking-wider py-3 rounded-lg flex items-center justify-center gap-2 cursor-pointer shadow-md uppercase text-xs transition-all" onclick="calculateResult()">
+                        Kalkulasi Nilai Output <i class="fa-solid fa-bolt text-xs text-orange-700"></i>
+                    </button>
+                </div>
+                
+                <div class="hidden space-y-3" id="resultBox">
+                    <div class="bg-slate-950 p-4 rounded-lg border shadow-inner" id="resultBorderBox">
+                        <span class="text-[10px] font-mono font-bold uppercase tracking-wider block mb-1" id="resultTitleLabel"><i class="fa-solid fa-square-poll-vertical mr-1"></i>Hasil Komputasi Eksak:</span>
+                        <div class="text-xl font-mono font-black" id="calcOutput"></div>
+                    </div>
+
+                    <div class="bg-slate-950/80 p-4 rounded-lg border border-slate-800 text-xs font-mono space-y-2">
+                        <div class="text-amber-500 font-black text-[10px] uppercase tracking-wider border-b border-slate-800 pb-1">
+                            <i class="fa-solid fa-brain mr-1"></i> Engineering Interpretative Log &amp; Evaluation
+                        </div>
+                        <div class="space-y-2 text-slate-200 text-[11px] leading-relaxed font-medium">
+                            <p id="logInputMeaning"></p>
+                            <p id="logKeyPoints"></p>
+                            <div class="p-2 rounded border mt-1" id="logAdviceConclusion"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 z-[60] hidden bg-black/50 flex items-center justify-center p-4 shadow-2xl" id="helpModal">
+        <div class="bg-slate-900 rounded-xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl transition-shadow duration-300 neon-border-emerald text-slate-100 select-none" id="draggableHelpPanel">
+            
+            <div class="drag-handle p-4 bg-slate-950 rounded-t-xl border-b border-slate-800 flex justify-between items-center relative" id="helpDragHandle">
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-slate-950 text-[9px] font-mono text-emerald-400 tracking-widest border border-emerald-500/30">
+                    <i class="fa-solid fa-arrows-up-down-left-right mr-1"></i> DRAG TERMINAL PANEL
+                </div>
+                <div class="flex items-center gap-2 text-emerald-400 font-bold font-mono text-xs tracking-wider uppercase">
+                    <i class="fa-solid fa-terminal"></i> CENTRAL SYSTEM DOCUMENTATION &amp; HELP
+                </div>
+                <button class="text-slate-400 hover:text-rose-400 cursor-pointer p-1" onclick="closeHelpModal()">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="p-5 overflow-y-auto space-y-5 font-mono text-xs text-slate-300 leading-relaxed">
+                
+                <div class="border border-slate-700 rounded-lg overflow-hidden shadow-lg">
+                    <div class="bg-amber-500 text-slate-950 px-3 py-2 flex items-center gap-2 font-black text-xs">
+                        <i class="fa-solid fa-shield-halved"></i> 1. BATASAN TEKNIS PARMETER KRITIS &amp; BAHAYA
+                    </div>
+                    <div class="p-4 bg-slate-950/80 space-y-4 text-slate-100">
+                        <div class="border-b border-slate-800 pb-3">
+                            <span class="text-amber-400 font-black block text-sm mb-1"><i class="fa-solid fa-chart-line mr-1.5"></i>FOS Lereng (Factor of Safety)</span>
+                            <ul class="list-none pl-1 space-y-1 text-xs font-medium text-slate-300">
+                                <li>• <span class="text-emerald-400 font-bold">Aman</span>: FOS ≥ 1.5 (Sesuai dengan regulasi jangka panjang nasional)</li>
+                                <li>• <span class="text-orange-400 font-bold">Kritis</span>: 1.0 ≤ FOS &lt; 1.5 (Rentan terjadi kelongsoran jika dipicu hujan atau gempa)</li>
+                                <li>• <span class="text-red-500 font-bold">Bahaya / Gagal</span>: FOS &lt; 1.0 (Lereng runtuh secara mekanis)</li>
+                            </ul>
+                        </div>
+
+                        <div class="border-b border-slate-800 pb-3">
+                            <span class="text-teal-400 font-black block text-sm mb-1"><i class="fa-solid fa-water mr-1.5"></i>Sand Boiling &amp; Piping (Gradien Hidrolik i)</span>
+                            <ul class="list-none pl-1 space-y-1 text-xs font-medium text-slate-300">
+                                <li>• <span class="text-emerald-400 font-bold">Aman</span>: i &lt; 0.75 (Aliran rembesan air tanah laminar stabil)</li>
+                                <li>• <span class="text-orange-400 font-bold">Kritis</span>: i ≥ 0.75 (Laju aliran cepat mendekati batas didih pasir murni)</li>
+                                <li>• <span class="text-red-500 font-bold">Bahaya / Tidak Aman</span>: i ≥ 1.0 (Terjadi kegagalan erosi internal piping atau sand boiling destruktif)</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <span class="text-purple-400 font-black block text-sm mb-1"><i class="fa-solid fa-arrow-down-long mr-1.5"></i>Batas Sc Penurunan (Consolidation Settlement)</span>
+                            <ul class="list-none pl-1 space-y-1 text-xs font-medium text-slate-300">
+                                <li>• <span class="text-emerald-400 font-bold">Aman</span>: Sc ≤ 50 mm (Deformasi elastis struktur masih mampu bertoleransi)</li>
+                                <li>• <span class="text-red-500 font-bold">Kritis / Bahaya</span>: Sc &gt; 50 mm (Penurunan konsolidasi lempung masif, memicu retak struktural gedung)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border border-slate-800 rounded-lg overflow-hidden shadow-md">
+                    <div class="bg-slate-950 px-3 py-2 border-b border-slate-800 flex items-center gap-2 text-emerald-400 font-black text-[11px]">
+                        <i class="fa-solid fa-code-branch"></i> 2. PROGRAMMING CREATOR IDENTITY
+                    </div>
+                    <div class="p-4 bg-slate-950/40 space-y-3 text-slate-200 font-medium">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/60 pb-2">
+                            <span class="text-slate-400"><i class="fa-solid fa-user-gear mr-1.5 text-amber-500"></i>Lead Developer:</span>
+                            <span class="text-white font-bold tracking-wide">Mohamad Hartadi (Adi)</span>
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/60 pb-2">
+                            <span class="text-slate-400"><i class="fa-brands fa-facebook mr-1.5 text-blue-500"></i>Profil Facebook:</span>
+                            <a class="text-blue-400 font-bold hover:underline hover:text-blue-300 flex items-center gap-1" href="https://www.facebook.com/m.hartadi" target="_blank">
+                                m.hartadi <i class="fa-solid fa-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/60 pb-2">
+                            <span class="text-slate-400"><i class="fa-brands fa-whatsapp mr-1.5 text-emerald-500"></i>Kontak WhatsApp:</span>
+                            <a class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded font-bold flex items-center gap-1 w-fit" href="https://wa.me/6282231036047" target="_blank">
+                                <i class="fa-solid fa-comments"></i> Chat 082231036047
+                            </a>
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1">
+                            <span class="text-slate-400"><i class="fa-solid fa-globe mr-1.5 text-orange-500"></i>Blog Resmi Platform:</span>
+                            <a class="text-orange-400 font-bold hover:underline hover:text-orange-300 text-[11px] break-all flex items-center gap-1" href="https://newbieonline7.blogspot.com/" target="_blank">
+                                newbieonline7.blogspot.com <i class="fa-solid fa-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="p-2.5 bg-slate-950 text-center border-t border-slate-800 text-[9px] font-mono text-slate-500 rounded-b-xl">
+                TAHAN DAN GESER HEADER PANEL UNTUK RE-POSISI TERMINAL SYSTEM HELP
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const formulaDatabase = [
+            // --- STRESS & STRENGTH (1-3) ---
+            {
+                id: "effective-stress",
+                title: "Effective Stress Principle",
+                category: "stress-strength",
+                symbol: "σ'",
+                expression: "σ' = σ - u",
+                desc: "Tegangan efektif mengontrol perubahan volume dan kuat geser tanah. Didapatkan dari tegangan total dikurangi tekanan air pori.",
+                inputs: [
+                    { label: "Total Stress (σ) [kPa]", id: "sigma", placeholder: "Misal: 140" },
+                    { label: "Pore Water Pressure (u) [kPa]", id: "u", placeholder: "Misal: 70" }
+                ],
+                calc: (inputs) => inputs.sigma - inputs.u,
+                unit: "kPa",
+                softwareCor: "Validasi dasar tegangan vertikal in-situ pada PLAXIS.",
+                interpret: (inputs, res) => {
+                    const ratio = inputs.u / inputs.sigma;
+                    let advice = ""; let status = "aman";
+                    if (ratio >= 0.5) { advice = "Kritis! Tekanan air pori sangat tinggi reduksi kekuatan geser secara masif."; status = "kritis"; }
+                    else if (inputs.u >= inputs.sigma * 0.9) { advice = "Bahaya/Tidak Aman! Tanah berpotensi tinggi mengalami likuifaksi total."; status = "bahaya"; }
+                    else { advice = "Aman. Efek tekanan air pori terkendali."; status = "aman"; }
+                    return {
+                        status: status,
+                        inputMeaning: `Analisis mengaitkan beban total penutup sebesar ${inputs.sigma} kPa dengan tekanan hidrostatis air pori sebesar ${inputs.u} kPa.`,
+                        keyPoints: `Tegangan kontak antar butiran tanah efektif yang tersisa adalah ${res} kPa.`,
+                        adviceConclusion: `Kesimpulan: ${advice}`
+                    };
+                }
+            },
+            {
+                id: "shear-strength",
+                title: "Shear Strength (Mohr-Coulomb)",
+                category: "stress-strength",
+                symbol: "τ",
+                expression: "τ = c + σ' × tan(φ)",
+                desc: "Menentukan tahanan geser maksimum tanah sepanjang bidang runtuh menggunakan parameter kohesi dan sudut geser dalam efektif.",
+                inputs: [
+                    { label: "Kohesi Tanah (c) [kPa]", id: "c", placeholder: "Misal: 15" },
+                    { label: "Tegangan Normal Efektif (σ') [kPa]", id: "sigma_prime", placeholder: "Misal: 110" },
+                    { label: "Sudut Geser Dalam (φ) [Derajat]", id: "phi", placeholder: "Misal: 25" }
+                ],
+                calc: (inputs) => {
+                    const rad = inputs.phi * (Math.PI / 180);
+                    return inputs.c + (inputs.sigma_prime * Math.tan(rad));
+                },
+                unit: "kPa",
+                softwareCor: "Kriteria keruntuhan plastis utama lereng pada SLOPE/W.",
+                interpret: (inputs, res) => {
+                    return {
+                        status: "aman",
+                        inputMeaning: `Parameter lab mendeteksi kohesi inheren sebesar ${inputs.c} kPa dan sudut geser ${inputs.phi}°.`,
+                        keyPoints: `Pada tegangan normal efektif ${inputs.sigma_prime} kPa, tanah mampu menahan geser hingga ${res} kPa.`,
+                        adviceConclusion: `Kesimpulan: Jaga lereng dari penjenuhan air agar nilai tegangan normal efektif tetap aman.`
+                    };
+                }
+            },
+            {
+                id: "terzaghi-bearing",
+                title: "Terzaghi Bearing Capacity",
+                category: "stress-strength",
+                symbol: "qu",
+                expression: "qu = c·Nc + q·Nq + 0.5·γ·B·Nγ",
+                desc: "Kapasitas daya dukung ultimat fondasi dangkal memanjang untuk menahan kegagalan geser umum.",
+                inputs: [
+                    { label: "Kohesi (c) [kPa]", id: "c", placeholder: "Misal: 20" },
+                    { label: "Faktor Nc", id: "nc", placeholder: "Misal: 14.8" },
+                    { label: "Overburden Stress (q) [kPa]", id: "q", placeholder: "Misal: 30" },
+                    { label: "Faktor Nq", id: "nq", placeholder: "Misal: 6.4" },
+                    { label: "Berat Volume Tanah (γ) [kN/m³]", id: "gamma", placeholder: "Misal: 18" },
+                    { label: "Lebar Pondasi (B) [m]", id: "b", placeholder: "Misal: 2" },
+                    { label: "Faktor Nγ", id: "ngamma", placeholder: "Misal: 5.4" }
+                ],
+                calc: (inputs) => (inputs.c * inputs.nc) + (inputs.q * inputs.nq) + (0.5 * inputs.gamma * inputs.b * inputs.ngamma),
+                unit: "kPa",
+                softwareCor: "Kalkulasi awal stabilitas fondasi GEO5.",
+                interpret: (inputs, res) => {
+                    return {
+                        status: "aman",
+                        inputMeaning: `Dimensi fondasi sebesar ${inputs.b} m dengan tegangan penutup tanah ${inputs.q} kPa.`,
+                        keyPoints: `Batas ultimat total kegagalan geser tanah di bawah struktur pondasi dangkal adalah ${res} kPa.`,
+                        adviceConclusion: `Kesimpulan: Terapkan Safety Factor minimal sebesar 3.0 untuk mendapatkan kapasitas ijin.`
+                    };
+                }
+            },
+            // --- FLOW & SEEPAGE (4-6) ---
+            {
+                id: "darcy-law",
+                title: "Darcy's Law (Flow Rate)",
+                category: "flow-seepage",
+                symbol: "q",
+                expression: "q = k × i × A",
+                desc: "Debit aliran rembesan air tanah laminar yang mengalir melewati penampang tanah basah akibat gradien hidrolik.",
+                inputs: [
+                    { label: "Permeabilitas (k) [m/s]", id: "k", placeholder: "Misal: 0.00001" },
+                    { label: "Gradien Hidrolik (i)", id: "i", placeholder: "Misal: 0.4" },
+                    { label: "Luas Penampang (A) [m²]", id: "a", placeholder: "Misal: 15" }
+                ],
+                calc: (inputs) => inputs.k * inputs.i * inputs.a,
+                unit: "m³/s",
+                softwareCor: "Dasar analisis aliran rembesan bendungan SEEP/W.",
+                interpret: (inputs, res) => {
+                    return {
+                        status: "aman",
+                        inputMeaning: `Rembesan ditinjau pada material k = ${inputs.k} m/s melalui penampang basah sebesar ${inputs.a} m².`,
+                        keyPoints: `Total volume air yang hilang menembus penampang adalah ${res} m³/s.`,
+                        adviceConclusion: `Kesimpulan: Amankan tubuh bendungan dengan inti lempung berpermeabilitas rendah.`
+                    };
+                }
+            },
+            {
+                id: "hydraulic-gradient",
+                title: "Hydraulic Gradient",
+                category: "flow-seepage",
+                symbol: "i",
+                expression: "i = h / L",
+                desc: "Rasio kehilangan tinggi tekan energi air (head loss) terhadap panjang lintasan aliran media tanah.",
+                inputs: [
+                    { label: "Head Loss (h) [meter]", id: "h", placeholder: "Misal: 2" },
+                    { label: "Panjang Lintasan (L) [meter]", id: "l", placeholder: "Misal: 10" }
+                ],
+                calc: (inputs) => inputs.h / inputs.l,
+                unit: "(Dimensionless)",
+                softwareCor: "Kontrol bahaya piping/sand boiling pada dasar galian.",
+                interpret: (inputs, res) => {
+                    let pipingRisk = ""; let status = "aman";
+                    if (res >= 1.0) { pipingRisk = "Bahaya/Tidak Aman! Terjadi sand boiling / piping destruktif."; status = "bahaya"; }
+                    else if (res >= 0.75) { pipingRisk = "Kritis! Aliran air sangat cepat mendekati batas boiling."; status = "kritis"; }
+                    else { pipingRisk = "Gradien aliran laminar terkendali."; status = "aman"; }
+                    return {
+                        status: status,
+                        inputMeaning: `Kehilangan energi air sebesar ${inputs.h} m sepanjang jalur rembesan sejauh ${inputs.l} m.`,
+                        keyPoints: `Gradien energi hidrolik yang diperoleh sebesar ${res}.`,
+                        adviceConclusion: `Kesimpulan: ${pipingRisk}`
+                    };
+                }
+            },
+            {
+                id: "seepage-velocity",
+                title: "Seepage Velocity",
+                category: "flow-seepage",
+                symbol: "vs",
+                expression: "vs = (k × i) / n",
+                desc: "Kecepatan rembesan air aktual saat mengalir masuk melewati rongga pori-pori tanah efektif.",
+                inputs: [
+                    { label: "Permeability (k) [m/s]", id: "k", placeholder: "Misal: 0.00002" },
+                    { label: "Hydraulic Gradient (i)", id: "i", placeholder: "Misal: 0.5" },
+                    { label: "Porositas Tanah (n) [Desimal]", id: "n", placeholder: "Misal: 0.35" }
+                ],
+                calc: (inputs) => (inputs.k * inputs.i) / inputs.n,
+                unit: "m/s",
+                softwareCor: "Menghitung laju infiltrasi pencemaran di dalam subsoil.",
+                interpret: (inputs, res) => {
+                    return {
+                        status: "aman",
+                        inputMeaning: `Menghitung laju aliran fluida di dalam ruang pori dengan porositas ${inputs.n * 100}%.`,
+                        keyPoints: `Kecepatan gerak air aktual di celah partikel (vs) adalah ${res} m/s.`,
+                        adviceConclusion: `Kesimpulan: Nilai vs ini krusial untuk mengestimasi penyebaran polutan.`
+                    };
+                }
+            },
+            // --- SETTLEMENT & CONSOLIDATION (7-11) ---
+            {
+                id: "consolidation-settlement",
+                title: "Consolidation Settlement",
+                category: "settlement-consolidation",
+                symbol: "Sc",
+                expression: "Sc = [Cc·H / (1 + e0)] × log((σ0' + Δσ) / σ0')",
+                desc: "Estimasi total penurunan konsolidasian primer lapisan tanah lempung kompresif jenuh akibat beban struktur.",
+                inputs: [
+                    { label: "Indeks Kompresi (Cc)", id: "cc", placeholder: "Misal: 0.25" },
+                    { label: "Tebal Lapisan H [m]", id: "h", placeholder: "Misal: 4.0" },
+                    { label: "Angka Pori Awal (e0)", id: "e0", placeholder: "Misal: 0.8" },
+                    { label: "Tegangan Awal (σ0') [kPa]", id: "sigma0", placeholder: "Misal: 80" },
+                    { label: "Tambahan Tegangan (Δσ) [kPa]", id: "dsigma", placeholder: "Misal: 50" }
+                ],
+                calc: (inputs) => ((inputs.cc * inputs.h) / (1 + inputs.e0)) * Math.log10((inputs.sigma0 + inputs.dsigma) / inputs.sigma0),
+                unit: "meter",
+                softwareCor: "Komparasi analisis deformasi jangka panjang SIGMA/W.",
+                interpret: (inputs, res) => {
+                    const setMm = res * 1000; let level = ""; let status = "aman";
+                    if (setMm > 50) { level = "Kritis! Penurunan melebihi 50mm, berisiko retak struktural masif."; status = "kritis"; }
+                    else { level = "Penurunan tanah relatif terkendali."; status = "aman"; }
+                    return {
+                        status: status,
+                        inputMeaning: `Analisis terhadap lapisan lempung setebal ${inputs.h} m dengan beban tambahan ${inputs.dsigma} kPa.`,
+                        keyPoints: `Total penurunan vertikal akhir diproyeksikan sebesar ${setMm.toFixed(1)} mm.`,
+                        adviceConclusion: `Kesimpulan: ${level}`
+                    };
+                }
+            },
+            {
+                id: "degree-consolidation",
+                title: "Degree of Consolidation Time Factor",
+                category: "settlement-consolidation",
+                symbol: "Tv",
+                expression: "Tv = (Cv × t) / Hdr²",
+                desc: "Faktor waktu tak berdimensi yang berkorelasi dengan derajat konsolidasi tanah pada waktu tertentu.",
+                inputs: [
+                    { label: "Koefisien Konsolidasi (Cv) [m²/tahun]", id: "cv", placeholder: "Misal: 2.1" },
+                    { label: "Waktu Konstruksi (t) [Tahun]", id: "t", placeholder: "Misal: 1.5" },
+                    { label: "Lintasan Drainase Hdr [m]", id: "hdr", placeholder: "Misal: 2.0" }
+                ],
+                calc: (inputs) => (inputs.cv * inputs.t) / Math.pow(inputs.hdr, 2),
+                unit: "(Dimensionless)",
+                softwareCor: "Penetapan parameter waktu preloading dengan PVD.",
+                interpret: (inputs, res) => {
+                    let uPercent = res < 0.282 ? Math.sqrt(res / (Math.PI / 4)) * 100 : 100 - Math.pow(10, (1.781 - res) / 0.933);
+                    return {
+                        status: "aman",
+                        inputMeaning: `Analisis progres penurunan dengan lintasan pengaliran sejauh Hdr = ${inputs.hdr} m selama ${inputs.t} tahun.`,
+                        keyPoints: `Faktor waktu pengaliran didapatkan Tv = ${res}.`,
+                        adviceConclusion: `Kesimpulan: Derajat konsolidasi teoritis yang dicapai sekitar ${uPercent.toFixed(1)}%.`
+                    };
+                }
+            },
+            {
+                id: "immediate-settlement",
+                title: "Immediate Settlement",
+                category: "settlement-consolidation",
+                symbol: "Si",
+                expression: "Si = [q · B · (1 - μ²) / E] × Iw",
+                desc: "Penurunan seketika secara elastis pada tanah berbutir kasar tepat setelah beban luar bekerja.",
+                inputs: [
+                    { label: "Beban Kontak Netto (q) [kPa]", id: "q", placeholder: "Misal: 120" },
+                    { label: "Lebar Fondasi (B) [meter]", id: "b", placeholder: "Misal: 1.5" },
+                    { label: "Poisson's Ratio (μ)", id: "mu", placeholder: "Misal: 0.3" },
+                    { label: "Modulus Elasticity (E) [kPa]", id: "e", placeholder: "Misal: 25000" },
+                    { label: "Faktor Pengaruh (Iw)", id: "iw", placeholder: "Misal: 0.88" }
+                ],
+                calc: (inputs) => ((inputs.q * inputs.b * (1 - Math.pow(inputs.mu, 2))) / inputs.e) * inputs.iw,
+                unit: "meter",
+                softwareCor: "Estimasi batas lendutan elastis awal tanah.",
+                interpret: (inputs, res) => {
+                    return {
+                        status: "aman",
+                        inputMeaning: `Kalkulasi deformasi elastis jangka pendek pada media tanah bermodulus ${inputs.e} kPa.`,
+                        keyPoints: `Besarnya penurunan seketika (Si) yang terjadi adalah ${(res * 1000).toFixed(1)} mm.`,
+                        adviceConclusion: `Kesimpulan: Penurunan ini dominan terjadi pada pasir bersih / lanau padat.`
+                    };
+                }
+            },
+            {
+                id: "secondary-compression",
+                title: "Secondary Compression (Creep)",
+                category: "settlement-consolidation",
+                symbol: "Ss",
+                expression: "Ss = Cα × H × log(t2 / t1)",
+                desc: "Penurunan sekunder akibat rayapan partikel tanah jangka panjang setelah tekanan air pori terdisipasi penuh.",
+                inputs: [
+                    { label: "Indeks Kompresi Sekunder (Cα)", id: "ca", placeholder: "Misal: 0.005" },
+                    { label: "Tebal Lapisan H [meter]", id: "h", placeholder: "Misal: 3.5" },
+                    { label: "Waktu Awal t1 (Akhir Kons. Primer)", id: "t1", placeholder: "Misal: 1" },
+                    { label: "Waktu Akhir Struktur t2 [Tahun]", id: "t2", placeholder: "Misal: 30" }
+                ],
+                calc: (inputs) => inputs.ca * inputs.h * Math.log10(inputs.t2 / inputs.t1),
+                unit: "meter",
+                softwareCor: "Evaluasi kestabilan tanah organik (peat soil) jalan raya.",
+                interpret: (inputs, res) => {
+                    return {
+                        status: "aman",
+                        inputMeaning: `Analisis meninjau efek rangkak partikel dari tahun ke-${inputs.t1} hingga batas layan tahun ke-${inputs.t2}.`,
+                        keyPoints: `Penurunan akibat rayapan (creep) sekunder diproyeksikan sebsar ${(res * 1000).toFixed(1)} mm.`,
+                        adviceConclusion: `Kesimpulan: Nilai rangkak ini sangat tinggi pada tanah lunak berkadar organik tinggi.`
+                    };
+                }
+            },
+            {
+                id: "compression-index",
+                title: "Compression Index Empirical",
+                category: "settlement-consolidation",
+                symbol: "Cc",
+                expression: "Cc = 0.009 × (LL - 10)",
+                desc: "Persamaan empiris Terzaghi untuk memproyeksikan nilai indeks kompresibilitas tanah lempung dari batas cair.",
+                inputs: [
+                    { label: "Liquid Limit (LL) [%]", id: "ll", placeholder: "Misal: 50" }
+                ],
+                calc: (inputs) => 0.009 * (inputs.ll - 10),
+                unit: "(Dimensionless)",
+                softwareCor: "Validasi silang hasil pengujian lab oedometer.",
+                interpret: (inputs, res) => {
+                    let comp = ""; let status = "aman";
+                    if (res > 0.3) { comp = "Kritis (Kompresibilitas Tinggi)! Lapisan lempung sangat mudah mampat."; status = "kritis"; }
+                    return {
+                        status: status,
+                        inputMeaning: `Korelasi empiris berdasarkan nilai Batas Cair (Liquid Limit) sebesar ${inputs.ll}%.`,
+                        keyPoints: `Dihasilkan nilai indeks kompresi Cc sebesar ${res.toFixed(3)}.`,
+                        adviceConclusion: `Kesimpulan: ${comp || 'Kompresibilitas sedang.'}`
+                    };
+                }
+            },
+            // --- EARTH PRESSURE (12-13) ---
+            {
+                id: "active-pressure",
+                title: "Earth Pressure - Active (Rankine)",
+                category: "earth-pressure",
+                symbol: "Ka",
+                expression: "Ka = tan²(45 - φ/2) | σh = Ka·γ·z",
+                desc: "Menghitung nilai koefisien dan total tekanan tanah lateral aktif saat dinding penahan bergeser menjauhi massa tanah.",
+                inputs: [
+                    { label: "Sudut Geser Dalam (φ) [Derajat]", id: "phi", placeholder: "Misal: 30" },
+                    { label: "Berat Volume Tanah (γ) [kN/m³]", id: "gamma", placeholder: "Misal: 18" },
+                    { label: "Kedalaman Retaining Wall z [m]", id: "z", placeholder: "Misal: 5" }
+                ],
+                calc: (inputs) => {
+                    const ka = Math.pow(Math.tan((45 - (inputs.phi / 2)) * Math.PI / 180), 2);
+                    return ka * inputs.gamma * inputs.z;
+                },
+                unit: "kPa",
+                softwareCor: "Gaya dorong lateral penentu dimensi struktural retaining wall.",
+                interpret: (inputs, res) => {
+                    const ka_val = Math.pow(Math.tan((45 - (inputs.phi / 2)) * Math.PI / 180), 2);
+                    return {
+                        status: "aman",
+                        inputMeaning: `Kalkulasi gaya dorong aktif pada pangkal dinding penahan sedalam ${inputs.z} m.`,
+                        keyPoints: `Nilai Ka = ${ka_val.toFixed(3)} dengan tekanan dasar sebesar ${res.toFixed(2)} kPa.`,
+                        adviceConclusion: `Kesimpulan: Pastikan tulangan dinding kuat menahan gaya guling akibat tekanan aktif ini.`
+                    };
+                }
+            },
+            {
+                id: "passive-pressure",
+                title: "Earth Pressure - Passive (Rankine)",
+                category: "earth-pressure",
+                symbol: "Kp",
+                expression: "Kp = tan²(45 + φ/2) | σh = Kp·γ·z",
+                desc: "Menghitung batas maksimum nilai koefisien dan tekanan pasif saat struktur terdorong masuk menekan massa tanah.",
+                inputs: [
+                    { label: "Sudut Geser Dalam (φ) [Derajat]", id: "phi", placeholder: "Misal: 30" },
+                    { label: "Berat Volume Tanah (γ) [kN/m³]", id: "gamma", placeholder: "Misal: 18" },
+                    { label: "Kedalaman Elemen z [meter]", id: "z", placeholder: "Misal: 3" }
+                ],
+                calc: (inputs) => {
+                    const kp = Math.pow(Math.tan((45 + (inputs.phi / 2)) * Math.PI / 180), 2);
+                    return kp * inputs.gamma * inputs.z;
+                },
+                unit: "kPa",
+                softwareCor: "Gaya penahan tanah kritis pada perancangan blok angkur.",
+                interpret: (inputs, res) => {
+                    const kp_val = Math.pow(Math.tan((45 + (inputs.phi / 2)) * Math.PI / 180), 2);
+                    return {
+                        status: "aman",
+                        inputMeaning: `Kalkulasi tahanan pasif dari blok tanah depan kaki struktur sedalam ${inputs.z} m.`,
+                        keyPoints: `Nilai Kp = ${kp_val.toFixed(3)} dengan total tahanan lateral dasar sebesar ${res.toFixed(2)} kPa.`,
+                        adviceConclusion: `Kesimpulan: Tekanan pasif bertindak menguntungkan sebagai penstabil gaya geser.`
+                    };
+                }
+            },
+            // --- STABILITY & STRESS (14-15) ---
+            {
+                id: "factor-safety",
+                title: "Factor of Safety - Slope Stability",
+                category: "stability-stress",
+                symbol: "FOS",
+                expression: "FOS = τf / τmob",
+                desc: "Rasio evaluasi stabilitas lereng: Kuat geser batas tanah yang tersedia dibagi dengan tegangan geser aktif termobilisasi.",
+                inputs: [
+                    { label: "Kuat Geser Tanah Batas (τf) [kPa]", id: "tauf", placeholder: "Misal: 45" },
+                    { label: "Tegangan Geser Aktif (τmob) [kPa]", id: "taumob", placeholder: "Misal: 32" }
+                ],
+                calc: (inputs) => inputs.tauf / inputs.taumob,
+                unit: "",
+                softwareCor: "Target nilai faktor keamanan standar desain lereng aman.",
+                interpret: (inputs, res) => {
+                    let msg = ""; let status = "aman";
+                    if (res >= 1.5) { msg = "Lereng AMAN. Memenuhi regulasi standar desain jangka panjang."; status = "aman"; }
+                    else if (res >= 1.0) { msg = "KRITIS! Lereng sangat rawan longsor akibat pemicu air atau beban dinamis."; status = "kritis"; }
+                    else { msg = "BAHAYA/GAGAL LONGSOR! Penanganan perkuatan lereng darurat mutlak diperlukan."; status = "bahaya"; }
+                    return {
+                        status: status,
+                        inputMeaning: `Perbandingan kuat geser batas tanah (${inputs.tauf} kPa) terhadap beban aktif longsor (${inputs.taumob} kPa).`,
+                        keyPoints: `Faktor Keamanan lereng diperoleh sebesar FOS = ${res.toFixed(3)}.`,
+                        adviceConclusion: `Kesimpulan: ${msg}`
+                    };
+                }
+            },
+            {
+                id: "boussinesq-stress",
+                title: "Boussinesq Stress Distribution",
+                category: "stability-stress",
+                symbol: "Δσz",
+                expression: "Δσz = 3·q·z³ / [2·π · (r² + z²)^(5/2)]",
+                desc: "Menghitung distribusi tambahan tegangan vertikal di dalam tanah akibat beban titik di permukaan.",
+                inputs: [
+                    { label: "Beban Titik Permukaan (q) [kN]", id: "q", placeholder: "Misal: 500" },
+                    { label: "Kedalaman Ditinjau (z) [m]", id: "z", placeholder: "Misal: 4" },
+                    { label: "Jarak Horizontal Radial (r) [m]", id: "r", placeholder: "0 jika tepat di bawah beban" }
+                ],
+                calc: (inputs) => {
+                    const pembilang = 3 * inputs.q * Math.pow(inputs.z, 3);
+                    const penyebut = 2 * Math.PI * Math.pow((Math.pow(inputs.r, 2) + Math.pow(inputs.z, 2)), 2.5);
+                    return pembilang / penyebut;
+                },
+                unit: "kPa",
+                softwareCor: "Prinsip dasar pembentukan kontur bulb tegangan subsoil.",
+                interpret: (inputs, res) => {
+                    return {
+                        status: "aman",
+                        inputMeaning: `Mentransfer beban titik permukaan sebesar ${inputs.q} kN pada kedalaman vertikal ${inputs.z} m.`,
+                        keyPoints: `Tambahan tegangan vertikal bersih di titik target adalah ${res.toFixed(3)} kPa.`,
+                        adviceConclusion: `Kesimpulan: Gunakan nilai delta stress ini untuk kalkulasi lanjutan penurunan konsolidasi.`
+                    };
+                }
+            }
+        ];
+
+        let formulaCalculationHistory = {}; 
+        let activeFormulaId = null;
+        let currentCategory = "all";
+        let currentTheme = "dark";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            updateCategoryCounters();
+            renderFormulaCards(formulaDatabase);
+            initDraggablePanel(document.getElementById('draggableHelpPanel'), document.getElementById('helpDragHandle'));
+            initLivePopUpTooltipEvents();
+        });
+
+        function initLivePopUpTooltipEvents() {
+            const tooltipNode = document.getElementById("geoLiveTooltip");
+            const container = document.getElementById("formulaContainer");
+            
+            container.addEventListener("mousemove", (e) => {
+                const card = e.target.closest(".formula-card");
+                if (!card) { tooltipNode.style.display = "none"; return; }
+                
+                const fId = card.getAttribute("data-formula-id");
+                const item = formulaDatabase.find(f => f.id === fId);
+                if (!item) return;
+
+                let historyHTML = "";
+                if (formulaCalculationHistory[fId]) {
+                    let textBadgeColor = "color:#10b981; font-weight:bold;"; 
+                    if (formulaCalculationHistory[fId].status === "kritis") textBadgeColor = "color:#f97316; font-weight:bold;"; 
+                    if (formulaCalculationHistory[fId].status === "bahaya") textBadgeColor = "color:#ef4444; font-weight:bold;"; 
+
+                    historyHTML = `
+                        <div style="margin-top: 8px; padding-top: 6px; border-top: 2px dashed #f59e0b;">
+                            <span style="${textBadgeColor}">[RIWAYAT TERAKHIR]:</span><br>
+                            <span style="${textBadgeColor}">&bull; Hasil: ${formulaCalculationHistory[fId].result} ${item.unit || ''}</span><br>
+                            <span style="color:var(--text-muted); font-size:11px;">&bull; Jam: ${formulaCalculationHistory[fId].time}</span>
+                        </div>`;
+                } else {
+                    historyHTML = `
+                        <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(245,158,11,0.3); color:var(--text-muted); font-size:11px;">
+                            <i class="fa-solid fa-calculator"></i> Belum ada kalkulasi riwayat aktif.
+                        </div>`;
+                }
+
+                tooltipNode.style.display = "block";
+                tooltipNode.style.left = (e.clientX + 18) + "px";
+                tooltipNode.style.top = (e.clientY + 12) + "px";
+                tooltipNode.innerHTML = `
+                    <div style="color:#f59e0b; font-weight:900; border-b: 2px solid #f59e0b; padding-bottom:3px; margin-bottom:5px; font-size:13px;">
+                        <i class="fa-solid fa-circle-info"></i> ${item.title}
+                    </div>
+                    <div style="font-size:12px; font-weight:600;">
+                        ${item.desc}
+                    </div>
+                    ${historyHTML}`;
+            });
+
+            container.addEventListener("mouseleave", () => { tooltipNode.style.display = "none"; });
+        }
+
+        function toggleThemeInterface() {
+            const body = document.getElementById('appBody');
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
+
+            if (currentTheme === "dark") {
+                body.classList.remove('theme-dark'); body.classList.add('theme-light');
+                icon.className = "fa-solid fa-sun"; text.innerText = "NORMAL MODE";
+                currentTheme = "light";
+            } else {
+                body.classList.remove('theme-light'); body.classList.add('theme-dark');
+                icon.className = "fa-solid fa-moon"; text.innerText = "DARK MODE";
+                currentTheme = "dark";
+            }
+            filterDatabase();
+        }
+
+        function updateCategoryCounters() {
+            document.getElementById("count-all").innerText = formulaDatabase.length;
+            const cats = ["stress-strength", "flow-seepage", "settlement-consolidation", "earth-pressure", "stability-stress"];
+            cats.forEach(cat => {
+                const count = formulaDatabase.filter(f => f.category === cat).length;
+                document.getElementById(`count-${cat}`).innerText = count;
+            });
+        }
+
+        function renderFormulaCards(dataList) {
+            const container = document.getElementById("formulaContainer");
+            container.innerHTML = "";
+            document.getElementById("itemCounter").innerText = `${dataList.length} Item Terdaftar`;
+
+            if (dataList.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-slate-950/20 rounded-xl border-2 border-dashed border-slate-400 text-slate-500 font-mono text-xs font-bold">
+                        <i class="fa-solid fa-folder-open text-3xl mb-2 block text-slate-400"></i>
+                        Formula tidak ditemukan. Sesuaikan kata kunci pencarian Anda.
+                    </div>`;
+                return;
+            }
+
+            dataList.forEach(item => {
+                let colorTheme = "";
+                switch(item.category) {
+                    case "stress-strength": colorTheme = "text-blue-600 border-blue-500 bg-blue-500/10"; break;
+                    case "flow-seepage": colorTheme = "text-teal-600 border-teal-500 bg-teal-500/10"; break;
+                    case "settlement-consolidation": colorTheme = "text-purple-600 border-purple-500 bg-purple-500/10"; break;
+                    case "earth-pressure": colorTheme = "text-cyan-600 border-cyan-500 bg-cyan-500/10"; break;
+                    case "stability-stress": colorTheme = "text-rose-600 border-rose-500 bg-rose-500/10"; break;
+                }
+
+                const card = document.createElement("div");
+                card.className = "formula-card bg-[var(--bg-card)] p-5 rounded-xl border-2 border-[var(--border-color)] shadow-lg flex flex-col justify-between backdrop-blur-sm";
+                card.setAttribute("data-formula-id", item.id);
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start gap-2 mb-3">
+                            <span class="text-xs font-mono px-2 py-0.5 rounded border-2 ${colorTheme} tracking-wider font-black uppercase">${item.category.replace('-', ' ')}</span>
+                            <span class="text-xl font-mono font-black text-slate-400/50 select-none">${item.symbol}</span>
+                        </div>
+                        <h3 class="text-sm font-black font-mono text-[var(--text-main)] mb-2 tracking-tight">${item.title}</h3>
+                        <div class="bg-slate-950 px-3 py-2 rounded border border-slate-800 font-mono text-amber-500 font-black text-xs mb-3 shadow-inner overflow-x-auto whitespace-nowrap">
+                            ${item.expression}
+                        </div>
+                        <p class="formula-desc text-[13px] text-[var(--text-muted)] mb-4 leading-relaxed">${item.desc}</p>
+                        <div class="bg-[var(--bg-input)] border-l-4 border-amber-500 p-2 rounded-r font-mono text-[11px] text-[var(--text-muted)] mb-1 border-y border-r border-[var(--border-color)] font-bold">
+                            <span class="font-black text-amber-500 block mb-0.5"><i class="fa-solid fa-circle-nodes mr-1 text-[9px]"></i>Konektivitas Pemodelan:</span>
+                            ${item.softwareCor}
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-[var(--border-color)] flex justify-end">
+                        <button onclick="openCalculator('${item.id}')" class="bg-[var(--bg-input)] hover:bg-amber-500 text-[var(--text-main)] hover:text-slate-950 font-mono font-black text-xs px-3 py-2 rounded transition-all flex items-center gap-1.5 shadow-sm cursor-pointer border-2 border-[var(--border-color)]">
+                            <i class="fa-solid fa-calculator"></i> Buka Solver
+                        </button>
+                    </div>`;
+                container.appendChild(card);
+            });
+        }
+
+        function filterDatabase() {
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            const filtered = formulaDatabase.filter(item => {
+                const matchesSearch = item.title.toLowerCase().includes(query) || 
+                                      item.desc.toLowerCase().includes(query) || 
+                                      item.expression.toLowerCase().includes(query);
+                const matchesCategory = currentCategory === "all" || item.category === currentCategory;
+                return matchesSearch && matchesCategory;
+            });
+            renderFormulaCards(filtered);
+        }
+
+        function filterCategory(targetCat) {
+            currentCategory = targetCat;
+            const buttons = document.querySelectorAll(".cat-btn");
+            buttons.forEach(btn => {
+                btn.className = "cat-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-mono font-bold text-[var(--text-muted)] hover:bg-amber-500/10 flex items-center justify-between transition-colors cursor-pointer";
+                const badge = btn.querySelector("span:last-child");
+                if (badge) badge.className = "text-xs bg-slate-400/20 text-[var(--text-main)] px-2 py-0.5 rounded-full font-black";
+            });
+
+            if (event && event.currentTarget) {
+                const currentBtn = event.currentTarget;
+                currentBtn.className = "cat-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-mono font-bold bg-amber-500 text-slate-950 flex items-center justify-between transition-colors cursor-pointer";
+                const currentBadge = currentBtn.querySelector("span:last-child");
+                if (currentBadge) currentBadge.className = "text-xs bg-slate-900/20 px-2 py-0.5 rounded-full font-black";
+            }
+
+            const titleMap = {
+                'all': 'Menampilkan Semua Formula',
+                'stress-strength': 'Geoteknik - Stress & Strength Mechanical Analysis',
+                'flow-seepage': 'Geoteknik - Flow & Groundwater Seepage Analysis',
+                'settlement-consolidation': 'Geoteknik - Settlement & Cohesive Soil Consolidation',
+                'earth-pressure': 'Geoteknik - Lateral Earth Pressure Retaining Wall',
+                'stability-stress': 'Geoteknik - Slope Stability & Stress Distribution'
+            };
+            document.getElementById("currentCategoryTitle").innerText = titleMap[targetCat] || titleMap['all'];
+            filterDatabase();
+        }
+
+        function openCalculator(id) {
+            const item = formulaDatabase.find(f => f.id === id);
+            if (!item) return;
+
+            activeFormulaId = id;
+            document.getElementById("modalTitle").innerText = item.title;
+            document.getElementById("modalMathExpression").innerText = item.expression;
+            
+            const inputsContainer = document.getElementById("dynamicInputs");
+            inputsContainer.innerHTML = "";
+            document.getElementById("resultBox").classList.add("hidden");
+
+            item.inputs.forEach(inp => {
+                const block = document.createElement("div");
+                block.className = "flex flex-col";
+                block.innerHTML = `
+                    <label class="font-black text-slate-300 mb-1">${inp.label}</label>
+                    <input type="number" id="input-${inp.id}" step="any" placeholder="${inp.placeholder}" 
+                        class="w-full px-3 py-2 bg-slate-950 border-2 border-slate-800 rounded text-slate-100 focus:outline-none focus:border-amber-500 font-mono text-xs font-bold">`;
+                inputsContainer.appendChild(block);
+            });
+
+            document.getElementById("calcModal").classList.remove("hidden");
+        }
+
+        function closeCalculator() {
+            document.getElementById("calcModal").classList.add("hidden");
+            activeFormulaId = null;
+        }
+
+        function askGeoBotAboutCurrentFormula() {
+            if (!activeFormulaId) return;
+            const item = formulaDatabase.find(f => f.id === activeFormulaId);
+            if (!item) return;
+
+            const chatWin = document.getElementById("chatWindow");
+            const icon = document.getElementById("chatTriggerIcon");
+            chatWin.classList.remove("hidden");
+            icon.className = "fa-solid fa-xmark text-lg";
+
+            const promptMessage = `Beri tahu saya batas kritis dan bahaya operasional untuk rumus: ${item.title} (${item.symbol})`;
+            sendQuickQuestion(promptMessage);
+        }
+
+        function calculateResult() {
+            const current = formulaDatabase.find(f => f.id === activeFormulaId);
+            if (!current) return;
+
+            const values = {}; let isComplete = true;
+
+            current.inputs.forEach(inp => {
+                const val = document.getElementById(`input-${inp.id}`).value;
+                if (val === "") isComplete = false;
+                values[inp.id] = parseFloat(val);
+            });
+
+            if (!isComplete) { alert("Harap lengkapi seluruh parameter laboratorium!"); return; }
+
+            try {
+                const output = current.calc(values);
+                const outBox = document.getElementById("resultBox");
+                const calcOut = document.getElementById("calcOutput");
+                const resBorderBox = document.getElementById("resultBorderBox");
+                const resTitleLabel = document.getElementById("resultTitleLabel");
+                const rounded = Number(output.toFixed(4));
+                
+                let evaluationNode = "";
+                let logs = current.interpret ? current.interpret(values, rounded) : { status: "aman", inputMeaning: "", keyPoints: "", adviceConclusion: "" };
+
+                resBorderBox.className = "bg-slate-950 p-4 rounded-lg border-2 shadow-inner transition-colors";
+                
+                if (logs.status === "kritis") {
+                    evaluationNode = " <span class='text-orange-500 text-xs font-black border border-orange-500/30 px-1.5 py-0.5 rounded bg-orange-950/40 uppercase tracking-wider'>(Kritis)</span>";
+                    calcOut.className = "text-xl font-mono font-black text-orange-500 drop-shadow-[0_0_6px_rgba(249,115,22,0.4)]";
+                    resBorderBox.classList.add("border-orange-500");
+                    resTitleLabel.className = "text-[10px] text-orange-500 font-mono font-bold uppercase tracking-wider block mb-1";
+                } else if (logs.status === "bahaya") {
+                    evaluationNode = " <span class='text-red-500 text-xs font-black border border-red-500/30 px-1.5 py-0.5 rounded bg-red-950/40 uppercase tracking-wider'>(Bahaya / Tidak Aman)</span>";
+                    calcOut.className = "text-xl font-mono font-black text-red-500 drop-shadow-[0_0_6px_rgba(239,68,68,0.4)]";
+                    resBorderBox.classList.add("border-red-500");
+                    resTitleLabel.className = "text-[10px] text-red-500 font-mono font-bold uppercase tracking-wider block mb-1";
+                } else {
+                    evaluationNode = " <span class='text-emerald-400 text-xs font-bold border border-emerald-500/30 px-1.5 py-0.5 rounded bg-emerald-950/40'>(Aman)</span>";
+                    calcOut.className = "text-xl font-mono font-black text-emerald-400";
+                    resBorderBox.classList.add("border-emerald-500");
+                    resTitleLabel.className = "text-[10px] text-emerald-400 font-mono font-bold uppercase tracking-wider block mb-1";
+                }
+
+                calcOut.innerHTML = `${rounded} ${current.unit || ''} ${evaluationNode}`;
+
+                if (current.interpret) {
+                    document.getElementById("logInputMeaning").innerHTML = `<strong><i class="fa-solid fa-right-to-bracket text-amber-500/70 mr-1"></i> Input Deskriptif:</strong> ${logs.inputMeaning}`;
+                    document.getElementById("logKeyPoints").innerHTML = `<strong><i class="fa-solid fa-chart-line text-cyan-400/70 mr-1"></i> Poin Kunci Analisis:</strong> ${logs.keyPoints}`;
+                    
+                    const adviceBox = document.getElementById("logAdviceConclusion");
+                    adviceBox.innerHTML = `<strong><i class="fa-solid fa-clipboard-check mr-1"></i> Saran & Kesimpulan Rekayasa:</strong><br>${logs.adviceConclusion}`;
+                    
+                    if (logs.status === "kritis") { adviceBox.className = "text-orange-400 bg-orange-950/40 p-2 rounded border border-orange-500 mt-1 font-bold"; }
+                    else if (logs.status === "bahaya") { adviceBox.className = "text-red-400 bg-red-950/40 p-2 rounded border border-red-500 mt-1 font-black"; }
+                    else { adviceBox.className = "text-emerald-400 bg-emerald-950/40 p-2 rounded border border-emerald-500 mt-1 font-bold"; }
+                }
+
+                formulaCalculationHistory[activeFormulaId] = {
+                    result: rounded, status: logs.status, time: new Date().toLocaleTimeString('id-ID')
+                };
+                outBox.classList.remove("hidden");
+            } catch (err) { alert("Terjadi kesalahan aritmatika komputasi numerik."); }
+        }
+
+        function openHelpModal() {
+            const modal = document.getElementById('helpModal');
+            modal.classList.remove('hidden');
+        }
+        function closeHelpModal() { document.getElementById('helpModal').classList.add('hidden'); }
+
+        function initDraggablePanel(panel, handle) {
+            let p1 = 0, p2 = 0, p3 = 0, p4 = 0;
+            handle.onmousedown = startDrag; handle.ontouchstart = startTouchDrag;
+            
+            function startDrag(e) {
+                e.preventDefault();
+                p3 = e.clientX; p4 = e.clientY; document.onmouseup = endDrag; document.onmousemove = moveDrag;
+            }
+            function moveDrag(e) {
+                e.preventDefault(); p1 = p3 - e.clientX; p2 = p4 - e.clientY; p3 = e.clientX; p4 = e.clientY;
+                panel.style.top = (panel.offsetTop - p2) + "px"; panel.style.left = (panel.offsetLeft - p1) + "px";
+            }
+            function endDrag() { document.onmouseup = null; document.onmousemove = null; }
+
+            function startTouchDrag(e) {
+                p3 = e.touches[0].clientX; p4 = e.touches[0].clientY;
+                document.ontouchend = endTouchDrag; document.ontouchmove = moveTouchDrag;
+            }
+            function moveTouchDrag(e) {
+                p1 = p3 - e.touches[0].clientX; p2 = p4 - e.touches[0].clientY; p3 = e.touches[0].clientX; p4 = e.touches[0].clientY;
+                panel.style.top = (panel.offsetTop - p2) + "px"; panel.style.left = (panel.offsetLeft - p1) + "px";
+            }
+            function endTouchDrag() { document.ontouchend = null; document.ontouchmove = null; }
+        }
+
+        function toggleFloatingChat() {
+            const chatWin = document.getElementById("chatWindow"); const icon = document.getElementById("chatTriggerIcon");
+            if(chatWin.classList.contains("hidden")) { chatWin.classList.remove("hidden"); icon.className = "fa-solid fa-xmark text-lg"; }
+            else { chatWin.classList.add("hidden"); icon.className = "fa-solid fa-comments text-lg"; }
+        }
+
+        function appendChatMessage(sender, text) {
+            const container = document.getElementById("chatMessages"); const msgEl = document.createElement("div");
+            if(sender === "user") { msgEl.className = "bg-amber-500 text-slate-950 p-2.5 rounded-lg max-w-[85%] self-end ml-auto font-bold shadow-sm border border-amber-400"; }
+            else { msgEl.className = "bg-slate-800 text-slate-100 p-2.5 rounded-lg max-w-[85%] self-start border border-slate-700 leading-relaxed shadow-sm font-medium"; }
+            msgEl.innerHTML = text; container.appendChild(msgEl); container.scrollTop = container.scrollHeight;
+        }
+
+        function sendQuickQuestion(questionText) { appendChatMessage("user", questionText); processBotResponse(questionText); }
+
+        function handleChatSubmit(e) {
+            e.preventDefault(); const input = document.getElementById("chatInput"); const query = input.value.trim();
+            if(!query) return; appendChatMessage("user", query); input.value = ""; processBotResponse(query);
+        }
+
+        function processBotResponse(query) {
+            const cleaned = query.toLowerCase();
+            let reply = "Maaf, saya tidak memahami perintah tersebut. Silakan tanyakan tentang batas kriteria stabilitas lereng (FOS), sand boiling, atau penurunan konsolidasi.";
+            
+            if (cleaned.includes("fos") || cleaned.includes("lereng") || cleaned.includes("keamanan") || cleaned.includes("stability")) {
+                reply = `Untuk stabilitas lereng, batas keamanannya adalah:<br>
+                • <strong style="color:#f97316;">Kritis</strong>: 1.0 ≤ FOS &lt; 1.5 (rentan akibat beban air atau gempa dinamis).<br>
+                • <strong style="color:#ef4444;">Bahaya/Gagal</strong>: FOS &lt; 1.0 (potensi runtuh atau longsor langsung).`;
+            } else if (cleaned.includes("boiling") || cleaned.includes("piping") || cleaned.includes("hidrolik") || cleaned.includes("gradient")) {
+                reply = `Gradien hidrolik (i = h / L) memiliki batas kriteria:<br>
+                • <strong style="color:#f97316;">Kritis</strong>: i ≥ 0.75 (kecepatan aliran tinggi mendekati kritis).<br>
+                • <strong style="color:#ef4444;">Bahaya/Tidak Aman</strong>: i ≥ 1.0 (terjadi efek kegagalan sand boiling / piping struktural).`;
+            } else if (cleaned.includes("penurunan") || cleaned.includes("lempung") || cleaned.includes("settlement")) {
+                reply = `Batas penurunan konsolidasi primer (Sc) pada lempung:<br>
+                • <strong style="color:#f97316;">Kritis</strong>: Penurunan &gt; 50 mm. Memicu risiko tinggi keretakan struktural bangunan.`;
+            } else if (cleaned.includes("cc") || cleaned.includes("kompresi")) {
+                reply = `Pada Indeks Kompresi Empiris (Cc):<br>
+                • <strong style="color:#f97316;">Kritis</strong>: Cc &gt; 0.3 menandakan kompresibilitas tanah sangat tinggi (sangat mudah mampat).`;
+            } else if (cleaned.includes("stress") || cleaned.includes("pori") || cleaned.includes("efektif") || cleaned.includes("bearing")) {
+                reply = `Pada prinsip tegangan efektif (sigma' = sigma - u):<br>
+                • <strong style="color:#f97316;">Kritis</strong>: Rasio tekanan air pori terhadap beban total (u / sigma) ≥ 0.5.<br>
+                • <strong style="color:#ef4444;">Bahaya/Tidak Aman</strong>: Ketika u = sigma, kuat geser tanah hilang total (likuifaksi).`;
+            }
+
+            setTimeout(() => { appendChatMessage("bot", reply); }, 400);
+        }
+    </script>
+</body>
+</html>
