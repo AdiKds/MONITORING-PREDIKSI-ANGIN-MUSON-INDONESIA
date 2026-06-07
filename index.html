@@ -75,7 +75,7 @@
             position: relative;
             width: 100%;
             height: 100%;
-        } front, .flip-back {
+        } .flip-front, .flip-back {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -160,9 +160,71 @@
         }
         .neon-text-cyan { text-shadow: 0 0 10px rgba(6, 182, 212, 0.5); }
         .theme-light .neon-text-cyan { text-shadow: none; }
+
+        /* --- STYLING ANIMASI DIGITAL SCREENSAVER --- */
+        @keyframes cyber-pulse-glow {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.45; transform: scale(1.06); }
+        }
+        @keyframes technology-scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        @keyframes drift-slow-motion {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(0.4deg); }
+        }
+        .screensaver-grid {
+            background-image: linear-gradient(rgba(6, 182, 212, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.08) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        .sc-pulse-animation {
+            animation: cyber-pulse-glow 4.5s ease-in-out infinite;
+        }
+        .sc-scanline-animation {
+            animation: technology-scanline 7s linear infinite;
+        }
+        .sc-drift-animation {
+            animation: drift-slow-motion 5.5s ease-in-out infinite;
+        }
     </style>
 </head>
 <body id="appBody" class="theme-dark bg-[var(--bg-main)] text-[var(--text-main)] p-4 md:p-6 min-h-screen flex flex-col justify-between overflow-x-hidden relative pb-32">
+
+    <div id="monsoonTechScreensaver" class="hidden fixed inset-0 z-[300] bg-[#020714] flex flex-col items-center justify-center overflow-hidden font-tech transition-all duration-700 opacity-0 select-none">
+        <div class="absolute inset-0 screensaver-grid opacity-50 pointer-events-none"></div>
+        
+        <div class="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-30 sc-scanline-animation pointer-events-none"></div>
+        
+        <div class="absolute w-[650px] h-[650px] rounded-full border-2 border-cyan-500/10 sc-pulse-animation pointer-events-none flex items-center justify-center">
+            <div class="w-[480px] h-[480px] rounded-full border border-indigo-500/15 animate-spin" style="animation-duration: 30s;"></div>
+        </div>
+
+        <div class="z-10 text-center sc-drift flex flex-col items-center px-6">
+            <div class="mb-5 flex items-center gap-2 border border-cyan-500/30 px-4 py-1.5 rounded-full bg-cyan-950/40 text-cyan-400 font-mono text-xs tracking-[0.25em] uppercase shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+                <i class="fa-solid fa-satellite-dish animate-pulse"></i> Monsoon Intel Terminal System Mode
+            </div>
+
+            <div id="scClockDisplay" class="text-7xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-cyan-200 to-cyan-600 tracking-wider filter drop-shadow-[0_0_30px_rgba(6,182,212,0.55)]">
+                00:00:00
+            </div>
+
+            <div class="mt-4 flex items-center gap-4 text-slate-300 font-medium tracking-widest text-lg md:text-2xl border-t border-b border-cyan-500/30 py-2.5 px-8 bg-slate-900/40 backdrop-blur-sm">
+                <span id="scDateDisplay" class="text-transparent bg-clip-text bg-gradient-to-r from-slate-200 to-cyan-100">Sabtu, 06 Jun 2026</span>
+                <div class="w-[2px] h-6 bg-cyan-500/40"></div>
+                <span id="scTzDisplay" class="text-xs font-mono font-black tracking-widest text-cyan-400 bg-cyan-950/80 px-2 py-1 rounded border border-cyan-500/30 shadow-[0_0_8px_rgba(6,182,212,0.25)]">WIB</span>
+            </div>
+
+            <div class="mt-12 text-slate-500 font-mono text-[11px] tracking-[0.3em] uppercase animate-pulse flex items-center gap-2">
+                <i class="fa-solid fa-computer-mouse"></i> Gerakkan Kursor / Sentuh Layar Untuk Kembali
+            </div>
+        </div>
+
+        <div class="absolute bottom-6 font-mono text-[9px] tracking-widest text-slate-600 uppercase">
+            Atmospheric Analytics Core Platform v2.6
+        </div>
+    </div>
+
 
     <div id="mainDashboardInterface" class="w-full flex flex-col justify-between flex-1 gap-5">
         <header class="w-full bg-[var(--bg-header)] backdrop-blur-md p-5 rounded-2xl border-2 border-[var(--border-color)] flex flex-col xl:flex-row justify-between items-center gap-5 transition-all shadow-md">
@@ -485,7 +547,11 @@
         </section>
     </div>
 
-    <div id="chatBotContainer" class="fixed bottom-6 right-6 z-[120] flex flex-col items-end">
+    <div id="chatBotContainer" class="fixed bottom-6 right-6 z-[120] flex flex-col items-end gap-3">
+        <button onclick="turnOnScreensaverMode()" class="h-12 w-12 rounded-full bg-gradient-to-r from-slate-900 to-indigo-950 border border-cyan-500/50 flex items-center justify-center text-cyan-400 shadow-lg cursor-pointer hover:scale-110 transition-transform" title="Simulasi Pengaktifan Layar Screensaver Sekarang">
+            <i class="fa-solid fa-desktop text-sm"></i>
+        </button>
+
         <button onclick="toggleChatWindow()" class="h-14 w-14 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 border-2 border-white flex items-center justify-center text-white shadow-[0_10px_30px_rgba(6,182,212,0.5)] cursor-pointer hover:scale-110 transition-transform relative">
             <i class="fa-solid fa-robot text-2xl"></i>
             <span class="absolute top-0 right-0 h-3.5 w-3.5 bg-emerald-400 rounded-full border-2 border-white animate-ping"></span>
@@ -580,15 +646,15 @@
                     Dasbor ini berfungsi menganalisis dinamika pergantian angin muson Indonesia. **Garis Pantai NKRI sepanjang 81.000 KM** sangat dipengaruhi oleh anomali termal sirkulasi angin global.
                 </p>
                 <p class="bg-slate-950/40 p-4 rounded-xl border border-slate-800 text-sm leading-relaxed">
-                    <strong class="text-cyan-400 block mb-1">KEMAMPUAN INTEGRASI SINKRONISASI RADAR:</strong>
+                    <span class="text-cyan-400 block mb-1">KEMAMPUAN INTEGRASI SINKRONISASI RADAR:</span>
                     Aplikasi ini menggunakan **Radar Lapisan Angin (Windy.com)** secara *default* sebagai fondasi spasial utama. Sistem komputasi internal secara kontinu melakukan asimilasi data termal dan gradien atmosfer regional.
                 </p>
                 <p class="bg-slate-950/40 p-4 rounded-xl border border-slate-800 text-sm leading-relaxed">
-                    <strong class="text-red-400 block mb-1">ARSIP KONDISI EKSTREM & SIRINE:</strong>
+                    <span class="text-red-400 block mb-1">ARSIP KONDISI EKSTREM & SIRINE:</span>
                     Fitur baru untuk mensimulasikan riwayat bencana klimatologi (seperti Banjir Rob, Kekeringan, Badai). Memilih arsip akan membunyikan sirine peringatan dini, mensinkronisasi lokasi pada peta GIS secara otomatis, dan menampilkan matriks mitigasi cerdas.
                 </p>
                 <p class="bg-slate-950/40 p-4 rounded-xl border border-slate-800 text-sm leading-relaxed">
-                    <strong class="text-fuchsia-400 block mb-1">KREDIT PENGEMBANG UTAMA:</strong>
+                    <span class="text-fuchsia-400 block mb-1">KREDIT PENGEMBANG UTAMA:</span>
                     Sistem ini dirancang dan dikembangkan secara eksklusif oleh **Mohamad Hartadi & Keluarga**. Panel kendali pengembang dilengkapi fitur *Draggable* (dapat diseret) untuk kenyamanan optimal pengamatan. Dukungan teknis dan korespondensi dapat diakses via tautan WhatsApp, Blog Resmi, dan profil Facebook pengembang.
                 </p>
             </div>
@@ -771,6 +837,11 @@
         let statusSirineMenyala = false;
         let currentPulsarMarker = null;
 
+        // TRACKING MATRIX SCREENSAVER IDLE SYSTEM
+        let currentSystemIdleSecondsCounter = 0;
+        const maximumIdleLimitBeforeActivation = 300; // 5 Menit Konstan Limitasi
+        let isMonsoonScreensaverModeActive = false;
+
         const namaBulan = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
 
         const mapTileProviders = {
@@ -874,6 +945,7 @@
             
             document.getElementById('lbl-real-tz').innerText = tzName;
             document.getElementById('lbl-fs-tz').innerText = tzName;
+            document.getElementById('scTzDisplay').innerText = tzName;
 
             setInterval(() => {
                 const now = new Date();
@@ -885,7 +957,62 @@
                 
                 document.getElementById('lbl-fs-day').innerText = dayStr;
                 document.getElementById('lbl-fs-clock').innerText = timeStr;
+
+                // Sinkronisasi data waktu jam ke interface screensaver aktif
+                if(isMonsoonScreensaverModeActive) {
+                    document.getElementById('scClockDisplay').innerText = timeStr;
+                    document.getElementById('scDateDisplay').innerText = dayStr;
+                }
+
+                // Increment tracker detik tidak ada pergerakan sistem
+                currentSystemIdleSecondsCounter++;
+                if(currentSystemIdleSecondsCounter >= maximumIdleLimitBeforeActivation && !isMonsoonScreensaverModeActive) {
+                    turnOnScreensaverMode();
+                }
             }, 1000);
+
+            // BIND EVENT LISTENERS UNTUK MENGINTIP AKTIVITAS PENGGUNA
+            setupScreensaverInterceptors();
+        }
+
+        /* --- MANAJEMEN SISTEM SCREENSAVER ENGINE --- */
+        function setupScreensaverInterceptors() {
+            const clearIdleSessionTracker = () => {
+                currentSystemIdleSecondsCounter = 0;
+                if(isMonsoonScreensaverModeActive) {
+                    turnOffScreensaverMode();
+                }
+            };
+            window.addEventListener("mousemove", clearIdleSessionTracker);
+            window.addEventListener("keypress", clearIdleSessionTracker);
+            window.addEventListener("mousedown", clearIdleSessionTracker);
+            window.addEventListener("touchstart", clearIdleSessionTracker);
+            window.addEventListener("scroll", clearIdleSessionTracker);
+        }
+
+        function turnOnScreensaverMode() {
+            if(isMonsoonScreensaverModeActive) return;
+            isMonsoonScreensaverModeActive = true;
+            
+            const element = document.getElementById("monsoonTechScreensaver");
+            element.classList.remove("hidden");
+            setTimeout(() => {
+                element.classList.remove("opacity-0");
+                element.classList.add("opacity-100");
+            }, 50);
+        }
+
+        function turnOffScreensaverMode() {
+            if(!isMonsoonScreensaverModeActive) return;
+            isMonsoonScreensaverModeActive = false;
+            
+            const element = document.getElementById("monsoonTechScreensaver");
+            element.classList.remove("opacity-100");
+            element.classList.add("opacity-0");
+            setTimeout(() => {
+                element.classList.add("hidden");
+                currentSystemIdleSecondsCounter = 0;
+            }, 700);
         }
 
         function checkSearchEnterKey(event, inputId, suggestionId) {
@@ -1151,7 +1278,6 @@
             document.getElementById("bottom-note").innerText = "**Kopling Atmosfer:** Mengalirkan data kalkulasi termal regional sirkulasi udara.";
         }
 
-        // FUNGSI UPDATE TOMBOL SIRINE
         function updateSirineButtonState() {
             const btnText = document.getElementById('textSirine');
             const btnIcon = document.getElementById('iconSirine');
@@ -1190,7 +1316,7 @@
             statusSirineMenyala = true;
             document.getElementById('visualSirenBar').classList.remove('hidden');
             
-            updateSirineButtonState(); // Sinkronisasi UI tombol sirine
+            updateSirineButtonState();
             
             let gelombangTinggi = true;
             sirenInterval = setInterval(() => {
@@ -1209,7 +1335,7 @@
             statusSirineMenyala = false;
             document.getElementById('visualSirenBar').classList.add('hidden');
 
-            updateSirineButtonState(); // Sinkronisasi UI tombol sirine
+            updateSirineButtonState();
         }
 
         function toggleArsipModal() {
@@ -1293,7 +1419,7 @@
 
         function toggleChatWindow() {
             const win = document.getElementById('chatWindow');
-            win.classList.toggle('hidden');
+ win.classList.toggle('hidden');
             win.classList.toggle('flex');
         }
 
