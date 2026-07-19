@@ -563,7 +563,7 @@
                         <i class="fa-solid fa-microchip text-cyan-400 text-xl animate-pulse"></i>
                         <div>
                             <h4 class="font-tech text-xs font-black text-cyan-300 tracking-wide">MONSOON INTEL TERMINAL</h4>
-                            <span class="text-[9px] font-mono text-emerald-400 block font-bold">● LIVE INTERCEPTOR ACTIVE</span>
+                            <span class="text-[9px] font-mono text-emerald-400 block font-bold">● LIVE INTERNET & VOICE SYNC ACTIVE</span>
                         </div>
                     </div>
                     <button onclick="toggleChatWindow()" class="text-slate-400 hover:text-red-400 p-1 cursor-pointer"><i class="fa-solid fa-minus text-lg"></i></button>
@@ -575,39 +575,44 @@
                 </div>
             </div>
             
-            <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-4 font-mono text-sm text-white bg-slate-950">
+            <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-4 font-mono text-sm text-white bg-slate-950 scroll-smooth">
                 <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700 max-w-[85%] font-sans font-medium text-[13px]">
                     <span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-terminal"></i> ASSISTANT INITIALIZED:</span>
-                    Halo! Saya asisten pintar simulasi iklim berbasis presisi algoritma tinggi. Gunakan *shortcut* di bawah untuk analisis instan.
+                    Halo! Saya asisten cerdas berfitur suara. Saya dapat memberikan analisis muson, rincian <b>Gempa Live BMKG</b>, hingga mencari data spesifik dari Wikipedia. Tekan ikon <b>Mic</b> untuk bicara!
                 </div>
             </div>
 
             <div class="px-3 py-2 bg-slate-900 border-t border-slate-800 flex gap-2 overflow-x-auto hide-scrollbar shrink-0">
+                <button onclick="sendChatShortcut('jelaskan gempa')" class="whitespace-nowrap px-3 py-1 bg-red-950 hover:bg-red-900 text-red-400 text-[10px] font-mono font-bold rounded-lg border border-red-700/50 transition-colors cursor-pointer"><i class="fa-solid fa-tower-broadcast animate-pulse"></i> Live Gempa BMKG</button>
                 <button onclick="sendChatShortcut('fitur aplikasi ini')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-cyan-900 text-cyan-400 text-[10px] font-mono font-bold rounded-lg border border-cyan-700/50 transition-colors cursor-pointer">Fitur Aplikasi</button>
                 <button onclick="sendChatShortcut('analisis cuaca')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-emerald-900 text-emerald-400 text-[10px] font-mono font-bold rounded-lg border border-emerald-700/50 transition-colors cursor-pointer">Analisis Cuaca</button>
-                <button onclick="sendChatShortcut('saran mitigasi')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-orange-900 text-orange-400 text-[10px] font-mono font-bold rounded-lg border border-orange-700/50 transition-colors cursor-pointer">Saran Mitigasi</button>
                 
                 <button onclick="sendChatShortcut('data programmer')" class="whitespace-nowrap px-3 py-1 bg-fuchsia-950 hover:bg-fuchsia-900 text-fuchsia-400 text-[10px] font-mono font-black rounded-lg border border-fuchsia-500/80 shadow-[0_0_8px_rgba(236,72,153,0.4)] transition-colors cursor-pointer"><i class="fa-solid fa-code"></i> Programmer</button>
                 
-                <button onclick="sendChatShortcut('sektor agraria')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-yellow-900 text-yellow-400 text-[10px] font-mono font-bold rounded-lg border border-yellow-700/50 transition-colors cursor-pointer">Sektor Agraria</button>
-                <button onclick="sendChatShortcut('sektor perikanan')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-blue-900 text-blue-400 text-[10px] font-mono font-bold rounded-lg border border-blue-700/50 transition-colors cursor-pointer">Perikanan</button>
-                <button onclick="sendChatShortcut('penerbangan')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-indigo-900 text-indigo-400 text-[10px] font-mono font-bold rounded-lg border border-indigo-700/50 transition-colors cursor-pointer">Penerbangan</button>
-                <button onclick="sendChatShortcut('sumber daya air')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-teal-900 text-teal-400 text-[10px] font-mono font-bold rounded-lg border border-teal-700/50 transition-colors cursor-pointer">SDA</button>
+                <button onclick="sendChatShortcut('saran mitigasi')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-orange-900 text-orange-400 text-[10px] font-mono font-bold rounded-lg border border-orange-700/50 transition-colors cursor-pointer">Saran Mitigasi</button>
             </div>
             
             <div class="p-3 bg-slate-900 border-t border-slate-800 flex gap-2 shrink-0">
-                <input type="text" id="chatInput" placeholder="Ketik pesan atau klik pintasan..." class="flex-1 bg-slate-950 border-2 border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400 font-bold placeholder-slate-500" onkeypress="handleChatKeyPress(event)">
+                <button onclick="startVoiceRecognition()" class="bg-slate-800 hover:bg-slate-700 text-cyan-400 px-3 rounded-xl border border-cyan-500/50 transition-colors cursor-pointer" title="Gunakan Perintah Suara"><i class="fa-solid fa-microphone"></i></button>
+                <input type="text" id="chatInput" placeholder="Ketik atau sebutkan sesuatu..." class="flex-1 bg-slate-950 border-2 border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400 font-bold placeholder-slate-500" onkeypress="handleChatKeyPress(event)">
                 <button onclick="processChatMessage()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 rounded-xl text-sm font-black cursor-pointer flex items-center justify-center"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
 
-        <div class="flex flex-row items-center gap-3 pointer-events-auto">
-            <button onclick="toggleFloatingGroup()" id="btnToggleFloating" class="h-8 w-8 rounded-full bg-slate-800 border border-cyan-500/50 flex items-center justify-center text-cyan-400 cursor-pointer hover:scale-110 transition-transform shadow-[0_0_10px_rgba(6,182,212,0.3)] z-10 relative" title="Sembunyikan/Tampilkan Menu Melayang">
-                <i id="iconToggleFloating" class="fa-solid fa-angles-right text-sm"></i>
-            </button>
+        <!-- PERBAIKAN STRUKTUR HTML GRUP TOMBOL MELAYANG -->
+        <div class="flex flex-row items-center gap-3 pointer-events-auto relative">
+            <div id="wrapperToggleFloating" class="transition-transform duration-500 z-20 shrink-0">
+                <button onclick="toggleFloatingGroup()" id="btnToggleFloating" class="h-8 w-8 rounded-full bg-slate-800 border border-cyan-500/50 flex items-center justify-center text-cyan-400 cursor-pointer hover:scale-110 transition-transform shadow-[0_0_10px_rgba(6,182,212,0.3)] relative" title="Sembunyikan/Tampilkan Menu Melayang">
+                    <i id="iconToggleFloating" class="fa-solid fa-angles-right text-sm"></i>
+                </button>
+            </div>
             
-            <div id="floatingButtonGroup" class="flex flex-row items-center gap-3 transition-all duration-500 origin-right relative transform">
+            <div id="floatingButtonGroup" class="flex flex-row items-center gap-3 transition-all duration-500 origin-right">
                 
+                <button onclick="toggleVoiceMute()" class="h-12 w-12 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center text-emerald-400 cursor-pointer hover:scale-110 transition-transform shadow-[0_5px_15px_rgba(16,185,129,0.3)] relative" title="Mute/Unmute Suara Asisten AI">
+                    <i id="iconVoiceMute" class="fa-solid fa-volume-high animate-pulse text-sm"></i>
+                </button>
+
                 <div class="relative group">
                     <button id="btnAiTracking" onclick="toggleAITracking()" class="h-12 w-12 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center text-slate-400 cursor-pointer hover:scale-110 transition-transform relative">
                         <i id="iconAiTracking" class="fa-solid fa-microchip text-sm"></i>
@@ -633,6 +638,8 @@
                 </button>
             </div>
         </div>
+        <!-- AKHIR PERBAIKAN STRUKTUR HTML GRUP TOMBOL MELAYANG -->
+
     </div>
 
     <div id="gisFullScreenWrapper" class="hidden fixed inset-0 z-[150] bg-slate-950 w-screen h-screen">
@@ -703,20 +710,20 @@
                 </p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="bg-slate-950/40 p-4 rounded-xl border border-slate-800">
-                        <span class="text-cyan-400 block mb-1 font-tech uppercase text-xs font-bold"><i class="fa-solid fa-map-location-dot"></i> Fungsi Peta GIS & Radar</span>
-                        Integrasi *real-time* Peta Spasial dan Radar Cuaca. Gunakan kolom <b>Cari Kota</b> untuk memperbesar ke stasiun meteorologi dan aktifkan <b>Peta Layar Penuh</b> untuk observasi presisi.
+                        <span class="text-blue-400 block mb-1 font-tech uppercase text-xs font-bold"><i class="fa-solid fa-microphone"></i> Voice Assistant & Web API</span>
+                        Chatbot cerdas terhubung ke <b>Wikipedia & Google</b>. Klik ikon Mikrofon untuk memberi perintah suara. Gunakan tombol Speaker melayang untuk Mematikan/Menyalakan output suara (TTS). Coba katakan "Jelaskan gempa" untuk menganalisis data BMKG.
                     </div>
                     <div class="bg-slate-950/40 p-4 rounded-xl border border-slate-800">
                         <span class="text-red-400 block mb-1 font-tech uppercase text-xs font-bold"><i class="fa-solid fa-satellite-dish"></i> Live Gempa BMKG & Timer</span>
-                        Terdapat di dasbor atas dan layar penuh. Jika aktif, akan melakukan hitung mundur <b>60 detik</b> dan otomatis mengambil/melacak JSON peringatan Gempa Bumi dan Tsunami BMKG secara seketika (*real-time*).
+                        Terdapat di dasbor atas dan layar penuh. Jika aktif, akan melakukan hitung mundur <b>60 detik</b> dan otomatis mengambil/melacak peringatan Gempa Bumi dan Tsunami BMKG secara <i>real-time</i> disertai Voice Alert.
                     </div>
                     <div class="bg-slate-950/40 p-4 rounded-xl border border-slate-800">
                         <span class="text-emerald-400 block mb-1 font-tech uppercase text-xs font-bold"><i class="fa-solid fa-robot"></i> Grup Tombol Melayang</span>
-                        Akses chatbot, pelacak algoritma AI (ikon chip biru), tombol *Refresh* data, dan layar *Screensaver* di pojok kanan bawah. Tombol ini juga terlihat di mode Fullscreen. Klik ikon <i class="fa-solid fa-angles-right mx-1"></i> untuk sembunyikan/tampilkan tombol.
+                        Akses tombol Voice (Speaker), Chatbot, pelacak algoritma AI (ikon chip), Refresh, dan layar <i>Screensaver</i> di pojok kanan bawah. Klik ikon <i class="fa-solid fa-angles-right mx-1"></i> untuk sembunyikan/tampilkan tombol.
                     </div>
                     <div class="bg-slate-950/40 p-4 rounded-xl border border-slate-800">
                         <span class="text-orange-400 block mb-1 font-tech uppercase text-xs font-bold"><i class="fa-solid fa-triangle-exclamation"></i> Arsip Simulasi Ekstrem</span>
-                        Buka panel ini di kanan atas untuk memuat riwayat / simulasi manual bencana klimatologi sektoral (Krakatau, Tambora, dll) yang memicu matriks evakuasi.
+                        Buka panel ini di kanan atas untuk memuat riwayat / simulasi manual bencana klimatologi sektoral (Krakatau, Tambora, dll) yang memicu matriks evakuasi pada antarmuka.
                     </div>
                 </div>
             </div>
@@ -924,6 +931,8 @@
         let bmkgLastEarthquakeTime = null;
         let currentBmkgData = null;
         let currentAIDisasterTarget = null;
+        
+        let isVoiceMuted = false;
 
         // OPSI POPUP UNTUK MENCEGAH OVERLAP DENGAN 4 TOMBOL (autoPanPadding Bottom-Right)
         const popupOptionsAI = { className: 'custom-map-popup', maxWidth: 350, offset: [0, -15], autoPanPaddingBottomRight: [50, 300] };
@@ -991,22 +1000,84 @@
             });
         });
 
+        // FUNGSI TTS & STT (WEB SPEECH API)
+        function toggleVoiceMute() {
+            isVoiceMuted = !isVoiceMuted;
+            const icon = document.getElementById('iconVoiceMute');
+            if (isVoiceMuted) {
+                icon.className = "fa-solid fa-volume-xmark text-slate-400 text-sm";
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            } else {
+                icon.className = "fa-solid fa-volume-high animate-pulse text-emerald-400 text-sm";
+                speakText("Suara asisten diaktifkan.");
+            }
+        }
+
+        function speakText(text) {
+            if (isVoiceMuted || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const cleanText = text.replace(/<[^>]*>?/gm, '').replace(/\*/g, '');
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'id-ID';
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function startVoiceRecognition() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert("Browser Anda tidak mendukung fitur Voice Recognition.");
+                return;
+            }
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'id-ID';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.start();
+            document.getElementById('chatInput').placeholder = "Mendengarkan suara...";
+
+            recognition.onresult = function(event) {
+                const speechResult = event.results[0][0].transcript;
+                document.getElementById('chatInput').value = speechResult;
+                processChatMessage();
+            };
+
+            recognition.onspeechend = function() {
+                recognition.stop();
+                document.getElementById('chatInput').placeholder = "Ketik atau sebutkan sesuatu...";
+            };
+
+            recognition.onerror = function(event) {
+                console.error("Speech recognition error", event.error);
+                document.getElementById('chatInput').placeholder = "Ketik atau sebutkan sesuatu...";
+            };
+        }
+
+        // PERBAIKAN LOGIKA JS HIDE / UNHIDE TOMBOL MENU
         let isFloatingGroupHidden = false;
         function toggleFloatingGroup() {
             const group = document.getElementById('floatingButtonGroup');
             const icon = document.getElementById('iconToggleFloating');
+            const wrapper = document.getElementById('wrapperToggleFloating');
             isFloatingGroupHidden = !isFloatingGroupHidden;
 
             if (isFloatingGroupHidden) {
-                group.classList.add('scale-0', 'opacity-0', 'pointer-events-none');
+                // Memudarkan elemen dan menghilangkan fungsi klik
+                group.classList.add('opacity-0', 'pointer-events-none');
+                
+                // Kalkulasi pergeseran (Lebar grup tersembunyi + nilai kompensasi gap)
+                const shiftRight = group.offsetWidth + 12; 
+                wrapper.style.transform = `translateX(${shiftRight}px)`;
                 icon.className = "fa-solid fa-angles-left text-sm";
             } else {
-                group.classList.remove('scale-0', 'opacity-0', 'pointer-events-none');
+                // Mengembalikan elemen
+                group.classList.remove('opacity-0', 'pointer-events-none');
+                wrapper.style.transform = 'translateX(0)';
                 icon.className = "fa-solid fa-angles-right text-sm"; 
             }
         }
 
-        // FUNGSI SIMULASI AI
+        // PERBAIKAN LOGIKA JS SUARA ALGORITMA PREDIKSI AI
         function toggleAITracking() {
             isAITrackingActive = !isAITrackingActive;
             const btn = document.getElementById('btnAiTracking');
@@ -1031,6 +1102,8 @@
                 
                 if(aiPulsarMarker) { map.removeLayer(aiPulsarMarker); aiPulsarMarker = null; }
                 if(aiFSPulsarMarker && fsMapInstance) { fsMapInstance.removeLayer(aiFSPulsarMarker); aiFSPulsarMarker = null; }
+
+                speakText("Sistem Algoritma Prediksi Dinamis Dinonaktifkan.");
             }
         }
 
@@ -1038,16 +1111,19 @@
             if(!isAITrackingActive) return;
 
             const aiDisasters = [
-                { title: "SIKLON TROPIS (BIBIT 98S)", lat: -10.5, lng: 120.0, desc: "Sistem mendeteksi anomali pusaran angin di Samudra Hindia selatan Laut Sawu. Potensi angin puting beliung dan gelombang swell maritim mencapai elevasi 4 meter.", mitigation: "Hentikan pelayaran penyeberangan feri wilayah NTT. Siapkan jalur evakuasi pesisir dari ancaman rob badai ekstrem.", icon: "fa-hurricane text-purple-400" },
+                { title: "SIKLON TROPIS (BIBIT 98S)", lat: -10.5, lng: 120.0, desc: "Sistem mendeteksi anomali pusaran angin di Samudra Hindia selatan Laut Sawu. Potensi angin puting beliung dan gelombang swell maritim mencapai elevasi 4 meter.", mitigation: "Hentikan pelayaran penyeberangan feri wilayah Nusa Tenggara Timur. Siapkan jalur evakuasi pesisir dari ancaman rob badai ekstrem.", icon: "fa-hurricane text-purple-400" },
                 { title: "SQUALL LINE (SEL BADAI)", lat: -5.1, lng: 119.4, desc: "Formasi vertikal awan cumulonimbus termal masif terdeteksi bergerak cepat melintasi Selat Makassar.", mitigation: "AWAS WINDSHEAR PENERBANGAN! Alihkan sementara rute pendaratan di Bandara Internasional Hasanuddin. Amankan infrastruktur crane pelabuhan.", icon: "fa-cloud-bolt text-red-400" },
-                { title: "KEKERINGAN EKSTREM & KARHUTLA", lat: -0.5, lng: 117.0, desc: "Deteksi anomali OLR dan SPL menunjukkan defisit tutupan awan berkepanjangan di area Kalimantan Timur. Indeks titik panas (hotspot) berpotensi memicu lonjakan Karhutla.", mitigation: "Teknologi Modifikasi Cuaca (TMC) mendesak dilakukan. Siagakan satgas pemadam darat dan patroli udara pencegahan.", icon: "fa-fire text-orange-400" },
+                { title: "KEKERINGAN EKSTREM & KARHUTLA", lat: -0.5, lng: 117.0, desc: "Deteksi anomali OLR dan SPL menunjukkan defisit tutupan awan berkepanjangan di area Kalimantan Timur. Indeks titik panas atau hotspot berpotensi memicu lonjakan Karhutla.", mitigation: "Teknologi Modifikasi Cuaca mendesak dilakukan. Siagakan satgas pemadam darat dan patroli udara pencegahan.", icon: "fa-fire text-orange-400" },
                 { title: "BANJIR BANDANG & HIDROLOGI", lat: -3.3667, lng: 126.6000, desc: "Akumulasi presipitasi curah hujan intensitas ekstrem di area tangkapan air hulu Pulau Buru pada fase puncak konvektif Muson Barat.", mitigation: "Segera lakukan evakuasi preventif bagi penduduk area bantaran sungai. Buka pintu spillway bendungan untuk mengurangi tekanan hidrostatik waduk.", icon: "fa-house-tsunami text-blue-400" }
             ];
             
             const target = aiDisasters[Math.floor(Math.random() * aiDisasters.length)];
             currentAIDisasterTarget = target; 
 
-            // OTOMATIS BERALIH KE PETA GIS JIKA SEDANG DI RADAR
+            // Integrasi Sinkronisasi Suara Algoritma Dinamis Baru
+            const voiceExplanation = `Sistem Prediksi AI diaktifkan. Mendeteksi anomali: ${target.title}. Keterangan analisis: ${target.desc} Saran Mitigasi yang direkomendasikan: ${target.mitigation}`;
+            speakText(voiceExplanation);
+
             const flipper = document.getElementById('mapWeatherFlipper');
             if (flipper.classList.contains('flipped')) { toggleMapWeatherFlip('map'); }
             if (!document.getElementById("gisFullScreenWrapper").classList.contains("hidden")) { switchFullScreenViewMode('map'); }
@@ -1064,7 +1140,6 @@
                 iconSize: [56, 56], iconAnchor: [28, 28]
             });
 
-            // PEMBUATAN POPUP INFORMASI SINKRON
             const popupHTML = `
                 <div class="bg-slate-900 p-4 rounded-xl border border-cyan-500 shadow-[0_10px_30px_rgba(6,182,212,0.4)] text-white w-[280px] md:w-[320px] pointer-events-auto">
                     <div class="flex items-center gap-3 mb-3 pb-2 border-b border-cyan-500/50">
@@ -1087,7 +1162,6 @@
             aiPulsarMarker = L.marker([target.lat, target.lng], {icon: aiIcon}).addTo(map).bindPopup(popupHTML, popupOptionsAI);
             if(fsMapInstance) aiFSPulsarMarker = L.marker([target.lat, target.lng], {icon: aiIcon}).addTo(fsMapInstance).bindPopup(popupHTML, popupOptionsAI);
 
-            // Buka Popup Otomatis
             setTimeout(() => { aiPulsarMarker.openPopup(); }, 1500);
         }
 
@@ -1186,7 +1260,6 @@
             const lng = parseFloat(coords[1]);
             const fasilitasPenting = gempa.Fasilitas || "Fasilitas pelabuhan, jaringan listrik, dan rute navigasi kapal terdekat.";
 
-            // OTOMATIS BERALIH KE PETA GIS JIKA SEDANG DI RADAR
             const flipper = document.getElementById('mapWeatherFlipper');
             if (flipper.classList.contains('flipped')) { toggleMapWeatherFlip('map'); }
             if (!document.getElementById("gisFullScreenWrapper").classList.contains("hidden")) { switchFullScreenViewMode('map'); }
@@ -1262,6 +1335,10 @@
                 const win = document.getElementById('chatWindow');
                 if(win.classList.contains('hidden')) toggleChatWindow();
             }
+
+            // Integrasi Text To Speech
+            const alertVoiceText = `Peringatan Dini! Analisis Gempa Bumi dari BMKG. Kekuatan gempa ${gempa.Magnitude} Skala Richter. Kedalaman ${gempa.Kedalaman}. Pusat gempa berada di ${gempa.Wilayah}. Status potensi: ${gempa.Potensi}.`;
+            speakText(alertVoiceText);
 
             setTimeout(() => { currentPulsarMarker.openPopup(); }, 1500);
         }
@@ -1431,7 +1508,6 @@
 
             if(!fsMapInstance) {
                 fsMapInstance = L.map('fullScreenMapContainer', { zoomControl: false }).setView(map.getCenter(), map.getZoom());
-                // Memindahkan Zoom control di Full Screen ke Kiri agar tidak menutupi Floating Buttons
                 L.control.zoom({ position: 'bottomleft' }).addTo(fsMapInstance);
 
                 currentFsMapLayerGroup = L.tileLayer(mapTileProviders[activeMapStyle]).addTo(fsMapInstance);
@@ -1717,7 +1793,6 @@
                 iconSize: [40, 40], iconAnchor: [20, 20]
             });
 
-            // Tambahan Popup untuk Mode Arsip yang mengikuti titik
             const arsipPopupHTML = `
                 <div class="bg-slate-900 p-4 rounded-xl border border-orange-500 shadow-[0_10px_30px_rgba(249,115,22,0.4)] text-white w-[240px] pointer-events-auto">
                     <div class="flex items-center gap-3 mb-2 pb-2 border-b border-orange-500/50">
@@ -1756,49 +1831,31 @@
             
             if (intent === 'analisis' || intent === 'risalah' || intent === 'cuaca') {
                 res = `**ANALISIS CUACA & KLIMATOLOGI AKTUAL (${simCurrentMonth}):**<br>` +
-                      `1. **Status ENSO/Anomali Pasifik:** Model mendeteksi fluktuasi **${ensoStatText}** memengaruhi dinamika sirkulasi lokal.<br>` +
-                      `2. **Indeks Prediksi Muson (MPI):** Stabilitas atmosfer tercatat pada rasio **${simCurrentMpi}%** (*${simCurrentStatus}*).<br>` +
-                      `3. **Proyeksi Gelombang Laut:** Estimasi tinggi dominan rata-rata: **${document.getElementById('val-chart-gelombang').innerText}** berdasarkan kecepatan konveksi.<br>` +
+                      `1. **Status ENSO:** Model mendeteksi fluktuasi **${ensoStatText}** memengaruhi dinamika sirkulasi lokal.<br>` +
+                      `2. **Indeks Prediksi Muson:** Stabilitas atmosfer tercatat pada rasio **${simCurrentMpi}%** (*${simCurrentStatus}*).<br>` +
+                      `3. **Proyeksi Gelombang Laut:** Estimasi tinggi rata-rata **${document.getElementById('val-chart-gelombang').innerText}** berdasarkan kecepatan konveksi.<br>` +
                       `4. **Kondisi Cuaca Spasial:** Diprediksi **${document.getElementById('val-cuaca').innerText}** meliputi perairan pesisir utama.`;
-                
-                if (simCurrentHujan >= 80) {
-                    res += `<br><br><div class="bg-red-950/60 p-2.5 rounded-lg border border-red-500 shadow-inner mt-2">` +
-                           `<span class="text-red-400 font-bold block mb-1 border-b border-red-500/30 pb-1 text-[11px] uppercase tracking-widest"><i class="fa-solid fa-cloud-bolt animate-pulse"></i> Peringatan Cuaca Ekstrem (Badai Petir)</span>` +
-                           `**📍 Lokasi Spesifik:** Perairan Selatan Pulau Jawa, Laut Sawu, hingga Nusa Tenggara Timur (NTT).<br>` +
-                           `**⚠️ Yang Harus Diwaspadai:** Ancaman banjir bandang (*flash floods*) pada hilir Daerah Aliran Sungai (DAS), potensi tanah longsor di tebing geoteknik yang jenuh air, dan gelombang laut (*swell*) mematikan bagi navigasi kapal perintis.<br>` +
-                           `**🛡️ Persiapan Darurat:** Segera petakan titik jalur evakuasi dataran tinggi, pastikan operasional seluruh pompa polder bebas sumbatan debris, dan keluarkan notifikasi penghentian izin berlayar bagi nelayan kapal kecil secara mutlak!` +
-                           `</div>`;
-                }
-
             } else if (intent === 'saran' || intent === 'mitigasi') {
                 let currentFase = simCurrentStatus.includes("TIMUR") ? "Muson Timur" : "Muson Barat";
                 res = `**REKOMENDASI MITIGASI SEKTORAL TERPADU (${currentFase.toUpperCase()}):**<br><br>` +
                       `<div class="space-y-4">` +
                       `<div><span class="text-emerald-400 font-bold block mb-1 uppercase tracking-wide border-b border-emerald-500/30 pb-1"><i class="fa-solid fa-wheat-awn"></i> Sektor Agraria:</span> <span class="leading-relaxed text-slate-200 text-[13px]">${aturanMitigasiDinamis[currentFase].agraria}</span></div>` +
-                      `<div><span class="text-blue-400 font-bold block mb-1 uppercase tracking-wide border-b border-blue-500/30 pb-1"><i class="fa-solid fa-fish-fins"></i> Sektor Perikanan & Maritim:</span> <span class="leading-relaxed text-slate-200 text-[13px]">${aturanMitigasiDinamis[currentFase].maritim}</span></div>` +
+                      `<div><span class="text-blue-400 font-bold block mb-1 uppercase tracking-wide border-b border-blue-500/30 pb-1"><i class="fa-solid fa-fish-fins"></i> Sektor Maritim:</span> <span class="leading-relaxed text-slate-200 text-[13px]">${aturanMitigasiDinamis[currentFase].maritim}</span></div>` +
                       `<div><span class="text-yellow-400 font-bold block mb-1 uppercase tracking-wide border-b border-yellow-500/30 pb-1"><i class="fa-solid fa-plane-departure"></i> Sektor Penerbangan:</span> <span class="leading-relaxed text-slate-200 text-[13px]">${aturanMitigasiDinamis[currentFase].penerbangan}</span></div>` +
-                      `<div><span class="text-red-400 font-bold block mb-1 uppercase tracking-wide border-b border-red-500/30 pb-1"><i class="fa-solid fa-water"></i> Sumber Daya Air (SDA):</span> <span class="leading-relaxed text-slate-200 text-[13px]">${aturanMitigasiDinamis[currentFase].sipil}</span></div>` +
+                      `<div><span class="text-red-400 font-bold block mb-1 uppercase tracking-wide border-b border-red-500/30 pb-1"><i class="fa-solid fa-water"></i> SDA & Sipil:</span> <span class="leading-relaxed text-slate-200 text-[13px]">${aturanMitigasiDinamis[currentFase].sipil}</span></div>` +
                       `</div>`;
-            
             } else if (intent === 'agraria' || intent === 'pertanian') {
                 let currentFase = simCurrentStatus.includes("TIMUR") ? "Muson Timur" : "Muson Barat";
-                res = `<span class="text-emerald-400 font-bold text-sm"><i class="fa-solid fa-wheat-awn"></i> MITIGASI SEKTOR AGRARIA / PERTANIAN:</span><br><br>`;
-                res += `<span class="leading-relaxed block text-slate-200">${aturanMitigasiDinamis[currentFase].agraria}</span>`;
-
+                res = `<span class="text-emerald-400 font-bold text-sm"><i class="fa-solid fa-wheat-awn"></i> MITIGASI SEKTOR AGRARIA / PERTANIAN:</span><br><br><span class="leading-relaxed block text-slate-200">${aturanMitigasiDinamis[currentFase].agraria}</span>`;
             } else if (intent === 'perikanan' || intent === 'maritim') {
                 let currentFase = simCurrentStatus.includes("TIMUR") ? "Muson Timur" : "Muson Barat";
-                res = `<span class="text-blue-400 font-bold text-sm"><i class="fa-solid fa-fish-fins"></i> MITIGASI SEKTOR PERIKANAN & MARITIM:</span><br><br>`;
-                res += `<span class="leading-relaxed block text-slate-200">${aturanMitigasiDinamis[currentFase].maritim}</span>`;
-
+                res = `<span class="text-blue-400 font-bold text-sm"><i class="fa-solid fa-fish-fins"></i> MITIGASI SEKTOR PERIKANAN & MARITIM:</span><br><br><span class="leading-relaxed block text-slate-200">${aturanMitigasiDinamis[currentFase].maritim}</span>`;
             } else if (intent === 'penerbangan') {
                 let currentFase = simCurrentStatus.includes("TIMUR") ? "Muson Timur" : "Muson Barat";
-                res = `<span class="text-yellow-400 font-bold text-sm"><i class="fa-solid fa-plane-departure"></i> MITIGASI SEKTOR PENERBANGAN:</span><br><br>`;
-                res += `<span class="leading-relaxed block text-slate-200">${aturanMitigasiDinamis[currentFase].penerbangan}</span>`;
-
+                res = `<span class="text-yellow-400 font-bold text-sm"><i class="fa-solid fa-plane-departure"></i> MITIGASI SEKTOR PENERBANGAN:</span><br><br><span class="leading-relaxed block text-slate-200">${aturanMitigasiDinamis[currentFase].penerbangan}</span>`;
             } else if (intent === 'sda' || intent === 'air' || intent === 'sipil' || intent === 'bendungan') {
                 let currentFase = simCurrentStatus.includes("TIMUR") ? "Muson Timur" : "Muson Barat";
-                res = `<span class="text-red-400 font-bold text-sm"><i class="fa-solid fa-water"></i> MITIGASI SUMBER DAYA AIR (SDA) & SIPIL:</span><br><br>`;
-                res += `<span class="leading-relaxed block text-slate-200">${aturanMitigasiDinamis[currentFase].sipil}</span>`;
+                res = `<span class="text-red-400 font-bold text-sm"><i class="fa-solid fa-water"></i> MITIGASI SUMBER DAYA AIR (SDA) & SIPIL:</span><br><br><span class="leading-relaxed block text-slate-200">${aturanMitigasiDinamis[currentFase].sipil}</span>`;
             }
             return res;
         }
@@ -1818,6 +1875,7 @@
                 </div>`;
             
             let foundReply = "";
+            let requiresExternalFetch = false;
 
             if (query.includes('analisis cuaca') || query.includes('risalah') || query.includes('cuaca')) {
                 foundReply = `<span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-square-poll-vertical"></i> ANALYTICS REPORT GENERATOR:</span>` + generateDynamicMonsoonReply('analisis');
@@ -1834,6 +1892,15 @@
             } else if (query.includes('arsip') || query.includes('ekstrem') || query.includes('bencana')) {
                 foundReply = `<span class="text-red-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-triangle-exclamation"></i> EXTREME ARCHIVE:</span>` +
                              `Sistem dilengkapi fitur **Simulasi Arsip Ekstrem** (Krakatau, Tambora, Merapi, Banjir Rob, dll). Klik tombol "Arsip Simulasi" di panel atas untuk melihat riwayat bencana, mensinkronkan peta, dan memicu sirine peringatan dini.`;
+            } else if (query.includes('jelaskan gempa') || query.includes('analisis gempa') || query.includes('gempa live') || query.includes('info gempa')) {
+                if (currentBmkgData) {
+                    foundReply = `<span class="text-red-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-tower-broadcast animate-pulse"></i> ANALISIS GEMPA BMKG TERKINI:</span>` +
+                    `Pusat gempa terdeteksi di **${currentBmkgData.Wilayah}** dengan kekuatan **Magnitudo ${currentBmkgData.Magnitude} SR** pada kedalaman ${currentBmkgData.Kedalaman}.<br><br>` +
+                    `**Status Potensi:** ${currentBmkgData.Potensi}<br>` +
+                    `**Analisis Sistem Geoteknik:** Perambatan gelombang seismik ini mempengaruhi struktur di sekitar titik koordinat (${currentBmkgData.Coordinates}). Dihimbau segera menjauhi pantai jika ada peringatan tsunami dan hindari bangunan vital seperti ${currentBmkgData.Fasilitas || "pelabuhan"}.`;
+                } else {
+                    foundReply = `<span class="text-emerald-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-shield-check"></i> STATUS SEISMIK AMAN:</span>Saat ini tidak ada data peringatan gempa live dari BMKG. Kondisi lempeng tektonik regional dalam batas stabil dan aman.`;
+                }
             } else if (query.includes('programmer') || query.includes('creator') || query.includes('hartadi') || query.includes('pengembang')) {
                 foundReply = `<span class="text-fuchsia-400 font-mono text-[13px] block font-black mb-3 border-b border-fuchsia-500/30 pb-1"><i class="fa-solid fa-id-card-clip animate-pulse"></i> IDENTITAS PROGRAMMER SISTEM:</span>` +
                              `<div class="bg-slate-950 p-4 rounded-xl border-2 border-fuchsia-500/50 space-y-3 mt-1 shadow-[0_0_15px_rgba(236,72,153,0.2)]">` +
@@ -1846,26 +1913,59 @@
                              `  <div class="space-y-2 mt-2 pt-1">` +
                              `      <a href="https://www.facebook.com/m.hartadi" target="_blank" class="flex items-center gap-3 text-cyan-400 hover:text-cyan-300 transition-colors p-1.5 hover:bg-slate-900 rounded-lg"><i class="fa-brands fa-facebook text-xl w-6 text-center"></i> <div><span class="block text-[9px] text-slate-500 uppercase tracking-widest font-bold">Facebook Profile</span><span class="font-bold text-xs font-mono">facebook.com/m.hartadi</span></div></a>` +
                              `      <a href="https://wa.me/6282231036047?text=Ijin%20bertanya%20mengenai%20Sistem%20Dashboard%20Muson." target="_blank" class="flex items-center gap-3 text-emerald-400 hover:text-emerald-300 transition-colors p-1.5 hover:bg-slate-900 rounded-lg"><i class="fa-brands fa-whatsapp text-xl w-6 text-center"></i> <div><span class="block text-[9px] text-slate-500 uppercase tracking-widest font-bold">Kontak WhatsApp</span><span class="font-bold text-xs font-mono">082231036047</span></div></a>` +
-                             `      <a href="https://newbieonline7.blogspot.com/" target="_blank" class="flex items-center gap-3 text-pink-400 hover:text-pink-300 transition-colors p-1.5 hover:bg-slate-900 rounded-lg"><i class="fa-solid fa-globe text-xl w-6 text-center"></i> <div><span class="block text-[9px] text-slate-500 uppercase tracking-widest font-bold">Portal Web Blog</span><span class="font-bold text-xs font-mono break-all">newbieonline7.blogspot.com</span></div></a>` +
                              `  </div>` +
                              `</div>`;
             } else if (query.includes('fitur') || query.includes('aplikasi')) {
                 foundReply = `<span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-terminal"></i> SYSTEM CAPABILITY & FEATURES:</span>` +
                              `Aplikasi Dasbor Dinamika Angin Muson ini memiliki fitur analitik tingkat lanjut meliputi:<br>` +
-                             `1. **Interseptor Radar (Live):** Sinkronisasi API lapisan satelit konvektif cuaca (*Windy.com*).<br>` +
-                             `2. **Algoritma ENSO & Gelombang:** Simulasi matematis dinamis anomali La Niña / El Niño.<br>` +
-                             `3. **Peta Spasial Sinkron (GIS):** Sistem telemetri spasial menggunakan *Leaflet JS*.<br>` +
-                             `4. **Deteksi BMKG Realtime:** Pelacakan otomatis data JSON Live BMKG untuk pencegahan gempa/tsunami.<br>` +
-                             `5. **Sistem Peringatan Ekstrem:** Aktuasi sirene kebencanaan disertai peta matriks mitigasi lintas sektoral.`;
+                             `1. **Interseptor Radar (Live):** Sinkronisasi API satelit cuaca.<br>` +
+                             `2. **Algoritma ENSO:** Simulasi matematis anomali iklim.<br>` +
+                             `3. **Voice Assistant:** Kontrol Suara (Mic) dan Integrasi data Wikipedia.<br>` +
+                             `4. **Deteksi BMKG Realtime:** Pelacakan data JSON Live BMKG beserta Voice Alert.<br>` +
+                             `5. **Sistem Peringatan Ekstrem:** Aktuasi sirene kebencanaan dan peta matriks mitigasi lintas sektoral.`;
             } else {
-                foundReply = `<span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-microchip"></i> MONSOON AI COMMAND:</span>` +
-                             `Perintah tidak dikenali. Ketik **"analisis cuaca"**, **"saran mitigasi"**, **"sektor agraria"**, **"data programmer"**, atau **"fitur aplikasi"** untuk memuat modul sistem cerdas.`;
+                requiresExternalFetch = true;
             }
 
-            setTimeout(() => {
-                msgContainer.innerHTML += `<div class="bg-slate-900 p-3 rounded-xl border border-slate-700 max-w-[85%] font-sans font-medium text-slate-100 leading-relaxed text-[13px]">${foundReply}</div>`;
-                msgContainer.scrollTop = msgContainer.scrollHeight;
-            }, 300);
+            if (!requiresExternalFetch) {
+                setTimeout(() => {
+                    msgContainer.innerHTML += `<div class="bg-slate-900 p-3 rounded-xl border border-slate-700 max-w-[85%] font-sans font-medium text-slate-100 leading-relaxed text-[13px]">${foundReply}</div>`;
+                    msgContainer.scrollTop = msgContainer.scrollHeight;
+                    speakText(foundReply);
+                }, 300);
+            } else {
+                // Fetch data dari Wikipedia API
+                const url = `https://id.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
+                
+                fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    let reply = "";
+                    if (data.query && data.query.search && data.query.search.length > 0) {
+                        const firstResult = data.query.search[0];
+                        const pageId = firstResult.pageid;
+                        reply = `<span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-globe"></i> INTERNET DATABASE (WIKIPEDIA):</span>` +
+                                `**${firstResult.title}**<br>${firstResult.snippet}...<br><br>` +
+                                `<div class="flex gap-2 mt-2">` +
+                                `<a href="https://id.wikipedia.org/?curid=${pageId}" target="_blank" class="px-2 py-1 bg-blue-950 text-blue-400 text-[10px] rounded border border-blue-500 hover:bg-blue-900 flex items-center gap-1"><i class="fa-brands fa-wikipedia-w"></i> Baca Wikipedia</a>` +
+                                `<a href="https://www.google.com/search?q=${encodeURIComponent(query)}" target="_blank" class="px-2 py-1 bg-emerald-950 text-emerald-400 text-[10px] rounded border border-emerald-500 hover:bg-emerald-900 flex items-center gap-1"><i class="fa-brands fa-google"></i> Cari di Google</a>` +
+                                `</div>`;
+                    } else {
+                        reply = `<span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-microchip"></i> AI SYSTEM LOG:</span>` +
+                                `Maaf, saya tidak menemukan informasi spesifik mengenai "${query}" di database internet kami.<br><br><a href="https://www.google.com/search?q=${encodeURIComponent(query)}" target="_blank" class="px-2 py-1 bg-emerald-950 text-emerald-400 text-[10px] rounded border border-emerald-500 hover:bg-emerald-900 inline-flex items-center gap-1"><i class="fa-brands fa-google"></i> Cari di Google Saja</a>`;
+                    }
+                    
+                    msgContainer.innerHTML += `<div class="bg-slate-900 p-3 rounded-xl border border-slate-700 max-w-[85%] font-sans font-medium text-slate-100 leading-relaxed text-[13px]">${reply}</div>`;
+                    msgContainer.scrollTop = msgContainer.scrollHeight;
+                    speakText(reply);
+                })
+                .catch(err => {
+                    let errReply = "Maaf, terjadi kesalahan jaringan saat mencoba mengakses data internet. Silakan coba beberapa saat lagi.";
+                    msgContainer.innerHTML += `<div class="bg-slate-900 p-3 rounded-xl border border-red-900/50 max-w-[85%] font-sans font-medium text-slate-100 leading-relaxed text-[13px]"><i class="fa-solid fa-triangle-exclamation text-red-500"></i> ${errReply}</div>`;
+                    msgContainer.scrollTop = msgContainer.scrollHeight;
+                    speakText(errReply);
+                });
+            }
 
             inputEl.value = '';
         }
