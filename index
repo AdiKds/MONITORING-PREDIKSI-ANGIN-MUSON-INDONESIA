@@ -13,215 +13,195 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            transition: background-color 0.3s, color 0.3s;
-            font-size: 18px;
-        }
-        .font-tech {
-            font-family: 'Orbitron', sans-serif;
-        }
-        .mono-font {
-            font-family: 'JetBrains Mono', monospace;
-        }
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; font-size: 18px; }
+        .font-tech { font-family: 'Orbitron', sans-serif; }
+        .mono-font { font-family: 'JetBrains Mono', monospace; }
         
         .theme-dark {
-            --bg-main: #020617;
-            --bg-card: rgba(15, 23, 42, 0.95);
-            --bg-header: rgba(15, 23, 42, 0.9);
-            --border-color: rgba(51, 65, 85, 0.7);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --panel-inner: rgba(30, 41, 59, 0.7);
-            --map-filter: brightness(0.8) contrast(1.2);
-            --accent-cyan: #06b6d4;
-            --tooltip-bg: rgba(15, 23, 42, 0.95);
-            --tooltip-border: #06b6d4;
-            --tooltip-text: #ffffff;
-            --modal-bg: rgba(15, 23, 42, 0.95);
+            --bg-main: #020617; --bg-card: rgba(15, 23, 42, 0.95); --bg-header: rgba(15, 23, 42, 0.9);
+            --border-color: rgba(51, 65, 85, 0.7); --text-main: #f8fafc; --text-muted: #94a3b8;
+            --panel-inner: rgba(30, 41, 59, 0.7); --map-filter: brightness(0.8) contrast(1.2);
+            --accent-cyan: #06b6d4; --tooltip-bg: rgba(15, 23, 42, 0.95); --tooltip-border: #06b6d4;
+            --tooltip-text: #ffffff; --modal-bg: rgba(15, 23, 42, 0.95);
         }
         .theme-light {
-            --bg-main: #f1f5f9;
-            --bg-card: #ffffff;
-            --bg-header: #ffffff;
-            --border-color: #0f172a;
-            --text-main: #0f172a;
-            --text-muted: #1e293b;
-            --panel-inner: #e2e8f0;
-            --map-filter: brightness(1) contrast(1);
-            --accent-cyan: #0284c7;
-            --tooltip-bg: rgba(255, 255, 255, 0.95);
-            --tooltip-border: #0284c7;
-            --tooltip-text: #0f172a;
-            --modal-bg: rgba(255, 255, 255, 0.98);
+            --bg-main: #f1f5f9; --bg-card: #ffffff; --bg-header: #ffffff;
+            --border-color: #0f172a; --text-main: #0f172a; --text-muted: #1e293b;
+            --panel-inner: #e2e8f0; --map-filter: brightness(1) contrast(1);
+            --accent-cyan: #0284c7; --tooltip-bg: rgba(255, 255, 255, 0.95); --tooltip-border: #0284c7;
+            --tooltip-text: #0f172a; --modal-bg: rgba(255, 255, 255, 0.98);
         }
 
-        .glow-border {
-            box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
-            border: 2px solid var(--border-color);
-        }
-        .glow-border:hover {
-            box-shadow: 0 0 25px rgba(6, 182, 212, 0.4);
-            border: 2px solid var(--accent-cyan);
-        }
-        .glow-text {
-            text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
-        }
+        .glow-border { box-shadow: 0 0 15px rgba(6, 182, 212, 0.2); border: 2px solid var(--border-color); }
+        .glow-border:hover { box-shadow: 0 0 25px rgba(6, 182, 212, 0.4); border: 2px solid var(--accent-cyan); }
+        .glow-text { text-shadow: 0 0 10px rgba(6, 182, 212, 0.5); }
         
-        .flip-container {
-            perspective: 1000px;
+        .flip-container { perspective: 1000px; }
+        .flip-inner { position: relative; width: 100%; height: 100%; } 
+        .flip-front, .flip-back {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; top: 0; left: 0; transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
         }
-        .flip-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        } .flip-front, .flip-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            top: 0;
-            left: 0;
-            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
-        .flip-front {
-            transform: rotateY(0deg);
-            z-index: 2;
-            pointer-events: auto;
-        }
-        .flip-back {
-            transform: rotateY(180deg);
-            z-index: 1;
-            pointer-events: none;
-        }
-        .flip-container.flipped .flip-front {
-            transform: rotateY(-180deg);
-            z-index: 1;
-            pointer-events: none;
-        }
-        .flip-container.flipped .flip-back {
-            transform: rotateY(0deg);
-            z-index: 2;
-            pointer-events: auto;
-        }
+        .flip-front { transform: rotateY(0deg); z-index: 2; pointer-events: auto; }
+        .flip-back { transform: rotateY(180deg); z-index: 1; pointer-events: none; }
+        .flip-container.flipped .flip-front { transform: rotateY(-180deg); z-index: 1; pointer-events: none; }
+        .flip-container.flipped .flip-back { transform: rotateY(0deg); z-index: 2; pointer-events: auto; }
 
-        .leaflet-container {
-            background: var(--bg-main) !important;
-        }
-        .satellite-style {
-            filter: var(--map-filter);
-        }
-        
-        .chat-window {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-        .drag-handle {
-            cursor: move;
-            user-select: none;
-        }
-        
-        [title] {
-            cursor: help;
-        }
+        .leaflet-container { background: var(--bg-main) !important; }
+        .satellite-style { filter: var(--map-filter); }
+        .chat-window { box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7); }
+        .drag-handle { cursor: move; user-select: none; }
+        [title] { cursor: help; }
 
-        #fullscreenMapControls {
-            transform: translateY(-85%);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        #fullscreenMapControls:hover {
-            transform: translateY(0);
-        }
-
-        .bar-chart-value {
-            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        #fullscreenMapControls { transform: translateY(-85%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        #fullscreenMapControls:hover { transform: translateY(0); }
+        .bar-chart-value { transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
         .custom-tooltip {
-            background: var(--tooltip-bg) !important;
-            border: 2px solid var(--tooltip-border) !important;
-            color: var(--tooltip-text) !important;
-            border-radius: 8px !important;
-            padding: 8px 12px !important;
-            font-family: 'JetBrains Mono', monospace !important;
-            font-size: 12px !important;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4) !important;
-            font-weight: 600;
-            animation: tooltipFadeIn 0.25s ease-out;
-            opacity: 0.95 !important;
+            background: var(--tooltip-bg) !important; border: 2px solid var(--tooltip-border) !important;
+            color: var(--tooltip-text) !important; border-radius: 8px !important; padding: 8px 12px !important;
+            font-family: 'JetBrains Mono', monospace !important; font-size: 12px !important; box-shadow: 0 6px 20px rgba(0,0,0,0.4) !important;
+            font-weight: 600; animation: tooltipFadeIn 0.25s ease-out; opacity: 0.95 !important;
         }
-        @keyframes tooltipFadeIn {
-            from { opacity: 0; transform: scale(0.92); }
-            to { opacity: 0.95; transform: scale(1); }
-        }
-        .custom-tooltip::before {
-            border-top-color: var(--tooltip-border) !important;
-            border-bottom-color: var(--tooltip-border) !important;
-        }
+        @keyframes tooltipFadeIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 0.95; transform: scale(1); } }
         .neon-text-cyan { text-shadow: 0 0 10px rgba(6, 182, 212, 0.5); }
         .theme-light .neon-text-cyan { text-shadow: none; }
 
-        /* --- STYLING ANIMASI DIGITAL SCREENSAVER --- */
-        @keyframes cyber-pulse-glow {
-            0%, 100% { opacity: 0.2; transform: scale(1); }
-            50% { opacity: 0.45; transform: scale(1.06); }
+        @keyframes cyber-pulse-glow { 0%, 100% { opacity: 0.2; transform: scale(1); } 50% { opacity: 0.45; transform: scale(1.06); } }
+        @keyframes technology-scanline { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+        @keyframes drift-slow-motion { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-12px) rotate(0.4deg); } }
+        .screensaver-grid { background-image: linear-gradient(rgba(6, 182, 212, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.08) 1px, transparent 1px); background-size: 50px 50px; }
+        .sc-pulse-animation { animation: cyber-pulse-glow 4.5s ease-in-out infinite; }
+        .sc-scanline-animation { animation: technology-scanline 7s linear infinite; }
+        .sc-drift-animation { animation: drift-slow-motion 5.5s ease-in-out infinite; }
+
+        @keyframes face-blink { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+        @keyframes tail-wag { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(15deg); } }
+        @keyframes ear-twitch-left { 0%, 92%, 98% { transform: rotate(-15deg); } 95% { transform: rotate(-30deg); } }
+        @keyframes ear-twitch-right { 0%, 88%, 96% { transform: rotate(15deg); } 92% { transform: rotate(30deg); } }
+        @keyframes tongue-stick { 0%, 100% { transform: translateY(-8px) scaleY(0); opacity: 0; } 40%, 60% { transform: translateY(0) scaleY(1); opacity: 1; } }
+        
+        .hologram-glow { box-shadow: 0 0 25px rgba(6, 182, 212, 0.6), inset 0 0 15px rgba(6, 182, 212, 0.4); filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.5)); }
+        
+        .eye-blink { animation: face-blink 4s infinite; }
+        .ear-anim-l { animation: ear-twitch-left 4s infinite; }
+        .ear-anim-r { animation: ear-twitch-right 4s infinite 2s; } 
+        .anim-tongue { animation: tongue-stick 4s infinite ease-in-out; transform-origin: top; }
+        
+        @keyframes cat-blink-left { 0%, 45%, 55%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.1); } }
+        @keyframes cat-blink-right { 0%, 85%, 95%, 100% { transform: scaleY(1); } 90% { transform: scaleY(0.1); } }
+        @keyframes cat-ear-left { 0%, 45%, 55%, 100% { transform: rotate(-15deg); } 50% { transform: rotate(-35deg); } }
+        @keyframes cat-ear-right { 0%, 85%, 95%, 100% { transform: rotate(15deg); } 90% { transform: rotate(35deg); } }
+        @keyframes cat-tongue-out { 0%, 100% { transform: scaleY(0) translateY(-5px); opacity: 0; } 20%, 80% { transform: scaleY(1) translateY(0); opacity: 1; } }
+        
+        .cat-eye-anim-l { animation: cat-blink-left 3s infinite; }
+        .cat-eye-anim-r { animation: cat-blink-right 4s infinite; }
+        .cat-ear-anim-l { animation: cat-ear-left 3s infinite; transform-origin: bottom right; }
+        .cat-ear-anim-r { animation: cat-ear-right 4s infinite; transform-origin: bottom left; }
+        .cat-tongue-anim-ss { animation: cat-tongue-out 3.5s infinite ease-in-out; transform-origin: top; }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* KUSTOMISASI POPUP LEAFLET AGAR MENGIKUTI TEMA DAN TITIK PETA */
+        .custom-map-popup .leaflet-popup-content-wrapper,
+        .custom-gempa-popup .leaflet-popup-content-wrapper,
+        .custom-arsip-popup .leaflet-popup-content-wrapper {
+            background: transparent !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
         }
-        @keyframes technology-scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
+        .custom-map-popup .leaflet-popup-tip { background: #0f172a !important; border-top: 1px solid #06b6d4 !important; border-left: 1px solid #06b6d4 !important; width: 16px !important; height: 16px !important; }
+        .custom-gempa-popup .leaflet-popup-tip { background: #0f172a !important; border-top: 1px solid #ef4444 !important; border-left: 1px solid #ef4444 !important; width: 16px !important; height: 16px !important; }
+        .custom-arsip-popup .leaflet-popup-tip { background: #0f172a !important; border-top: 1px solid #f97316 !important; border-left: 1px solid #f97316 !important; width: 16px !important; height: 16px !important; }
+        
+        .leaflet-popup-close-button {
+            color: #cbd5e1 !important; top: 12px !important; right: 12px !important;
+            font-size: 22px !important; font-weight: 900 !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 50 !important;
         }
-        @keyframes drift-slow-motion {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-12px) rotate(0.4deg); }
-        }
-        .screensaver-grid {
-            background-image: linear-gradient(rgba(6, 182, 212, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.08) 1px, transparent 1px);
-            background-size: 50px 50px;
-        }
-        .sc-pulse-animation {
-            animation: cyber-pulse-glow 4.5s ease-in-out infinite;
-        }
-        .sc-scanline-animation {
-            animation: technology-scanline 7s linear infinite;
-        }
-        .sc-drift-animation {
-            animation: drift-slow-motion 5.5s ease-in-out infinite;
-        }
+        .leaflet-popup-close-button:hover { color: #fff !important; }
+        .leaflet-popup-content { margin: 0 !important; width: auto !important; }
     </style>
 </head>
 <body id="appBody" class="theme-dark bg-[var(--bg-main)] text-[var(--text-main)] p-4 md:p-6 min-h-screen flex flex-col justify-between overflow-x-hidden relative pb-32">
 
-    <div id="monsoonTechScreensaver" class="hidden fixed inset-0 z-[300] bg-[#020714] flex flex-col items-center justify-center overflow-hidden font-tech transition-all duration-700 opacity-0 select-none">
+    <div id="startupLoader" class="fixed inset-0 z-[9999] bg-[#020714] flex flex-col items-center justify-center overflow-hidden font-tech transition-all duration-700">
         <div class="absolute inset-0 screensaver-grid opacity-50 pointer-events-none"></div>
-        
         <div class="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-30 sc-scanline-animation pointer-events-none"></div>
         
-        <div class="absolute w-[650px] h-[650px] rounded-full border-2 border-cyan-500/10 sc-pulse-animation pointer-events-none flex items-center justify-center">
-            <div class="w-[480px] h-[480px] rounded-full border border-indigo-500/15 animate-spin" style="animation-duration: 30s;"></div>
+        <div class="z-10 text-center sc-drift-animation flex flex-col items-center px-6">
+            <div class="relative w-[120px] h-[100px] mb-4 flex items-center justify-center drop-shadow-[0_5px_15px_rgba(6,182,212,0.6)] z-20">
+                <div class="cat-ear-anim-l absolute top-0 left-2 w-[40px] h-[40px] bg-slate-900 border-2 border-cyan-400 rounded-tl-3xl z-0"></div>
+                <div class="cat-ear-anim-r absolute top-0 right-2 w-[40px] h-[40px] bg-slate-900 border-2 border-cyan-400 rounded-tr-3xl z-0"></div>
+                <div class="relative w-[100px] h-[80px] bg-slate-900 rounded-[45%] flex flex-col items-center justify-center border-[3px] border-cyan-400 z-10 overflow-visible shadow-[inset_0_0_15px_rgba(6,182,212,0.3)]">
+                    <div class="flex justify-between w-[60px] relative top-[5px]">
+                        <div class="w-[20px] h-[24px] bg-cyan-950 rounded-[45%] flex items-center justify-center border border-cyan-500/50">
+                            <div class="cat-eye-anim-l w-[8px] h-[12px] bg-cyan-300 rounded-full shadow-[0_0_8px_rgba(6,182,212,0.8)]"></div>
+                        </div>
+                        <div class="w-[20px] h-[24px] bg-cyan-950 rounded-[45%] flex items-center justify-center border border-cyan-500/50">
+                            <div class="cat-eye-anim-r w-[8px] h-[12px] bg-cyan-300 rounded-full shadow-[0_0_8px_rgba(6,182,212,0.8)]"></div>
+                        </div>
+                    </div>
+                    <div class="mt-[8px] flex flex-col items-center relative z-20">
+                        <div class="w-[12px] h-[8px] bg-pink-400 rounded-[50%] mb-[2px] shadow-[0_0_5px_rgba(244,114,182,0.8)]"></div>
+                        <div class="flex relative">
+                            <div class="w-[12px] h-[8px] border-b-[3px] border-r-[3px] border-cyan-400 rounded-br-full"></div>
+                            <div class="w-[12px] h-[8px] border-b-[3px] border-l-[3px] border-cyan-400 rounded-bl-full"></div>
+                        </div>
+                        <div class="cat-tongue-anim-ss absolute top-[14px] w-[14px] h-[18px] bg-pink-500 border-2 border-pink-700 rounded-b-full shadow-[0_0_10px_rgba(236,72,153,0.6)] z-10"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-2xl font-black text-cyan-400 mt-2 animate-pulse tracking-widest border border-cyan-500/30 px-6 py-2 rounded-full bg-cyan-950/40 shadow-[0_0_15px_rgba(6,182,212,0.15)]">MENGINISIALISASI SISTEM...</div>
+        </div>
+    </div>
+
+    <div id="monsoonTechScreensaver" class="hidden fixed inset-0 z-[300] bg-[#020714] flex flex-col items-center justify-center overflow-hidden font-tech transition-all duration-700 opacity-0 select-none">
+        <div class="absolute inset-0 screensaver-grid opacity-50 pointer-events-none"></div>
+        <div class="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-30 sc-scanline-animation pointer-events-none"></div>
+        <div class="absolute w-[750px] h-[750px] rounded-full border-2 border-cyan-500/10 sc-pulse-animation pointer-events-none flex items-center justify-center">
+            <div class="w-[580px] h-[580px] rounded-full border border-indigo-500/15 animate-spin" style="animation-duration: 40s;"></div>
         </div>
 
-        <div class="z-10 text-center sc-drift flex flex-col items-center px-6">
+        <div class="z-10 text-center sc-drift-animation flex flex-col items-center px-6">
+            <div class="relative w-[120px] h-[100px] mb-6 flex items-center justify-center drop-shadow-[0_5px_15px_rgba(6,182,212,0.6)] z-20">
+                <div class="cat-ear-anim-l absolute top-0 left-2 w-[40px] h-[40px] bg-slate-900 border-2 border-cyan-400 rounded-tl-3xl z-0"></div>
+                <div class="cat-ear-anim-r absolute top-0 right-2 w-[40px] h-[40px] bg-slate-900 border-2 border-cyan-400 rounded-tr-3xl z-0"></div>
+                <div class="relative w-[100px] h-[80px] bg-slate-900 rounded-[45%] flex flex-col items-center justify-center border-[3px] border-cyan-400 z-10 overflow-visible shadow-[inset_0_0_15px_rgba(6,182,212,0.3)]">
+                    <div class="flex justify-between w-[60px] relative top-[5px]">
+                        <div class="w-[20px] h-[24px] bg-cyan-950 rounded-[45%] flex items-center justify-center border border-cyan-500/50">
+                            <div class="cat-eye-anim-l w-[8px] h-[12px] bg-cyan-300 rounded-full shadow-[0_0_8px_rgba(6,182,212,0.8)]"></div>
+                        </div>
+                        <div class="w-[20px] h-[24px] bg-cyan-950 rounded-[45%] flex items-center justify-center border border-cyan-500/50">
+                            <div class="cat-eye-anim-r w-[8px] h-[12px] bg-cyan-300 rounded-full shadow-[0_0_8px_rgba(6,182,212,0.8)]"></div>
+                        </div>
+                    </div>
+                    <div class="mt-[8px] flex flex-col items-center relative z-20">
+                        <div class="w-[12px] h-[8px] bg-pink-400 rounded-[50%] mb-[2px] shadow-[0_0_5px_rgba(244,114,182,0.8)]"></div>
+                        <div class="flex relative">
+                            <div class="w-[12px] h-[8px] border-b-[3px] border-r-[3px] border-cyan-400 rounded-br-full"></div>
+                            <div class="w-[12px] h-[8px] border-b-[3px] border-l-[3px] border-cyan-400 rounded-bl-full"></div>
+                        </div>
+                        <div class="cat-tongue-anim-ss absolute top-[14px] w-[14px] h-[18px] bg-pink-500 border-2 border-pink-700 rounded-b-full shadow-[0_0_10px_rgba(236,72,153,0.6)] z-10"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="mb-5 flex items-center gap-2 border border-cyan-500/30 px-4 py-1.5 rounded-full bg-cyan-950/40 text-cyan-400 font-mono text-xs tracking-[0.25em] uppercase shadow-[0_0_15px_rgba(6,182,212,0.15)]">
                 <i class="fa-solid fa-satellite-dish animate-pulse"></i> Monsoon Intel Terminal System Mode
             </div>
-
-            <div id="scClockDisplay" class="text-7xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-cyan-200 to-cyan-600 tracking-wider filter drop-shadow-[0_0_30px_rgba(6,182,212,0.55)]">
-                00:00:00
-            </div>
-
+            <div id="scClockDisplay" class="text-7xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-cyan-200 to-cyan-600 tracking-wider filter drop-shadow-[0_0_30px_rgba(6,182,212,0.55)]">00:00:00</div>
             <div class="mt-4 flex items-center gap-4 text-slate-300 font-medium tracking-widest text-lg md:text-2xl border-t border-b border-cyan-500/30 py-2.5 px-8 bg-slate-900/40 backdrop-blur-sm">
                 <span id="scDateDisplay" class="text-transparent bg-clip-text bg-gradient-to-r from-slate-200 to-cyan-100">Sabtu, 06 Jun 2026</span>
                 <div class="w-[2px] h-6 bg-cyan-500/40"></div>
                 <span id="scTzDisplay" class="text-xs font-mono font-black tracking-widest text-cyan-400 bg-cyan-950/80 px-2 py-1 rounded border border-cyan-500/30 shadow-[0_0_8px_rgba(6,182,212,0.25)]">WIB</span>
             </div>
-
             <div class="mt-12 text-slate-500 font-mono text-[11px] tracking-[0.3em] uppercase animate-pulse flex items-center gap-2">
                 <i class="fa-solid fa-computer-mouse"></i> Gerakkan Kursor / Sentuh Layar Untuk Kembali
             </div>
-        </div>
-
-        <div class="absolute bottom-6 font-mono text-[9px] tracking-widest text-slate-600 uppercase">
-            Atmospheric Analytics Core Platform v2.6
         </div>
     </div>
 
@@ -233,7 +213,7 @@
                     <i class="fa-solid fa-wind text-cyan-400 text-3xl md:text-4xl animate-pulse"></i>
                 </div>
                 <div class="min-w-0 flex-1">
-                    <h1 id="mainAppTitle" class="font-tech text-xl md:text-2xl lg:text-3xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-slate-100 to-cyan-400 theme-light:text-slate-900 theme-light:bg-none leading-tight uppercase" title="Analisis Prediksi Iklim & Pergantian Angin Muson Nusantara">
+                    <h1 id="mainAppTitle" class="font-tech text-xl md:text-2xl lg:text-3xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-slate-100 to-cyan-400 theme-light:text-slate-900 theme-light:bg-none leading-tight uppercase">
                         MONITORING & PREDIKSI ANGIN MUSON INDONESIA
                     </h1>
                     <p class="text-xs font-mono text-[var(--text-muted)] mt-1.5 uppercase tracking-wider flex items-center gap-2 font-bold theme-light:text-slate-900">
@@ -244,7 +224,7 @@
             </div>
 
             <div class="flex flex-col md:flex-row items-center gap-4 w-full xl:w-7/12 justify-end">
-                <div class="flex bg-slate-950/90 theme-light:bg-slate-900 text-white border border-[var(--border-color)] py-2 px-5 rounded-xl min-w-[220px] shadow-sm font-tech text-center justify-between items-center gap-3 md:block shrink-0" title="Waktu dan Zona Waktu perangkat lokal Anda">
+                <div class="flex bg-slate-950/90 theme-light:bg-slate-900 text-white border border-[var(--border-color)] py-2 px-5 rounded-xl min-w-[220px] shadow-sm font-tech text-center justify-between items-center gap-3 md:block shrink-0">
                     <div class="text-[10px] font-bold text-slate-400 tracking-wider uppercase" id="lbl-real-day">Sabtu, 06 Jun 2026</div>
                     <div class="text-lg font-black text-cyan-400 neon-text-cyan mt-0.5 flex items-center justify-center gap-1.5 font-mono">
                         <i class="fa-solid fa-clock text-sm text-cyan-500"></i>
@@ -269,58 +249,59 @@
 
                 <div class="flex flex-col items-end gap-2 w-full md:w-auto">
                     <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full justify-stretch sm:justify-end">
-                        <button type="button" onclick="toggleArsipModal()" class="bg-red-950 text-red-400 text-xs font-mono font-black px-4 py-2.5 rounded-xl border-2 border-[var(--border-color)] hover:bg-red-900 cursor-pointer transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-none whitespace-nowrap" title="Buka Arsip Bencana Iklim">
-                            <i class="fa-solid fa-triangle-exclamation animate-pulse"></i> <span>ARSIP EKSTREM</span>
+                        <button type="button" onclick="toggleArsipModal()" class="bg-red-950 text-red-400 text-xs font-mono font-black px-4 py-2.5 rounded-xl border-2 border-[var(--border-color)] hover:bg-red-900 cursor-pointer transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-none whitespace-nowrap" title="Buka Simulasi Arsip Bencana Iklim">
+                            <i class="fa-solid fa-book-journal-whills"></i> <span>ARSIP SIMULASI</span>
                         </button>
-
                         <button type="button" onclick="openCreatorModal()" class="bg-slate-800 hover:bg-slate-700 theme-light:bg-slate-900 theme-light:hover:bg-slate-800 text-white text-xs font-mono font-black px-4 py-2.5 rounded-xl border-2 border-[var(--border-color)] cursor-pointer transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-none whitespace-nowrap" title="Kredit Sistem Pengembang Komputasi">
                             <i class="fa-solid fa-code text-cyan-400"></i> <span>CREATOR</span>
                         </button>
-
                         <button type="button" onclick="toggleThemeInterface()" class="bg-slate-950 border-2 border-[var(--border-color)] theme-light:bg-slate-200 theme-light:hover:bg-slate-300 theme-light:text-slate-900 text-xs font-mono font-black px-4 py-2.5 rounded-xl cursor-pointer transition-all text-slate-300 hover:bg-slate-900 flex items-center justify-center gap-1.5 flex-1 sm:flex-none whitespace-nowrap" title="Ganti visual antarmuka">
                             <i id="themeIcon" class="fa-solid fa-moon"></i> <span id="themeText">DARK</span>
                         </button>
-
                         <button type="button" onclick="openHelpModal()" class="bg-slate-950 border-2 border-emerald-600 text-xs font-mono font-black px-4 py-2.5 rounded-xl cursor-pointer transition-all text-emerald-400 theme-light:text-emerald-700 theme-light:bg-emerald-100 theme-light:hover:bg-emerald-200 hover:bg-emerald-950/40 flex items-center justify-center gap-1.5 flex-1 sm:flex-none whitespace-nowrap" title="Buka manual penggunaan dasbor iklim">
                             <i class="fa-solid fa-circle-question"></i> <span>HELP</span>
                         </button>
                     </div>
-                    <button id="btnSirineTest" onclick="toggleManualSirine()" class="w-full sm:w-auto bg-slate-950 border-2 border-red-600/50 text-[11px] font-mono font-black px-4 py-1.5 rounded-lg cursor-pointer transition-all text-red-400 hover:bg-red-950/40 flex items-center justify-center gap-1.5" title="Test/Mute Audio Sirine Peringatan Dini">
-                        <i id="iconSirine" class="fa-solid fa-volume-xmark"></i> <span id="textSirine">TEST SIRINE: MUTED</span>
-                    </button>
+                    <div class="flex flex-wrap items-center gap-2 w-full justify-stretch sm:justify-end">
+                        <button id="btnSirineTest" onclick="toggleManualSirine()" class="w-full sm:w-auto bg-slate-950 border-2 border-red-600/50 text-[11px] font-mono font-black px-4 py-1.5 rounded-lg cursor-pointer transition-all text-red-400 hover:bg-red-950/40 flex items-center justify-center gap-1.5" title="Test/Mute Audio Sirine Peringatan Dini">
+                            <i id="iconSirine" class="fa-solid fa-volume-xmark"></i> <span id="textSirine">TEST SIRINE: MUTED</span>
+                        </button>
+                        <button id="btnBmkgNormal" onclick="toggleBmkg()" class="w-full sm:w-auto bg-slate-950 border-2 border-red-600/50 text-[11px] font-mono font-black px-4 py-1.5 rounded-lg cursor-pointer transition-all text-red-400 hover:bg-red-950/40 flex items-center justify-center gap-1.5" title="Aktifkan Tracking Live Gempa BMKG">
+                            <i id="iconBmkgNormal" class="fa-solid fa-satellite-dish"></i> <span id="textBmkgNormal">LIVE BMKG: OFF</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start w-full">
-            
+        <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start w-full relative">
             <section class="lg:col-span-3 bg-[var(--bg-card)] p-5 rounded-2xl border-2 border-slate-700 flex flex-col gap-4 h-full shadow-lg">
                 <h2 class="font-tech text-base md:text-lg font-black text-cyan-400 border-b-2 border-cyan-900/50 pb-2 flex items-center gap-2 uppercase tracking-wider" title="Fase sirkulasi angin muson di Indonesia">
                     <i class="fa-solid fa-cloud-sun-rain text-amber-500"></i> Siklus Fenomena Muson
                 </h2>
                 <div class="space-y-4 overflow-y-auto max-h-[680px] pr-1">
-                    <div id="item-tantangan-0" class="p-3.5 bg-slate-900/40 rounded-xl border-2 border-l-4 border-blue-500 hover:bg-slate-900/80 cursor-pointer transition-all duration-200" title="Arahkan kursor untuk memfokuskan peta pada aliran Muson Barat">
+                    <div id="item-tantangan-0" class="p-3.5 bg-slate-900/40 rounded-xl border-2 border-l-4 border-blue-500 hover:bg-slate-900/80 cursor-pointer transition-all duration-200">
                         <div class="flex justify-between items-center mb-1.5">
                             <span class="font-tech text-sm font-black text-blue-400">MUSON BARAT (OKT - APR)</span>
                             <i class="fa-solid fa-cloud-showers-heavy text-blue-400 text-sm"></i>
                         </div>
                         <p class="text-sm md:text-base font-bold text-[var(--text-main)] leading-relaxed">Angin bertiup dari Asia ke Australia melewati samudra luas. Membawa uap air padat, memicu **musim hujan** masif di Indonesia.</p>
                     </div>
-                    <div id="item-tantangan-1" class="p-3.5 bg-slate-900/40 rounded-xl border-2 border-l-4 border-orange-500 hover:bg-slate-900/80 cursor-pointer transition-all duration-200" title="Arahkan kursor untuk memfokuskan peta pada aliran Muson Timur">
+                    <div id="item-tantangan-1" class="p-3.5 bg-slate-900/40 rounded-xl border-2 border-l-4 border-orange-500 hover:bg-slate-900/80 cursor-pointer transition-all duration-200">
                         <div class="flex justify-between items-center mb-1.5">
                             <span class="font-tech text-sm font-black text-orange-400">MUSON TIMUR (APR - OKT)</span>
                             <i class="fa-solid fa-sun text-orange-400 text-sm"></i>
                         </div>
                         <p class="text-sm md:text-base font-bold text-[var(--text-main)] leading-relaxed">Angin berbalik arah bertiup dari Australia yang kering ke Asia. Kandungan uap air rendah, memicu **musim kemarau**.</p>
                     </div>
-                    <div id="item-tantangan-2" class="p-3.5 bg-slate-900/40 rounded-xl border-2 border-l-4 border-yellow-500 hover:bg-slate-900/80 cursor-pointer transition-all duration-200" title="Arahkan kursor untuk memfokuskan peta pada area konvergensi pancaroba">
+                    <div id="item-tantangan-2" class="p-3.5 bg-slate-900/40 rounded-xl border-2 border-l-4 border-yellow-500 hover:bg-slate-900/80 cursor-pointer transition-all duration-200">
                         <div class="flex justify-between items-center mb-1.5">
                             <span class="font-tech text-sm font-black text-yellow-400">PANCAROBA MARET-APRIL</span>
                             <i class="fa-solid fa-cloud-bolt text-yellow-500 text-sm"></i>
                         </div>
                         <p class="text-sm md:text-base font-bold text-[var(--text-main)] leading-relaxed">Masa transisi dari hujan ke kemarau. Ditandai arah angin tidak menentu, suhu terik, dan badai konvektif lokal sore hari.</p>
                     </div>
-                    <div id="item-tantangan-3" class="p-3.5 bg-slate-900/40 rounded-xl border-2 border-l-4 border-purple-500 hover:bg-slate-900/80 cursor-pointer transition-all duration-200" title="Arahkan kursor untuk memfokuskan peta pada area pancaroba akhir tahun">
+                    <div id="item-tantangan-3" class="p-3.5 bg-slate-900/40 rounded-xl border-2 border-l-4 border-purple-500 hover:bg-slate-900/80 cursor-pointer transition-all duration-200">
                         <div class="flex justify-between items-center mb-1.5">
                             <span class="font-tech text-sm font-black text-purple-400">PANCAROBA OKTOBER</span>
                             <i class="fa-solid fa-tornado text-purple-400 text-sm"></i>
@@ -331,7 +312,6 @@
             </section>
 
             <section class="lg:col-span-6 flex flex-col gap-6">
-                
                 <div class="bg-[var(--bg-card)] p-3 rounded-2xl border-2 border-[var(--border-color)] glow-border flex flex-col sm:flex-row justify-between items-center gap-3">
                      <h2 class="font-tech text-base md:text-lg font-black text-cyan-400 flex items-center gap-2 uppercase tracking-wider">
                          <i class="fa-solid fa-earth-asiapacific"></i> Visualisasi Spasial Aliran Angin
@@ -347,16 +327,12 @@
                      </div>
                 </div>
 
-                <div class="flip-container w-full aspect-[16/10] flipped" id="mapWeatherFlipper">
+                <div class="flip-container w-full aspect-[16/10] flipped relative" id="mapWeatherFlipper">
                     <div class="flip-inner w-full h-full">
-                        
                         <div class="flip-front w-full h-full bg-slate-950 rounded-2xl border-2 border-cyan-400 overflow-hidden relative shadow-xl">
                             <div id="map" class="w-full h-full z-10"></div>
-                            
                             <div id="visualSirenBar" class="hidden absolute bottom-14 left-4 right-4 z-30 p-2.5 bg-red-950/90 border-2 border-red-500 rounded-lg text-center font-mono text-xs text-red-400 font-bold tracking-widest uppercase animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.5)]">
-                                ⚠️ ALERT AWAS: SIRINE PERINGATAN KONDISI EKSTREM AKTIF ⚠️
-                            </div>
-
+                                </div>
                             <div class="absolute top-4 left-4 z-20 flex flex-col gap-1.5 w-64 md:w-80 pointer-events-auto">
                                 <div class="text-[11px] font-bold text-cyan-400 bg-slate-950 px-2.5 py-1.5 rounded-lg border-2 border-cyan-400 font-tech uppercase tracking-widest">
                                     <i class="fa-solid fa-crosshairs animate-spin text-[10px] mr-1"></i> MONSOON GIS ACTIVE
@@ -365,11 +341,9 @@
                                     <i class="fa-solid fa-magnifying-glass text-cyan-400 pl-2 text-xs"></i>
                                     <input type="text" id="citySearchInput" oninput="filterCitySearch('citySearchInput', 'searchSuggestions')" onkeypress="checkSearchEnterKey(event, 'citySearchInput', 'searchSuggestions')" placeholder="Cari Nama Kota / Stasiun..." class="w-full bg-transparent text-white font-mono text-xs p-1.5 focus:outline-none placeholder-slate-500 font-bold">
                                     <button onclick="executeCitySearch('citySearchInput', 'searchSuggestions')" class="bg-cyan-600 hover:bg-cyan-500 text-slate-950 text-[10px] font-mono font-black px-2.5 py-1.5 rounded-lg transition-all cursor-pointer">CARI</button>
-                                    <div id="searchSuggestions" class="absolute left-0 right-0 top-full mt-1 bg-slate-950 border border-cyan-500/40 rounded-lg overflow-hidden max-h-48 overflow-y-auto hidden z-30 shadow-2xl">
-                                    </div>
+                                    <div id="searchSuggestions" class="absolute left-0 right-0 top-full mt-1 bg-slate-950 border border-cyan-500/40 rounded-lg overflow-hidden max-h-48 overflow-y-auto hidden z-30 shadow-2xl"></div>
                                 </div>
                             </div>
-                            
                             <div class="absolute top-4 right-4 z-20 pointer-events-auto">
                                 <div class="flex rounded-lg bg-slate-950 p-1 border-2 border-cyan-500/50 text-[10px] font-mono font-black">
                                     <button onclick="switchBaseMapLayer('street')" id="mapBtn-street" class="px-2 py-1 rounded text-slate-400 transition-all font-bold cursor-pointer">STREET</button>
@@ -377,10 +351,9 @@
                                     <button onclick="switchBaseMapLayer('terrain')" id="mapBtn-terrain" class="px-2 py-1 rounded text-slate-400 transition-all font-bold cursor-pointer">TOPO 3D</button>
                                 </div>
                             </div>
-
                             <div class="absolute bottom-4 left-4 right-4 z-20 pointer-events-none flex justify-between items-end">
-                                <div class="text-[10px] font-mono font-bold text-white bg-slate-950 p-1.5 rounded border border-slate-800 pointer-events-auto">ZOOM: <span id="zoom-level" class="text-cyan-400">4</span></div>
-                                <div class="text-[11px] font-bold text-white bg-slate-950 px-3 py-1.5 rounded-lg border-2 border-slate-700 font-tech tracking-wider">
+                                <div class="text-[10px] font-mono font-bold text-white bg-slate-950 p-1.5 rounded border border-slate-800 pointer-events-auto shadow-md">ZOOM: <span id="zoom-level" class="text-cyan-400">4</span></div>
+                                <div class="text-[11px] font-bold text-white bg-slate-950 px-3 py-1.5 rounded-lg border-2 border-slate-700 font-tech tracking-wider shadow-md">
                                     STASIUN: <span id="focused-location" class="text-teal-400">PUSAT METEOROLOGI MARITIM</span>
                                 </div>
                             </div>
@@ -392,44 +365,27 @@
                                     <i class="fa-solid fa-satellite animate-pulse text-emerald-400 pl-2 text-xs"></i>
                                     <input type="text" id="radarSearchInput" oninput="filterCitySearch('radarSearchInput', 'radarSuggestions')" onkeypress="checkSearchEnterKey(event, 'radarSearchInput', 'radarSuggestions')" placeholder="Cari di Radar Windy..." class="w-full bg-transparent text-white font-mono text-xs p-1.5 focus:outline-none placeholder-slate-500 font-bold">
                                     <button onclick="executeCitySearch('radarSearchInput', 'radarSuggestions')" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 text-[10px] font-mono font-black px-2.5 py-1.5 rounded-lg transition-all cursor-pointer">CARI</button>
-                                    <div id="radarSuggestions" class="absolute left-0 right-0 top-full mt-1 bg-slate-950 border border-emerald-500/40 rounded-lg overflow-hidden max-h-48 overflow-y-auto hidden z-30 shadow-2xl">
-                                    </div>
+                                    <div id="radarSuggestions" class="absolute left-0 right-0 top-full mt-1 bg-slate-950 border border-emerald-500/40 rounded-lg overflow-hidden max-h-48 overflow-y-auto hidden z-30 shadow-2xl"></div>
                                 </div>
                             </div>
-
                             <iframe id="dashboardWeatherIframe" width="100%" height="100%" src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=°C&metricWind=km/h&zoom=4&overlay=wind&product=ecmwf&level=surface&lat=-2.5&lon=118.0" frameborder="0"></iframe>
                         </div>
-
                     </div>
                 </div>
 
-                <div class="bg-[var(--bg-card)] p-5 rounded-2xl border-2 border-slate-700 shadow-lg">
+                <div class="bg-[var(--bg-card)] p-5 rounded-2xl border-2 border-slate-700 shadow-lg relative z-10">
                     <h2 class="font-tech text-base md:text-lg font-black text-cyan-400 border-b-2 border-cyan-900/50 pb-2 mb-4 flex items-center gap-2 uppercase tracking-wider">
                         <i class="fa-solid fa-layer-group"></i> 5 Indikator Utama Pemantauan Iklim
                     </h2>
-                    
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4">
-                        <button onclick="switchPilar(1)" id="btn-pilar-1" class="pilar-btn px-2 py-3 text-left rounded-lg font-tech text-xs border-2 border-slate-700 bg-slate-800/60 text-slate-300 font-bold transition-all cursor-pointer">
-                            1. ANOMALI SPL
-                        </button>
-                        <button onclick="switchPilar(2)" id="btn-pilar-2" class="pilar-btn px-2 py-3 text-left rounded-lg font-tech text-xs border-2 border-slate-700 bg-slate-800/60 text-slate-300 font-bold transition-all cursor-pointer">
-                            2. TEKANAN REGIONAL
-                        </button>
-                        <button onclick="switchPilar(3)" id="btn-pilar-3" class="pilar-btn px-2 py-3 text-left rounded-lg font-tech text-xs border-2 border-slate-700 bg-slate-800/60 text-slate-300 font-bold transition-all cursor-pointer">
-                            3. ANOMALI OLR
-                        </button>
-                        <button onclick="switchPilar(4)" id="btn-pilar-4" class="pilar-btn px-2 py-3 text-left rounded-lg font-tech text-xs border-2 border-slate-700 bg-slate-800/60 text-slate-300 font-bold transition-all cursor-pointer">
-                            4. KONDISI MJO
-                        </button>
-                        <button onclick="switchPilar(5)" id="btn-pilar-5" class="pilar-btn px-2 py-3 text-left rounded-lg font-tech text-xs border-2 border-slate-700 bg-slate-800/60 text-slate-300 font-bold transition-all cursor-pointer">
-                            5. GAYA CORIOLIS
-                        </button>
+                        <button onclick="switchPilar(1)" id="btn-pilar-1" class="pilar-btn px-2 py-3 text-left rounded-lg font-tech text-xs border-2 border-slate-700 bg-slate-800/60 text-slate-300 font-bold transition-all cursor-pointer">1. ANOMALI SPL</button>
+                        <button onclick="switchPilar(2)" id="btn-pilar-2" class="pilar-btn px-2 py-3 text-left rounded-lg font-tech text-xs border-2 border-slate-700 bg-slate-800/60 text-slate-300 font-bold transition-all cursor-pointer">2. TEKANAN REGIONAL</button>
+                        <button onclick="switchPilar(3)" id="btn-pilar-3" class="pilar-btn px-2 py-3 text-left rounded-lg font-tech text-xs border-2 border-slate-700 bg-slate-800/60 text-slate-300 font-bold transition-all cursor-pointer">3. ANOMALI OLR</button>
+                        <button onclick="switchPilar(4)" id="btn-pilar-4" class="pilar-btn px-2 py-3 text-left rounded-lg font-tech text-xs border-2 border-slate-700 bg-slate-800/60 text-slate-300 font-bold transition-all cursor-pointer">4. KONDISI MJO</button>
+                        <button onclick="switchPilar(5)" id="btn-pilar-5" class="pilar-btn px-2 py-3 text-left rounded-lg font-tech text-xs border-2 border-slate-700 bg-slate-800/60 text-slate-300 font-bold transition-all cursor-pointer">5. GAYA CORIOLIS</button>
                     </div>
-
-                    <div id="pilar-content" class="bg-[var(--panel-inner)] p-5 rounded-xl border-2 border-slate-700 min-h-[150px]">
-                    </div>
+                    <div id="pilar-content" class="bg-[var(--panel-inner)] p-5 rounded-xl border-2 border-slate-700 min-h-[150px]"></div>
                 </div>
-
             </section>
 
             <section class="lg:col-span-3 bg-[var(--bg-card)] p-5 rounded-2xl border-2 border-slate-700 flex flex-col gap-5 h-full shadow-lg">
@@ -437,8 +393,7 @@
                     <h2 class="font-tech text-base md:text-lg font-black text-cyan-400 border-b-2 border-cyan-900/50 pb-2 mb-3 flex items-center gap-2 uppercase tracking-wider">
                         <i class="fa-solid fa-sliders"></i> Simulator Parameter Muson
                     </h2>
-                    <p class="text-xs font-bold text-slate-400 mb-3">Sesuaikan bulan dan kondisi atmosfer untuk menguji model kestabilan iklim:</p>
-                    
+                    <p class="text-xs font-bold text-slate-400 mb-3">Sesuaikan bulan dan kondisi atmosfer untuk menguji presisi algoritma stabilitas iklim:</p>
                     <div class="space-y-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800 text-xs">
                         <div>
                             <div class="flex justify-between items-center mb-1">
@@ -461,22 +416,20 @@
                 <div class="border-t-2 border-slate-800 pt-3 flex-1 flex flex-col justify-between">
                     <div>
                         <h3 class="font-tech text-sm font-black text-cyan-400 mb-3 flex items-center gap-1.5 uppercase">
-                            <i class="fa-solid fa-chart-pie"></i> Output Skor & Grafik Analisis
+                            <i class="fa-solid fa-chart-pie"></i> Output Presisi Analisis
                         </h3>
-                        
                         <div class="p-3 bg-slate-950 rounded-xl border border-cyan-500/30 text-center mb-4">
                             <span class="text-[10px] font-tech text-slate-400 block font-bold">MONSOON PREDICTION INDEX (MPI)</span>
                             <span id="mpi-score-display" class="font-tech text-3xl font-black text-blue-400 glow-text">85%</span>
-                            <span id="mpi-status-display" class="block text-xs font-mono font-bold text-emerald-400 mt-0.5">INTENSITAS MUSON BARAT KUAT</span>
+                            <span id="mpi-status-display" class="block text-[11px] font-mono font-bold text-emerald-400 mt-0.5">INTENSITAS MUSON BARAT KUAT</span>
                         </div>
-
                         <div class="space-y-2 text-xs font-bold text-[var(--text-main)]">
                             <div>
                                 <div class="flex justify-between text-[11px] mb-1">
                                     <span>POTENSI CURAH HUJAN</span>
                                     <span id="val-chart-hujan" class="text-cyan-400">90%</span>
                                 </div>
-                                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-700">
+                                <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-700">
                                     <div id="bar-chart-hujan" class="bar-chart-value h-full bg-cyan-400 w-[90%]"></div>
                                 </div>
                             </div>
@@ -485,7 +438,7 @@
                                     <span>TINGKAT KEKERINGAN LAHAN</span>
                                     <span id="val-chart-kering" class="text-orange-400">10%</span>
                                 </div>
-                                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-700">
+                                <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-700">
                                     <div id="bar-chart-kering" class="bar-chart-value h-full bg-orange-500 w-[10%]"></div>
                                 </div>
                             </div>
@@ -494,15 +447,34 @@
                                     <span>TINGGI GELOMBANG LAUT</span>
                                     <span id="val-chart-gelombang" class="text-red-400">0.50 - 1.25 M (Aman)</span>
                                 </div>
-                                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-700">
+                                <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-700">
                                     <div id="bar-chart-gelombang" class="bar-chart-value h-full bg-red-500 w-[35%]"></div>
                                 </div>
                             </div>
+
+                            <div class="mt-3 pt-3 border-t border-slate-800/80 space-y-2">
+                                <div>
+                                    <div class="flex justify-between text-[11px] mb-1">
+                                        <span class="text-slate-400"><i class="fa-solid fa-cloud-sun text-[10px] mr-1"></i> KONDISI CUACA</span>
+                                        <span id="val-cuaca" class="text-white font-tech tracking-wider">HUJAN LEBAT</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-[11px] mb-1 items-center">
+                                        <span class="text-slate-400"><i class="fa-solid fa-temperature-arrow-up text-[10px] mr-1"></i> STATUS ENSO</span>
+                                        <span id="val-enso" class="text-blue-400 font-tech uppercase text-[10px]"><i class="fa-solid fa-cloud-showers-heavy text-blue-400 animate-bounce"></i> LA NIÑA (-1.2) [BASAH]</span>
+                                    </div>
+                                    <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-700 relative">
+                                        <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-400 z-10"></div>
+                                        <div id="bar-chart-enso" class="bar-chart-value h-full bg-blue-500" style="width: 30%; margin-left: 0;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
-
-                    <div class="bg-cyan-950/30 p-2.5 rounded-lg border border-cyan-800/40 text-xs text-[var(--text-muted)] mt-4 font-medium">
-                        <i class="fa-solid fa-satellite-dish text-cyan-400 mr-1 animate-spin"></i> <span id="bottom-note">**Mode Otomatis Berjalan:** Angka simulasi dikunci oleh matriks interseptor Windy.</span>
+                    <div class="bg-cyan-950/30 p-2.5 rounded-lg border border-cyan-800/40 text-[10px] text-[var(--text-muted)] mt-4 font-medium leading-relaxed">
+                        <i class="fa-solid fa-satellite-dish text-cyan-400 mr-1 animate-spin"></i> <span id="bottom-note">**Mode Otomatis:** Algoritma analitik disinkronisasi oleh interseptor data Windy.</span>
                     </div>
                 </div>
             </section>
@@ -513,74 +485,161 @@
                 <i class="fa-solid fa-diagram-next"></i> Workflow Siklus Pemrosesan Data Muson Nasional
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-6 gap-4 text-center">
-                <div id="wf-btn-1" class="p-3.5 bg-slate-900 border-2 border-slate-700 rounded-xl relative group hover:border-cyan-400 transition-colors cursor-help">
+                <div class="p-3.5 bg-slate-900 border-2 border-slate-700 rounded-xl relative group hover:border-cyan-400 transition-colors cursor-help">
                     <div class="w-8 h-8 rounded-full bg-cyan-950 border-2 border-cyan-400 flex items-center justify-center font-tech text-xs font-black text-cyan-400 mx-auto mb-2 group-hover:bg-cyan-400 group-hover:text-black transition-colors">1</div>
-                    <div class="font-tech text-xs font-black mb-1 text-white">ASIMILASI DATA</div>
-                    <div class="text-xs text-[var(--text-muted)] font-mono font-bold">AWS → Satelit → Buoy</div>
+                    <div class="font-tech text-[11px] font-black mb-1 text-white uppercase tracking-wider">Asimilasi Data</div>
+                    <div class="text-[10px] text-[var(--text-muted)] font-mono font-bold">AWS → Satelit → Buoy</div>
+                    
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 hidden group-hover:block w-56 bg-slate-900 border-2 border-cyan-500/80 text-white text-[10px] font-mono p-2.5 rounded-xl shadow-[0_10px_20px_rgba(6,182,212,0.4)] z-50 pointer-events-none text-left">
+                        <span class="text-cyan-400 font-bold block mb-1 border-b border-cyan-500/50 pb-1">1. ASIMILASI DATA</span>
+                        <span class="text-slate-300">Penarikan data mentah otomatis seketika (*real-time*) dari stasiun Automatic Weather Station (AWS), radar cuaca maritim, dan satelit Himawari-9.</span>
+                    </div>
                 </div>
-                <div id="wf-btn-2" class="p-3.5 bg-slate-900 border-2 border-slate-700 rounded-xl relative group hover:border-cyan-400 transition-colors cursor-help">
-                    <div class="w-8 h-8 rounded-full bg-cyan-950 border-2 border-cyan-400 flex items-center justify-center font-tech text-xs font-black text-cyan-400 mx-auto mb-2 group-hover:bg-cyan-400 group-hover:text-black transition-colors">2</div>
-                    <div class="font-tech text-xs font-black mb-1 text-white">HITUNG GRADIAN</div>
-                    <div class="text-xs text-[var(--text-muted)] font-mono font-bold">Tekanan Benua $\Delta P$</div>
+                
+                <div class="p-3.5 bg-slate-900 border-2 border-slate-700 rounded-xl relative group hover:border-red-400 transition-colors cursor-help">
+                    <div class="w-8 h-8 rounded-full bg-red-950 border-2 border-red-400 flex items-center justify-center font-tech text-xs font-black text-red-400 mx-auto mb-2 group-hover:bg-red-400 group-hover:text-black transition-colors">2</div>
+                    <div class="font-tech text-[11px] font-black mb-1 text-white uppercase tracking-wider">Hitung Gradian</div>
+                    <div class="text-[10px] text-[var(--text-muted)] font-mono font-bold">Tekanan Benua $\Delta P$</div>
+
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 hidden group-hover:block w-56 bg-slate-900 border-2 border-red-500/80 text-white text-[10px] font-mono p-2.5 rounded-xl shadow-[0_10px_20px_rgba(239,68,68,0.4)] z-50 pointer-events-none text-left">
+                        <span class="text-red-400 font-bold block mb-1 border-b border-red-500/50 pb-1">2. HITUNG GRADIAN TEKANAN</span>
+                        <span class="text-slate-300">Menghitung selisih tekanan hidrostatik udara antar benua untuk memprediksi kecepatan konveksi dorongan angin.</span>
+                    </div>
                 </div>
-                <div id="wf-btn-3" class="p-3.5 bg-slate-900 border-2 border-slate-700 rounded-xl relative group hover:border-cyan-400 transition-colors cursor-help">
-                    <div class="w-8 h-8 rounded-full bg-cyan-950 border-2 border-cyan-400 flex items-center justify-center font-tech text-xs font-black text-cyan-400 mx-auto mb-2 group-hover:bg-cyan-400 group-hover:text-black transition-colors">3</div>
-                    <div class="font-tech text-xs font-black mb-1 text-white">PROYEKSI VEKTOR</div>
-                    <div class="text-xs text-[var(--text-muted)] font-mono font-bold">Gaya Coriolis & Arah</div>
+                
+                <div class="p-3.5 bg-slate-900 border-2 border-slate-700 rounded-xl relative group hover:border-yellow-400 transition-colors cursor-help">
+                    <div class="w-8 h-8 rounded-full bg-yellow-950 border-2 border-yellow-400 flex items-center justify-center font-tech text-xs font-black text-yellow-400 mx-auto mb-2 group-hover:bg-yellow-400 group-hover:text-black transition-colors">3</div>
+                    <div class="font-tech text-[11px] font-black mb-1 text-white uppercase tracking-wider">Proyeksi Vektor</div>
+                    <div class="text-[10px] text-[var(--text-muted)] font-mono font-bold">Gaya Coriolis & Arah</div>
+
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 hidden group-hover:block w-56 bg-slate-900 border-2 border-yellow-500/80 text-white text-[10px] font-mono p-2.5 rounded-xl shadow-[0_10px_20px_rgba(234,179,8,0.4)] z-50 pointer-events-none text-left">
+                        <span class="text-yellow-400 font-bold block mb-1 border-b border-yellow-500/50 pb-1">3. PROYEKSI VEKTOR KINEMATIS</span>
+                        <span class="text-slate-300">Mensimulasikan arah belokan mata angin menggunakan percepatan fisis akibat lintasan rotasi sferis bumi di khatulistiwa.</span>
+                    </div>
                 </div>
-                <div id="wf-btn-4" class="p-3.5 bg-slate-900 border-2 border-slate-700 rounded-xl relative group hover:border-cyan-400 transition-colors cursor-help">
-                    <div class="w-8 h-8 rounded-full bg-cyan-950 border-2 border-cyan-400 flex items-center justify-center font-tech text-xs font-black text-cyan-400 mx-auto mb-2 group-hover:bg-cyan-400 group-hover:text-black transition-colors">4</div>
-                    <div class="font-tech text-xs font-black mb-1 text-white">PREDIKSI DAMPAK</div>
-                    <div class="text-xs text-[var(--text-muted)] font-mono font-bold">Curah Hujan & Gelombang</div>
+                
+                <div class="p-3.5 bg-slate-900 border-2 border-slate-700 rounded-xl relative group hover:border-purple-400 transition-colors cursor-help">
+                    <div class="w-8 h-8 rounded-full bg-purple-950 border-2 border-purple-400 flex items-center justify-center font-tech text-xs font-black text-purple-400 mx-auto mb-2 group-hover:bg-purple-400 group-hover:text-black transition-colors">4</div>
+                    <div class="font-tech text-[11px] font-black mb-1 text-white uppercase tracking-wider">Prediksi Dampak</div>
+                    <div class="text-[10px] text-[var(--text-muted)] font-mono font-bold">Curah Hujan & Gelombang</div>
+
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 hidden group-hover:block w-56 bg-slate-900 border-2 border-purple-500/80 text-white text-[10px] font-mono p-2.5 rounded-xl shadow-[0_10px_20px_rgba(168,85,247,0.4)] z-50 pointer-events-none text-left">
+                        <span class="text-purple-400 font-bold block mb-1 border-b border-purple-500/50 pb-1">4. PREDIKSI DAMPAK HIDROLOGIS</span>
+                        <span class="text-slate-300">Komputasi permodelan numerik untuk menentukan estimasi curah hujan, tingkat kekeringan tanah, dan tinggi gelombang laut.</span>
+                    </div>
                 </div>
-                <div id="wf-btn-5" class="p-3.5 bg-slate-900 border-2 border-slate-700 rounded-xl relative group hover:border-cyan-400 transition-colors cursor-help">
-                    <div class="w-8 h-8 rounded-full bg-cyan-950 border-2 border-cyan-400 flex items-center justify-center font-tech text-xs font-black text-cyan-400 mx-auto mb-2 group-hover:bg-cyan-400 group-hover:text-black transition-colors">5</div>
-                    <div class="font-tech text-xs font-black mb-1 text-white">GENERASI MAP GIS</div>
-                    <div class="text-xs text-[var(--text-muted)] font-mono font-bold">Isobar & Isoteris</div>
+                
+                <div class="p-3.5 bg-slate-900 border-2 border-slate-700 rounded-xl relative group hover:border-blue-400 transition-colors cursor-help">
+                    <div class="w-8 h-8 rounded-full bg-blue-950 border-2 border-blue-400 flex items-center justify-center font-tech text-xs font-black text-blue-400 mx-auto mb-2 group-hover:bg-blue-400 group-hover:text-black transition-colors">5</div>
+                    <div class="font-tech text-[11px] font-black mb-1 text-white uppercase tracking-wider">Generasi Map GIS</div>
+                    <div class="text-[10px] text-[var(--text-muted)] font-mono font-bold">Isobar & Isoteris</div>
+
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 hidden group-hover:block w-56 bg-slate-900 border-2 border-blue-500/80 text-white text-[10px] font-mono p-2.5 rounded-xl shadow-[0_10px_20px_rgba(59,130,246,0.4)] z-50 pointer-events-none text-left">
+                        <span class="text-blue-400 font-bold block mb-1 border-b border-blue-500/50 pb-1">5. RENDER SPASIAL LAYER GIS</span>
+                        <span class="text-slate-300">Mengonversi matriks array komputasi menjadi visualisasi spasial interaktif Leaflet JS untuk pelacakan dinamis.</span>
+                    </div>
                 </div>
-                <div id="wf-btn-6" class="p-3.5 bg-slate-900 border-2 border-slate-700 rounded-xl relative group hover:border-cyan-400 transition-colors cursor-help">
-                    <div class="w-8 h-8 rounded-full bg-cyan-950 border-2 border-cyan-400 flex items-center justify-center font-tech text-xs font-black text-cyan-400 mx-auto mb-2 group-hover:bg-cyan-400 group-hover:text-black transition-colors">6</div>
-                    <div class="font-tech text-xs font-black mb-1 text-white">WARNING SYSTEM</div>
-                    <div class="text-xs text-[var(--text-muted)] font-mono font-bold">Sinyal Dini Kebencanaan</div>
+                
+                <div class="p-3.5 bg-slate-900 border-2 border-slate-700 rounded-xl relative group hover:border-emerald-400 transition-colors cursor-help">
+                    <div class="w-8 h-8 rounded-full bg-emerald-950 border-2 border-emerald-400 flex items-center justify-center font-tech text-xs font-black text-emerald-400 mx-auto mb-2 group-hover:bg-emerald-400 group-hover:text-black transition-colors">6</div>
+                    <div class="font-tech text-[11px] font-black mb-1 text-white uppercase tracking-wider">Warning System</div>
+                    <div class="text-[10px] text-[var(--text-muted)] font-mono font-bold">Sinyal Dini Bencana</div>
+
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 hidden group-hover:block w-56 bg-slate-900 border-2 border-emerald-500/80 text-white text-[10px] font-mono p-2.5 rounded-xl shadow-[0_10px_20px_rgba(16,185,129,0.4)] z-50 pointer-events-none text-left">
+                        <span class="text-emerald-400 font-bold block mb-1 border-b border-emerald-500/50 pb-1">6. EARLY WARNING SYSTEM</span>
+                        <span class="text-slate-300">Diseminasi sinyal sirene bahaya otomatis dan sinkronisasi protokol mitigasi lintas sektoral ke dalam antarmuka.</span>
+                    </div>
                 </div>
             </div>
         </section>
     </div>
 
-    <div id="chatBotContainer" class="fixed bottom-6 right-6 z-[120] flex flex-col items-end gap-3">
-        <button onclick="turnOnScreensaverMode()" class="h-12 w-12 rounded-full bg-gradient-to-r from-slate-900 to-indigo-950 border border-cyan-500/50 flex items-center justify-center text-cyan-400 shadow-lg cursor-pointer hover:scale-110 transition-transform" title="Simulasi Pengaktifan Layar Screensaver Sekarang">
-            <i class="fa-solid fa-desktop text-sm"></i>
-        </button>
-
-        <button onclick="toggleChatWindow()" class="h-14 w-14 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 border-2 border-white flex items-center justify-center text-white shadow-[0_10px_30px_rgba(6,182,212,0.5)] cursor-pointer hover:scale-110 transition-transform relative">
-            <i class="fa-solid fa-robot text-2xl"></i>
-            <span class="absolute top-0 right-0 h-3.5 w-3.5 bg-emerald-400 rounded-full border-2 border-white animate-ping"></span>
-        </button>
-
-        <div id="chatWindow" class="chat-window w-[360px] sm:w-[440px] h-[480px] bg-slate-900 border-2 border-cyan-400 rounded-2xl flex-col hidden mt-3 overflow-hidden transition-all duration-300 shadow-2xl">
-            <div class="bg-gradient-to-r from-slate-950 to-blue-950 p-4 border-b-2 border-cyan-500 flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-microchip text-cyan-400 text-xl animate-pulse"></i>
-                    <div>
-                        <h4 class="font-tech text-xs font-black text-cyan-300 tracking-wide">MONSOON INTEL TERMINAL</h4>
-                        <span class="text-[9px] font-mono text-emerald-400 block font-bold">● LIVE INTERCEPTOR ACTIVE</span>
+    <div id="chatBotContainer" class="fixed bottom-[85px] right-4 lg:bottom-12 lg:right-[26%] z-[9000] flex flex-col items-end gap-3 pointer-events-none">
+        
+        <div id="chatWindow" class="chat-window w-[360px] sm:w-[460px] h-[550px] bg-slate-900 border-2 border-cyan-400 rounded-2xl flex-col hidden overflow-hidden transition-all duration-300 shadow-2xl pointer-events-auto mb-1">
+            <div class="bg-gradient-to-r from-slate-950 to-blue-950 p-4 border-b-2 border-cyan-500 flex flex-col gap-2">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-microchip text-cyan-400 text-xl animate-pulse"></i>
+                        <div>
+                            <h4 class="font-tech text-xs font-black text-cyan-300 tracking-wide">MONSOON INTEL TERMINAL</h4>
+                            <span class="text-[9px] font-mono text-emerald-400 block font-bold">● LIVE INTERNET & VOICE SYNC ACTIVE</span>
+                        </div>
                     </div>
+                    <button onclick="toggleChatWindow()" class="text-slate-400 hover:text-red-400 p-1 cursor-pointer"><i class="fa-solid fa-minus text-lg"></i></button>
                 </div>
-                <button onclick="toggleChatWindow()" class="text-slate-400 hover:text-red-400 p-1 cursor-pointer"><i class="fa-solid fa-minus text-lg"></i></button>
+                
+                <div class="flex justify-between items-center bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl px-4 py-2 border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.3)] mt-2">
+                    <span id="chat-day" class="text-base font-black text-white font-tech tracking-wide drop-shadow-md">Sabtu, 06 Jun 2026</span>
+                    <span id="chat-time" class="text-lg font-black text-yellow-400 font-mono drop-shadow-[0_0_10px_rgba(250,204,21,0.8)]">00:00:00 WIB</span>
+                </div>
             </div>
             
-            <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-4 font-mono text-sm text-white bg-slate-950">
-                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700 max-w-[85%] font-sans font-medium">
+            <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-4 font-mono text-sm text-white bg-slate-950 scroll-smooth">
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700 max-w-[85%] font-sans font-medium text-[13px]">
                     <span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-terminal"></i> ASSISTANT INITIALIZED:</span>
-                    Halo! Saya asisten pintar simulasi iklim. Konsol otentikasi aktif: <span class="text-amber-400">[Inisial Identifikasi Otomatis]</span>. Kirim pesan **"analisis"**, **"risalah"**, **"arsip"**, atau **"kesimpulan"** untuk membedah data kalkulasi, atau tanyakan detail pengembang aplikasi ini.
+                    Halo! Saya asisten cerdas berfitur suara. Saya dapat memberikan analisis muson, rincian <b>Gempa Live BMKG</b>, hingga mencari data spesifik dari Wikipedia. Tekan ikon <b>Mic</b> untuk bicara!
                 </div>
             </div>
+
+            <div class="px-3 py-2 bg-slate-900 border-t border-slate-800 flex gap-2 overflow-x-auto hide-scrollbar shrink-0">
+                <button onclick="sendChatShortcut('jelaskan gempa')" class="whitespace-nowrap px-3 py-1 bg-red-950 hover:bg-red-900 text-red-400 text-[10px] font-mono font-bold rounded-lg border border-red-700/50 transition-colors cursor-pointer"><i class="fa-solid fa-tower-broadcast animate-pulse"></i> Live Gempa BMKG</button>
+                <button onclick="sendChatShortcut('fitur aplikasi ini')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-cyan-900 text-cyan-400 text-[10px] font-mono font-bold rounded-lg border border-cyan-700/50 transition-colors cursor-pointer">Fitur Aplikasi</button>
+                <button onclick="sendChatShortcut('analisis cuaca')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-emerald-900 text-emerald-400 text-[10px] font-mono font-bold rounded-lg border border-emerald-700/50 transition-colors cursor-pointer">Analisis Cuaca</button>
+                
+                <button onclick="sendChatShortcut('data programmer')" class="whitespace-nowrap px-3 py-1 bg-fuchsia-950 hover:bg-fuchsia-900 text-fuchsia-400 text-[10px] font-mono font-black rounded-lg border border-fuchsia-500/80 shadow-[0_0_8px_rgba(236,72,153,0.4)] transition-colors cursor-pointer"><i class="fa-solid fa-code"></i> Programmer</button>
+                
+                <button onclick="sendChatShortcut('saran mitigasi')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-orange-900 text-orange-400 text-[10px] font-mono font-bold rounded-lg border border-orange-700/50 transition-colors cursor-pointer">Saran Mitigasi</button>
+            </div>
             
-            <div class="p-3 bg-slate-900 border-t border-slate-800 flex gap-2">
-                <input type="text" id="chatInput" placeholder="Ketik pesan atau minta analisis..." class="flex-1 bg-slate-950 border-2 border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400 font-bold placeholder-slate-500" onkeypress="handleChatKeyPress(event)">
+            <div class="p-3 bg-slate-900 border-t border-slate-800 flex gap-2 shrink-0">
+                <button onclick="startVoiceRecognition()" class="bg-slate-800 hover:bg-slate-700 text-cyan-400 px-3 rounded-xl border border-cyan-500/50 transition-colors cursor-pointer" title="Gunakan Perintah Suara"><i class="fa-solid fa-microphone"></i></button>
+                <input type="text" id="chatInput" placeholder="Ketik atau sebutkan sesuatu..." class="flex-1 bg-slate-950 border-2 border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400 font-bold placeholder-slate-500" onkeypress="handleChatKeyPress(event)">
                 <button onclick="processChatMessage()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 rounded-xl text-sm font-black cursor-pointer flex items-center justify-center"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
+
+        <!-- PERBAIKAN STRUKTUR HTML GRUP TOMBOL MELAYANG -->
+        <div class="flex flex-row items-center gap-3 pointer-events-auto relative">
+            <div id="wrapperToggleFloating" class="transition-transform duration-500 z-20 shrink-0">
+                <button onclick="toggleFloatingGroup()" id="btnToggleFloating" class="h-8 w-8 rounded-full bg-slate-800 border border-cyan-500/50 flex items-center justify-center text-cyan-400 cursor-pointer hover:scale-110 transition-transform shadow-[0_0_10px_rgba(6,182,212,0.3)] relative" title="Sembunyikan/Tampilkan Menu Melayang">
+                    <i id="iconToggleFloating" class="fa-solid fa-angles-right text-sm"></i>
+                </button>
+            </div>
+            
+            <div id="floatingButtonGroup" class="flex flex-row items-center gap-3 transition-all duration-500 origin-right">
+                
+                <button onclick="toggleVoiceMute()" class="h-12 w-12 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center text-emerald-400 cursor-pointer hover:scale-110 transition-transform shadow-[0_5px_15px_rgba(16,185,129,0.3)] relative" title="Mute/Unmute Suara Asisten AI">
+                    <i id="iconVoiceMute" class="fa-solid fa-volume-high animate-pulse text-sm"></i>
+                </button>
+
+                <div class="relative group">
+                    <button id="btnAiTracking" onclick="toggleAITracking()" class="h-12 w-12 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center text-slate-400 cursor-pointer hover:scale-110 transition-transform relative">
+                        <i id="iconAiTracking" class="fa-solid fa-microchip text-sm"></i>
+                    </button>
+                    
+                    <div id="tooltipAiTracking" class="absolute bottom-full right-0 mb-3 hidden group-hover:block w-56 bg-slate-900 border border-cyan-500/50 text-white text-[10px] font-mono p-2.5 rounded-xl shadow-lg z-50 pointer-events-none">
+                        <span class="text-slate-400 font-bold block mb-1 border-b border-slate-600/30 pb-1">💤 ALGORITMA MATI</span>
+                        <span class="text-slate-300">Sistem Prediksi Mati: Klik untuk mengaktifkan kembali kalkulasi.</span>
+                    </div>
+                </div>
+
+                <button onclick="location.reload()" class="h-12 w-12 rounded-full bg-gradient-to-r from-green-600 to-emerald-500 border border-white/50 flex items-center justify-center text-white shadow-[0_5px_15px_rgba(16,185,129,0.4)] cursor-pointer hover:scale-110 transition-transform" title="Refresh Sistem (Reload Data)">
+                    <i class="fa-solid fa-arrows-rotate text-sm"></i>
+                </button>
+
+                <button onclick="turnOnScreensaverMode()" class="h-12 w-12 rounded-full bg-gradient-to-r from-slate-900 to-indigo-950 border border-cyan-500/50 flex items-center justify-center text-cyan-400 shadow-[0_5px_15px_rgba(6,182,212,0.3)] cursor-pointer hover:scale-110 transition-transform" title="Simulasi Pengaktifan Layar Screensaver Sekarang">
+                    <i class="fa-solid fa-desktop text-sm"></i>
+                </button>
+
+                <button onclick="toggleChatWindow()" class="h-14 w-14 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 border-2 border-white flex items-center justify-center text-white shadow-[0_10px_30px_rgba(6,182,212,0.6)] cursor-pointer hover:scale-110 transition-transform relative" title="Buka Asisten Chatbot AI">
+                    <i class="fa-solid fa-robot text-2xl"></i>
+                    <span class="absolute top-0 right-0 h-3.5 w-3.5 bg-emerald-400 rounded-full border-2 border-white animate-ping"></span>
+                </button>
+            </div>
+        </div>
+        <!-- AKHIR PERBAIKAN STRUKTUR HTML GRUP TOMBOL MELAYANG -->
+
     </div>
 
     <div id="gisFullScreenWrapper" class="hidden fixed inset-0 z-[150] bg-slate-950 w-screen h-screen">
@@ -617,12 +676,16 @@
                     <button onclick="switchBaseMapLayer('terrain')" id="fsMapBtn-terrain" class="px-3 py-1.5 rounded text-slate-400 transition-all cursor-pointer">TOPO 3D</button>
                 </div>
                 
+                <button id="btnBmkgFS" onclick="toggleBmkg()" class="px-3 py-1.5 bg-slate-950 hover:bg-red-950 border border-red-500/50 text-red-400 font-mono font-black text-xs rounded-lg transition-all shadow-md flex items-center gap-1.5 cursor-pointer" title="Aktifkan Tracking Live Gempa BMKG">
+                    <i id="iconBmkgFS" class="fa-solid fa-satellite-dish"></i> <span id="textBmkgFS">LIVE BMKG: OFF</span>
+                </button>
+
                 <button onclick="exitMapFullScreenMode()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-mono font-black text-xs rounded-lg transition-all shadow-md flex items-center gap-1.5 border border-rose-400/30 cursor-pointer">
                     <i class="fa-solid fa-rectangle-xmark text-sm"></i> EXIT INTERFACE
                 </button>
             </div>
             <div class="absolute bottom-[-16px] left-1/2 transform -translate-x-1/2 bg-cyan-500 text-slate-950 font-mono font-bold text-[9px] px-3 py-0.5 rounded-b-md shadow-md tracking-widest cursor-default pointer-events-none">
-                <i class="fa-solid fa-angles-down"></i> SENTUH ATAS UNTUK KONTROL CONTROL MAP
+                <i class="fa-solid fa-angles-down"></i> SENTUH ATAS UNTUK KONTROL MAP
             </div>
         </div>
         
@@ -633,116 +696,127 @@
     </div>
 
     <div id="helpModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-[100] flex items-center justify-center p-4 hidden">
-        <div class="bg-[var(--modal-bg)] border-2 border-emerald-400 p-6 rounded-2xl max-w-xl w-full flex flex-col gap-4 max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div class="bg-[var(--modal-bg)] border-2 border-emerald-400 p-6 rounded-2xl max-w-2xl w-full flex flex-col gap-4 max-h-[90vh] overflow-y-auto shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <div class="flex items-center gap-2">
                     <i class="fa-solid fa-circle-question text-emerald-400 text-lg"></i>
-                    <h3 class="font-tech text-sm font-black text-emerald-400">PANDUAN INTELLIGENT SYSTEM</h3>
+                    <h3 class="font-tech text-sm font-black text-emerald-400">PANDUAN INTELLIGENT SYSTEM LENGKAP</h3>
                 </div>
                 <button onclick="closeHelpModal()" class="text-slate-400 hover:text-red-400 cursor-pointer"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
-            <div class="space-y-4 text-xs font-bold text-[var(--text-main)] leading-relaxed">
-                <p class="bg-slate-950/40 p-4 rounded-xl border border-slate-800 text-sm leading-relaxed">
-                    Dasbor ini berfungsi menganalisis dinamika pergantian angin muson Indonesia. **Garis Pantai NKRI sepanjang 81.000 KM** sangat dipengaruhi oleh anomali termal sirkulasi angin global.
+            <div class="space-y-4 text-[13px] font-medium text-[var(--text-main)] leading-relaxed">
+                <p class="bg-slate-950/40 p-4 rounded-xl border border-slate-800 leading-relaxed text-slate-200">
+                    Sistem ini berfungsi menganalisis dinamika pergantian angin muson, mendeteksi anomali cuaca lokal, dan menghitung secara presisi proksi ENSO beserta dampaknya terhadap kehidupan maritim dan daratan.
                 </p>
-                <p class="bg-slate-950/40 p-4 rounded-xl border border-slate-800 text-sm leading-relaxed">
-                    <span class="text-cyan-400 block mb-1">KEMAMPUAN INTEGRASI SINKRONISASI RADAR:</span>
-                    Aplikasi ini menggunakan **Radar Lapisan Angin (Windy.com)** secara *default* sebagai fondasi spasial utama. Sistem komputasi internal secara kontinu melakukan asimilasi data termal dan gradien atmosfer regional.
-                </p>
-                <p class="bg-slate-950/40 p-4 rounded-xl border border-slate-800 text-sm leading-relaxed">
-                    <span class="text-red-400 block mb-1">ARSIP KONDISI EKSTREM & SIRINE:</span>
-                    Fitur baru untuk mensimulasikan riwayat bencana klimatologi (seperti Banjir Rob, Kekeringan, Badai). Memilih arsip akan membunyikan sirine peringatan dini, mensinkronisasi lokasi pada peta GIS secara otomatis, dan menampilkan matriks mitigasi cerdas.
-                </p>
-                <p class="bg-slate-950/40 p-4 rounded-xl border border-slate-800 text-sm leading-relaxed">
-                    <span class="text-fuchsia-400 block mb-1">KREDIT PENGEMBANG UTAMA:</span>
-                    Sistem ini dirancang dan dikembangkan secara eksklusif oleh **Mohamad Hartadi & Keluarga**. Panel kendali pengembang dilengkapi fitur *Draggable* (dapat diseret) untuk kenyamanan optimal pengamatan. Dukungan teknis dan korespondensi dapat diakses via tautan WhatsApp, Blog Resmi, dan profil Facebook pengembang.
-                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-950/40 p-4 rounded-xl border border-slate-800">
+                        <span class="text-blue-400 block mb-1 font-tech uppercase text-xs font-bold"><i class="fa-solid fa-microphone"></i> Voice Assistant & Web API</span>
+                        Chatbot cerdas terhubung ke <b>Wikipedia & Google</b>. Klik ikon Mikrofon untuk memberi perintah suara. Gunakan tombol Speaker melayang untuk Mematikan/Menyalakan output suara (TTS). Coba katakan "Jelaskan gempa" untuk menganalisis data BMKG.
+                    </div>
+                    <div class="bg-slate-950/40 p-4 rounded-xl border border-slate-800">
+                        <span class="text-red-400 block mb-1 font-tech uppercase text-xs font-bold"><i class="fa-solid fa-satellite-dish"></i> Live Gempa BMKG & Timer</span>
+                        Terdapat di dasbor atas dan layar penuh. Jika aktif, akan melakukan hitung mundur <b>60 detik</b> dan otomatis mengambil/melacak peringatan Gempa Bumi dan Tsunami BMKG secara <i>real-time</i> disertai Voice Alert.
+                    </div>
+                    <div class="bg-slate-950/40 p-4 rounded-xl border border-slate-800">
+                        <span class="text-emerald-400 block mb-1 font-tech uppercase text-xs font-bold"><i class="fa-solid fa-robot"></i> Grup Tombol Melayang</span>
+                        Akses tombol Voice (Speaker), Chatbot, pelacak algoritma AI (ikon chip), Refresh, dan layar <i>Screensaver</i> di pojok kanan bawah. Klik ikon <i class="fa-solid fa-angles-right mx-1"></i> untuk sembunyikan/tampilkan tombol.
+                    </div>
+                    <div class="bg-slate-950/40 p-4 rounded-xl border border-slate-800">
+                        <span class="text-orange-400 block mb-1 font-tech uppercase text-xs font-bold"><i class="fa-solid fa-triangle-exclamation"></i> Arsip Simulasi Ekstrem</span>
+                        Buka panel ini di kanan atas untuk memuat riwayat / simulasi manual bencana klimatologi sektoral (Krakatau, Tambora, dll) yang memicu matriks evakuasi pada antarmuka.
+                    </div>
+                </div>
             </div>
-            <div class="flex justify-end">
-                <button onclick="closeHelpModal()" class="px-4 py-2 bg-emerald-950 border-2 border-emerald-400 text-emerald-400 rounded-xl font-tech text-xs font-black hover:bg-emerald-400 hover:text-black cursor-pointer transition-all">DISMISS HELP</button>
+            <div class="flex justify-end pt-2">
+                <button onclick="closeHelpModal()" class="px-4 py-2 bg-emerald-950 border-2 border-emerald-400 text-emerald-400 rounded-xl font-tech text-xs font-black hover:bg-emerald-400 hover:text-black cursor-pointer transition-all shadow-[0_0_10px_rgba(52,211,153,0.3)]">DISMISS HELP</button>
             </div>
         </div>
     </div>
 
     <div id="arsipModal" class="hidden fixed top-[160px] right-4 bottom-6 z-[140] w-[90%] max-w-[380px] bg-[var(--bg-card)] backdrop-blur-xl border-2 border-red-500/80 rounded-2xl flex flex-col shadow-[-10px_0_40px_rgba(239,68,68,0.3)] overflow-hidden transition-all duration-300">
-        <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-950">
+        <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-950 shrink-0">
             <div class="flex items-center gap-3">
-                <i class="fa-solid fa-triangle-exclamation text-red-500 text-xl animate-pulse"></i>
-                <div>
-                    <h3 class="text-sm font-black font-tech text-red-400 tracking-wider uppercase">Arsip Ekstrem</h3>
-                </div>
+                <i class="fa-solid fa-book-journal-whills text-red-500 text-xl animate-pulse"></i>
+                <div><h3 class="text-sm font-black font-tech text-red-400 tracking-wider uppercase">Simulasi Arsip Ekstrem</h3></div>
             </div>
             <button onclick="toggleArsipModal()" class="text-slate-400 hover:text-white text-xl font-bold bg-slate-800/50 px-2 py-0.5 rounded-lg transition-all cursor-pointer">&times;</button>
         </div>
-
-        <div class="flex-1 overflow-y-auto flex flex-col">
-            <div class="p-4 space-y-2 bg-slate-950/40 border-b border-slate-800">
-                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1 font-mono">Pilih Riwayat Peristiwa:</label>
+        <div class="flex-1 overflow-y-auto flex flex-col hide-scrollbar">
+            <div class="p-4 space-y-2 bg-slate-950/40 border-b border-slate-800 shrink-0">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1 font-mono">Pilih Simulasi Riwayat Bencana:</label>
                 
-                <div onclick="pilihArsip('surabaya', -7.2504, 112.7508, 'Muson Barat')" class="p-2.5 bg-slate-800/40 hover:bg-red-950/30 border border-slate-700 hover:border-red-500 rounded-xl cursor-pointer transition-all duration-200">
+                <div onclick="pilihArsip('Banjir Rob Kota Semarang', -6.9667, 110.4167, 'Banjir Rob')" class="p-2.5 bg-slate-800/40 hover:bg-red-950/30 border border-slate-700 hover:border-red-500 rounded-xl cursor-pointer transition-all duration-200">
                     <div class="flex justify-between items-center mb-1">
-                        <span class="font-black text-xs text-white font-tech">Pesisir Surabaya</span>
+                        <span class="font-black text-xs text-white font-tech">Banjir Rob Semarang</span>
                         <span class="px-1.5 py-0.5 text-[8px] font-bold bg-blue-500/20 text-blue-400 rounded border border-blue-500/30">Muson Barat</span>
                     </div>
                 </div>
-                <div onclick="pilihArsip('ntt', -10.1772, 123.6070, 'Muson Timur')" class="p-2.5 bg-slate-800/40 hover:bg-red-950/30 border border-slate-700 hover:border-red-500 rounded-xl cursor-pointer transition-all duration-200">
+                <div onclick="pilihArsip('Banjir Besar Pulau Buru', -3.3667, 126.6000, 'Banjir Besar')" class="p-2.5 bg-slate-800/40 hover:bg-red-950/30 border border-slate-700 hover:border-red-500 rounded-xl cursor-pointer transition-all duration-200">
                     <div class="flex justify-between items-center mb-1">
-                        <span class="font-black text-xs text-white font-tech">Nusa Tenggara Timur</span>
+                        <span class="font-black text-xs text-white font-tech">Banjir Pulau Buru</span>
+                        <span class="px-1.5 py-0.5 text-[8px] font-bold bg-cyan-500/20 text-cyan-400 rounded border border-cyan-500/30">Muson Barat</span>
+                    </div>
+                </div>
+                <div onclick="pilihArsip('Kekeringan Ekstrim NTT & NTB', -9.0000, 121.0000, 'Kekeringan Ekstrim')" class="p-2.5 bg-slate-800/40 hover:bg-red-950/30 border border-slate-700 hover:border-red-500 rounded-xl cursor-pointer transition-all duration-200">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-black text-xs text-white font-tech">Kekeringan NTT & NTB</span>
                         <span class="px-1.5 py-0.5 text-[8px] font-bold bg-orange-500/20 text-orange-400 rounded border border-orange-500/30">Muson Timur</span>
                     </div>
                 </div>
-                <div onclick="pilihArsip('malang', -7.9666, 112.6326, 'Pancaroba')" class="p-2.5 bg-slate-800/40 hover:bg-red-950/30 border border-slate-700 hover:border-red-500 rounded-xl cursor-pointer transition-all duration-200">
+                <div onclick="pilihArsip('Erupsi Global Gunung Krakatau', -6.1025, 105.4233, 'Erupsi Krakatau')" class="p-2.5 bg-slate-800/40 hover:bg-red-950/30 border border-slate-700 hover:border-red-500 rounded-xl cursor-pointer transition-all duration-200">
                     <div class="flex justify-between items-center mb-1">
-                        <span class="font-black text-xs text-white font-tech">Malang Raya</span>
-                        <span class="px-1.5 py-0.5 text-[8px] font-bold bg-yellow-500/20 text-yellow-400 rounded border border-yellow-500/30">Pancaroba</span>
+                        <span class="font-black text-xs text-white font-tech">Erupsi Krakatau (Iklim)</span>
+                        <span class="px-1.5 py-0.5 text-[8px] font-bold bg-red-500/20 text-red-400 rounded border border-red-500/30">Bencana Global</span>
                     </div>
                 </div>
-            </div>
+                <div onclick="pilihArsip('Erupsi Gunung Tambora', -8.2472, 117.9911, 'Erupsi Tambora')" class="p-2.5 bg-slate-800/40 hover:bg-red-950/30 border border-slate-700 hover:border-red-500 rounded-xl cursor-pointer transition-all duration-200">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-black text-xs text-white font-tech">Erupsi Tambora</span>
+                        <span class="px-1.5 py-0.5 text-[8px] font-bold bg-fuchsia-500/20 text-fuchsia-400 rounded border border-fuchsia-500/30">Dampak Sumbawa</span>
+                    </div>
+                </div>
+                <div onclick="pilihArsip('Erupsi Gunung Merapi', -7.5407, 110.4457, 'Erupsi Merapi')" class="p-2.5 bg-slate-800/40 hover:bg-red-950/30 border border-slate-700 hover:border-red-500 rounded-xl cursor-pointer transition-all duration-200">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-black text-xs text-white font-tech">Erupsi Merapi</span>
+                        <span class="px-1.5 py-0.5 text-[8px] font-bold bg-purple-500/20 text-purple-400 rounded border border-purple-500/30">Dampak Jateng/DIY</span>
+                    </div>
+                </div>
 
+            </div>
             <div class="p-4 flex flex-col space-y-4">
                 <div id="placeholderArsip" class="text-center py-10 text-slate-500 text-xs font-mono border-2 border-dashed border-slate-800 rounded-xl p-4">
                     <i class="fa-solid fa-map-location-dot text-2xl mb-2 text-slate-600"></i><br>
-                    Pilih rekam wilayah di atas untuk memuat matriks mitigasi sektoral dan mensinkronkan koordinat Peta GIS secara live.
+                    Pilih simulasi riwayat di atas untuk memuat matriks mitigasi sektoral dan mensinkronkan koordinat Peta GIS ke lokasi kejadian.
                 </div>
-                
-                <div id="kontenMitigasi" class="hidden space-y-3 flex-1">
+                <div id="kontenMitigasi" class="hidden space-y-3 flex-1 pb-4">
                     <div class="bg-slate-950 p-3 border border-red-500/50 rounded-xl relative overflow-hidden">
                         <div class="absolute inset-0 bg-red-500/5 animate-pulse"></div>
                         <div class="relative z-10 flex justify-between items-center">
                             <div>
-                                <h4 class="text-[9px] font-black text-red-400 uppercase tracking-widest font-tech mb-0.5">SINKRONISASI AKTIF</h4>
+                                <h4 class="text-[9px] font-black text-red-400 uppercase tracking-widest font-tech mb-0.5">SIMULASI AKTIF</h4>
                                 <p id="namaWilayahTerpilih" class="text-sm font-black text-white font-tech glow-text">-</p>
-                                <p id="faseMusonTerpilih" class="text-[10px] text-slate-400 font-mono mt-0.5">Fase: <span class="font-bold text-cyan-400"></span></p>
+                                <p id="faseMusonTerpilih" class="text-[10px] text-slate-400 font-mono mt-0.5">Kondisi: <span class="font-bold text-cyan-400"></span></p>
                             </div>
                             <div class="px-2 py-1 bg-red-950 border border-red-500 rounded text-red-400 text-[10px] font-black font-mono flex items-center gap-1 shadow-[0_0_10px_rgba(239,68,68,0.4)]">
                                 <i class="fa-solid fa-tower-broadcast animate-ping"></i> AWAS
                             </div>
                         </div>
                     </div>
-
                     <div class="space-y-2">
                         <div class="p-2.5 bg-slate-900 border border-slate-700 rounded-xl shadow-inner">
-                            <div class="flex items-center gap-1.5 mb-1 text-cyan-400 font-black text-[10px] uppercase font-tech">
-                                <i class="fa-solid fa-ship"></i> <span>Maritim</span>
-                            </div>
+                            <div class="flex items-center gap-1.5 mb-1 text-cyan-400 font-black text-[10px] uppercase font-tech"><i class="fa-solid fa-ship"></i> <span>Maritim</span></div>
                             <p id="mitigasiMaritim" class="text-[11px] text-slate-300 font-mono leading-snug">-</p>
                         </div>
                         <div class="p-2.5 bg-slate-900 border border-slate-700 rounded-xl shadow-inner">
-                            <div class="flex items-center gap-1.5 mb-1 text-blue-400 font-black text-[10px] uppercase font-tech">
-                                <i class="fa-solid fa-plane"></i> <span>Penerbangan</span>
-                            </div>
+                            <div class="flex items-center gap-1.5 mb-1 text-blue-400 font-black text-[10px] uppercase font-tech"><i class="fa-solid fa-plane"></i> <span>Penerbangan</span></div>
                             <p id="mitigasiPenerbangan" class="text-[11px] text-slate-300 font-mono leading-snug">-</p>
                         </div>
                         <div class="p-2.5 bg-slate-900 border border-slate-700 rounded-xl shadow-inner">
-                            <div class="flex items-center gap-1.5 mb-1 text-red-400 font-black text-[10px] uppercase font-tech">
-                                <i class="fa-solid fa-building-shield"></i> <span>Sipil & Bendungan</span>
-                            </div>
+                            <div class="flex items-center gap-1.5 mb-1 text-red-400 font-black text-[10px] uppercase font-tech"><i class="fa-solid fa-building-shield"></i> <span>Sipil & SDA</span></div>
                             <p id="mitigasiSipil" class="text-[11px] text-slate-300 font-mono leading-snug">-</p>
                         </div>
                         <div class="p-2.5 bg-slate-900 border border-slate-700 rounded-xl shadow-inner">
-                            <div class="flex items-center gap-1.5 mb-1 text-emerald-400 font-black text-[10px] uppercase font-tech">
-                                <i class="fa-solid fa-wheat-awn"></i> <span>Agraria</span>
-                            </div>
+                            <div class="flex items-center gap-1.5 mb-1 text-emerald-400 font-black text-[10px] uppercase font-tech"><i class="fa-solid fa-wheat-awn"></i> <span>Agraria / Pertanian</span></div>
                             <p id="mitigasiAgraria" class="text-[11px] text-slate-300 font-mono leading-snug">-</p>
                         </div>
                     </div>
@@ -754,59 +828,64 @@
     <div id="creatorModal" class="fixed inset-0 z-[110] hidden bg-black/70 pointer-events-none flex items-center justify-center p-4">
         <div id="draggablePanel" class="bg-slate-900 border-2 border-fuchsia-500 rounded-2xl w-full max-w-md p-6 absolute pointer-events-auto shadow-[0_0_30px_rgba(236,72,153,0.5)] select-none">
             <div id="dragHandle" class="drag-handle text-center pb-2 mb-4 border-b border-slate-800 flex flex-col items-center justify-center relative">
-                <div class="absolute -top-1 px-3 py-0.5 rounded-full bg-slate-950 text-[10px] font-mono font-bold text-fuchsia-400 tracking-widest border border-fuchsia-600">
+                <div class="absolute -top-1 px-3 py-0.5 rounded-full bg-slate-950 text-[10px] font-mono font-bold text-fuchsia-400 tracking-widest border border-fuchsia-600 shadow-md">
                     <i class="fa-solid fa-arrows-up-down-left-right animate-pulse mr-1"></i> PROGRAMMER CREATOR
                 </div>
-                <div class="h-16 w-16 mt-4 bg-gradient-to-tr from-fuchsia-500 to-pink-500 rounded-full flex items-center justify-center shadow-md mb-2">
-                    <i class="fa-solid fa-user-gear text-3xl text-slate-950"></i>
+                
+                <div class="relative w-[85px] h-[75px] mt-6 mb-2 flex items-center justify-center drop-shadow-[0_5px_15px_rgba(236,72,153,0.4)]">
+                    <div class="ear-anim-l absolute top-1 -left-1.5 w-[30px] h-[30px] bg-slate-950 rounded-[50%] border-2 border-slate-700 origin-bottom-right z-0"></div>
+                    <div class="ear-anim-r absolute top-1 -right-1.5 w-[30px] h-[30px] bg-slate-950 rounded-[50%] border-2 border-slate-700 origin-bottom-left z-0"></div>
+                    
+                    <div class="relative w-[70px] h-[60px] bg-white rounded-[45%] flex flex-col items-center justify-center border-[3px] border-slate-900 z-10 overflow-hidden shadow-inner">
+                        <div class="flex justify-between w-[46px] relative top-[3px]">
+                            <div class="w-[18px] h-[22px] bg-slate-950 rounded-[45%] transform -rotate-[20deg] flex items-center justify-center">
+                                <div class="eye-blink w-[6px] h-[8px] bg-white rounded-full relative -top-[2px] right-[1px] shadow-[0_0_5px_rgba(255,255,255,0.8)]">
+                                    <div class="w-[2px] h-[2px] bg-white rounded-full absolute top-[1px] left-[3px]"></div>
+                                </div>
+                            </div>
+                            <div class="w-[18px] h-[22px] bg-slate-950 rounded-[45%] transform rotate-[20deg] flex items-center justify-center">
+                                <div class="eye-blink w-[6px] h-[8px] bg-white rounded-full relative -top-[2px] left-[1px] shadow-[0_0_5px_rgba(255,255,255,0.8)]">
+                                    <div class="w-[2px] h-[2px] bg-white rounded-full absolute top-[1px] left-[1px]"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-[4px] flex flex-col items-center relative z-20">
+                            <div class="w-[10px] h-[6px] bg-slate-900 rounded-[50%] mb-[1px]"></div>
+                            <div class="flex relative">
+                                <div class="w-[8px] h-[6px] border-b-[2.5px] border-r-[2.5px] border-slate-900 rounded-br-full"></div>
+                                <div class="w-[8px] h-[6px] border-b-[2.5px] border-l-[2.5px] border-slate-900 rounded-bl-full"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h3 class="text-xl font-black font-tech text-fuchsia-400 tracking-wider">MOHAMAD HARTADI & KELUARGA</h3>
-                <p class="text-xs font-mono font-bold text-slate-300 mt-0.5">Sistem Monitoring Cuaca & Prediksi Angin Muson</p>
+
+                <h3 class="text-xl font-black font-tech text-fuchsia-400 tracking-wider">MOHAMAD HARTADI</h3>
+                <p class="text-xs font-mono font-bold text-slate-300 mt-0.5">Software & Data Engineer • Prediksi Muson Nusantara</p>
                 <button onclick="closeCreatorModal()" class="absolute top-0 right-0 text-slate-400 hover:text-white text-md p-1 cursor-pointer"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3 font-mono text-xs font-bold">
                 <div class="flex items-center gap-3 py-2 border-b border-slate-800">
                     <i class="fa-solid fa-user text-cyan-400 w-5 text-center text-sm"></i>
                     <div>
-                        <span class="block text-[10px] text-slate-500">PROGRAMMING CREATOR (FB)</span>
+                        <span class="block text-[10px] text-slate-500 tracking-wide">PROGRAMMING CREATOR (FB)</span>
                         <a href="https://www.facebook.com/m.hartadi" target="_blank" class="text-cyan-400 font-bold text-sm hover:underline flex items-center gap-1.5">Mohamad Hartadi <i class="fa-brands fa-facebook text-xs"></i></a>
                     </div>
                 </div>
                 <div class="flex items-center gap-3 py-2 border-b border-slate-800">
                     <i class="fa-brands fa-whatsapp text-emerald-400 w-5 text-center text-base"></i>
                     <div>
-                        <span class="block text-[10px] text-slate-500">KONTAK WHATSAPP</span>
-                        <a href="https://wa.me/6282231036047?text=Ijin%20bertanya%20mengenai%20Sistem%20Dashboard%20Muson%20Indonesia." target="_blank" class="text-emerald-400 font-bold hover:underline">082231036047</a>
+                        <span class="block text-[10px] text-slate-500 tracking-wide">KONTAK WHATSAPP</span>
+                        <a href="https://wa.me/6282231036047?text=Ijin%20bertanya%20mengenai%20Sistem%20Dashboard%20Muson." target="_blank" class="text-emerald-400 font-bold hover:underline">082231036047</a>
                     </div>
                 </div>
                 <div class="flex items-center gap-3 py-2">
                     <i class="fa-solid fa-globe text-pink-400 w-5 text-center"></i>
                     <div>
-                        <span class="block text-[10px] text-slate-500">PORTAL BLOG RESMI</span>
+                        <span class="block text-[10px] text-slate-500 tracking-wide">PORTAL BLOG RESMI</span>
                         <a href="https://newbieonline7.blogspot.com/" target="_blank" class="text-pink-400 font-bold hover:underline break-all">https://newbieonline7.blogspot.com/</a>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="bottom-matrix-popup" class="fixed bottom-4 left-4 right-4 bg-slate-950/95 backdrop-blur-lg border-2 border-cyan-400 rounded-2xl p-5 z-[200] shadow-2xl transition-all duration-300 translate-y-40 opacity-0 hidden">
-        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="p-3 bg-cyan-950 rounded-xl border border-cyan-400 text-cyan-400">
-                    <i id="popup-icon" class="fa-solid fa-chart-line text-2xl"></i>
-                </div>
-                <div>
-                    <span class="text-[10px] font-tech text-slate-400 tracking-widest block uppercase font-bold" id="popup-tag">MONSOON ANALYTICS INJECTOR</span>
-                    <h4 class="font-tech text-base font-black text-cyan-300" id="popup-title">JUDUL MODUL</h4>
-                </div>
-            </div>
-            <div class="flex-1 max-w-3xl">
-                <p class="text-sm md:text-base font-bold text-slate-200 leading-relaxed" id="popup-desc">Deskripsi analisis komponen sistem...</p>
-            </div>
-            <div class="flex items-center gap-3 w-full md:w-auto justify-end border-t border-slate-800 md:border-none pt-2 md:pt-0 pr-14 md:pr-0">
-                <div class="text-xs font-mono font-bold text-slate-300 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700" id="popup-location">REGIO: INDONESIA</div>
-                <button onclick="closeBottomPopup()" class="text-slate-400 hover:text-red-400 p-1.5 cursor-pointer"><i class="fa-solid fa-xmark text-2xl"></i></button>
             </div>
         </div>
     </div>
@@ -819,7 +898,6 @@
         let fsMapInstance = null;
         let currentFsMapLayerGroup = null;
         let activeMapStyle = 'satellite';
-        let bottomPopupTimer = null;
         let windyInterceptorInterval = null;
         let isWindyAutomatedMode = false;
 
@@ -836,11 +914,30 @@
         let sirenInterval = null;
         let statusSirineMenyala = false;
         let currentPulsarMarker = null;
+        let currentFSPulsarMarker = null; 
 
-        // TRACKING MATRIX SCREENSAVER IDLE SYSTEM
+        let aiPulsarMarker = null;
+        let aiFSPulsarMarker = null;
+
         let currentSystemIdleSecondsCounter = 0;
-        const maximumIdleLimitBeforeActivation = 300; // 5 Menit Konstan Limitasi
+        const maximumIdleLimitBeforeActivation = 300; 
         let isMonsoonScreensaverModeActive = false;
+
+        let isAITrackingActive = false; 
+
+        let isBmkgActive = false;
+        let bmkgTimer = 60;
+        let bmkgIntervalId = null;
+        let bmkgLastEarthquakeTime = null;
+        let currentBmkgData = null;
+        let currentAIDisasterTarget = null;
+        
+        let isVoiceMuted = false;
+
+        // OPSI POPUP UNTUK MENCEGAH OVERLAP DENGAN 4 TOMBOL (autoPanPadding Bottom-Right)
+        const popupOptionsAI = { className: 'custom-map-popup', maxWidth: 350, offset: [0, -15], autoPanPaddingBottomRight: [50, 300] };
+        const popupOptionsBMKG = { className: 'custom-gempa-popup', maxWidth: 350, offset: [0, -15], autoPanPaddingBottomRight: [50, 300] };
+        const popupOptionsArsip = { className: 'custom-arsip-popup', maxWidth: 300, offset: [0, -10], autoPanPaddingBottomRight: [50, 300] };
 
         const namaBulan = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
 
@@ -850,26 +947,15 @@
             terrain: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'
         };
 
-        const map = L.map('map', {
-            center: [-2.5, 118.0], 
-            zoom: 4,               
-            minZoom: 2,
-            maxZoom: 10,
-            zoomControl: true
-        });
-
-        currentMapLayer = L.tileLayer(mapTileProviders.satellite, {
-            attribution: 'Map Core &copy; Esri World Imagery'
-        }).addTo(map);
+        const map = L.map('map', { center: [-2.5, 118.0], zoom: 4, minZoom: 2, maxZoom: 10, zoomControl: true });
+        currentMapLayer = L.tileLayer(mapTileProviders.satellite, { attribution: 'Map Core &copy; Esri World Imagery' }).addTo(map);
 
         currentMapLayer.on('tileload', function(e) {
             if(currentTheme === 'dark') e.tile.classList.add('satellite-style');
             else e.tile.classList.remove('satellite-style');
         });
 
-        map.on('zoomend', function() {
-            document.getElementById('zoom-level').innerText = map.getZoom();
-        });
+        map.on('zoomend', function() { document.getElementById('zoom-level').innerText = map.getZoom(); });
 
         const stasiunKlimatologi = [
             { id: 0, name: "Stasiun Maritim Belawan (Selat Malaka)", coords: [3.7831, 98.6833], color: "#3b82f6" },
@@ -886,14 +972,7 @@
 
         const markerMap = {};
         stasiunKlimatologi.forEach(function(stn) {
-            const marker = L.circleMarker(stn.coords, {
-                radius: 10,
-                fillColor: stn.color,
-                color: "#ffffff",
-                weight: 2,
-                opacity: 1,
-                fillOpacity: 0.8
-            }).addTo(map);
+            const marker = L.circleMarker(stn.coords, { radius: 10, fillColor: stn.color, color: "#ffffff", weight: 2, opacity: 1, fillOpacity: 0.8 }).addTo(map);
 
             marker.bindTooltip(`
                 <div class="text-xs">
@@ -901,12 +980,7 @@
                     <strong class="font-bold">${stn.name}</strong><br>
                     <span class="text-slate-400 text-[10px]">Pos: ${stn.coords[0].toFixed(4)}, ${stn.coords[1].toFixed(4)}</span>
                 </div>
-            `, { 
-                direction: 'auto', 
-                sticky: true, 
-                className: 'custom-tooltip',
-                offset: L.point(0, -10)
-            });
+            `, { direction: 'auto', sticky: true, className: 'custom-tooltip', offset: L.point(0, -10) });
             
             markerMap[stn.id] = marker;
 
@@ -925,6 +999,349 @@
                 toggleMapWeatherFlip('weather');
             });
         });
+
+        // FUNGSI TTS & STT (WEB SPEECH API)
+        function toggleVoiceMute() {
+            isVoiceMuted = !isVoiceMuted;
+            const icon = document.getElementById('iconVoiceMute');
+            if (isVoiceMuted) {
+                icon.className = "fa-solid fa-volume-xmark text-slate-400 text-sm";
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            } else {
+                icon.className = "fa-solid fa-volume-high animate-pulse text-emerald-400 text-sm";
+                speakText("Suara asisten diaktifkan.");
+            }
+        }
+
+        function speakText(text) {
+            if (isVoiceMuted || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const cleanText = text.replace(/<[^>]*>?/gm, '').replace(/\*/g, '');
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'id-ID';
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function startVoiceRecognition() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert("Browser Anda tidak mendukung fitur Voice Recognition.");
+                return;
+            }
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'id-ID';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.start();
+            document.getElementById('chatInput').placeholder = "Mendengarkan suara...";
+
+            recognition.onresult = function(event) {
+                const speechResult = event.results[0][0].transcript;
+                document.getElementById('chatInput').value = speechResult;
+                processChatMessage();
+            };
+
+            recognition.onspeechend = function() {
+                recognition.stop();
+                document.getElementById('chatInput').placeholder = "Ketik atau sebutkan sesuatu...";
+            };
+
+            recognition.onerror = function(event) {
+                console.error("Speech recognition error", event.error);
+                document.getElementById('chatInput').placeholder = "Ketik atau sebutkan sesuatu...";
+            };
+        }
+
+        // PERBAIKAN LOGIKA JS HIDE / UNHIDE TOMBOL MENU
+        let isFloatingGroupHidden = false;
+        function toggleFloatingGroup() {
+            const group = document.getElementById('floatingButtonGroup');
+            const icon = document.getElementById('iconToggleFloating');
+            const wrapper = document.getElementById('wrapperToggleFloating');
+            isFloatingGroupHidden = !isFloatingGroupHidden;
+
+            if (isFloatingGroupHidden) {
+                // Memudarkan elemen dan menghilangkan fungsi klik
+                group.classList.add('opacity-0', 'pointer-events-none');
+                
+                // Kalkulasi pergeseran (Lebar grup tersembunyi + nilai kompensasi gap)
+                const shiftRight = group.offsetWidth + 12; 
+                wrapper.style.transform = `translateX(${shiftRight}px)`;
+                icon.className = "fa-solid fa-angles-left text-sm";
+            } else {
+                // Mengembalikan elemen
+                group.classList.remove('opacity-0', 'pointer-events-none');
+                wrapper.style.transform = 'translateX(0)';
+                icon.className = "fa-solid fa-angles-right text-sm"; 
+            }
+        }
+
+        // PERBAIKAN LOGIKA JS SUARA ALGORITMA PREDIKSI AI
+        function toggleAITracking() {
+            isAITrackingActive = !isAITrackingActive;
+            const btn = document.getElementById('btnAiTracking');
+            const tooltip = document.getElementById('tooltipAiTracking');
+
+            if (isAITrackingActive) {
+                btn.className = "h-12 w-12 rounded-full bg-gradient-to-r from-blue-900 to-indigo-950 border border-cyan-500/50 flex items-center justify-center text-cyan-400 shadow-[0_5px_15px_rgba(6,182,212,0.3)] cursor-pointer hover:scale-110 transition-transform relative";
+                btn.innerHTML = `<i id="iconAiTracking" class="fa-solid fa-microchip text-sm animate-pulse"></i>
+                                 <span class="absolute -top-1 -right-1 flex h-3 w-3" id="pingAiTracking">
+                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                                     <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+                                 </span>`;
+                tooltip.innerHTML = `<span class="text-cyan-400 font-bold block mb-1 border-b border-cyan-500/30 pb-1">🧠 AI PREDICTION ALGORITHM</span>
+                                     <span class="text-slate-300">Algoritma Aktif: Menganalisis presisi matriks muson dan ENSO.</span>`;
+                jalankanKalkulasiDinamis();
+                simulateAIDisasterPrediction();
+            } else {
+                btn.className = "h-12 w-12 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center text-slate-400 cursor-pointer hover:scale-110 transition-transform relative";
+                btn.innerHTML = `<i id="iconAiTracking" class="fa-solid fa-microchip text-sm"></i>`;
+                tooltip.innerHTML = `<span class="text-slate-400 font-bold block mb-1 border-b border-slate-600/30 pb-1">💤 ALGORITMA MATI</span>
+                                     <span class="text-slate-300">Sistem Prediksi Mati: Klik untuk mengaktifkan kembali kalkulasi.</span>`;
+                
+                if(aiPulsarMarker) { map.removeLayer(aiPulsarMarker); aiPulsarMarker = null; }
+                if(aiFSPulsarMarker && fsMapInstance) { fsMapInstance.removeLayer(aiFSPulsarMarker); aiFSPulsarMarker = null; }
+
+                speakText("Sistem Algoritma Prediksi Dinamis Dinonaktifkan.");
+            }
+        }
+
+        function simulateAIDisasterPrediction() {
+            if(!isAITrackingActive) return;
+
+            const aiDisasters = [
+                { title: "SIKLON TROPIS (BIBIT 98S)", lat: -10.5, lng: 120.0, desc: "Sistem mendeteksi anomali pusaran angin di Samudra Hindia selatan Laut Sawu. Potensi angin puting beliung dan gelombang swell maritim mencapai elevasi 4 meter.", mitigation: "Hentikan pelayaran penyeberangan feri wilayah Nusa Tenggara Timur. Siapkan jalur evakuasi pesisir dari ancaman rob badai ekstrem.", icon: "fa-hurricane text-purple-400" },
+                { title: "SQUALL LINE (SEL BADAI)", lat: -5.1, lng: 119.4, desc: "Formasi vertikal awan cumulonimbus termal masif terdeteksi bergerak cepat melintasi Selat Makassar.", mitigation: "AWAS WINDSHEAR PENERBANGAN! Alihkan sementara rute pendaratan di Bandara Internasional Hasanuddin. Amankan infrastruktur crane pelabuhan.", icon: "fa-cloud-bolt text-red-400" },
+                { title: "KEKERINGAN EKSTREM & KARHUTLA", lat: -0.5, lng: 117.0, desc: "Deteksi anomali OLR dan SPL menunjukkan defisit tutupan awan berkepanjangan di area Kalimantan Timur. Indeks titik panas atau hotspot berpotensi memicu lonjakan Karhutla.", mitigation: "Teknologi Modifikasi Cuaca mendesak dilakukan. Siagakan satgas pemadam darat dan patroli udara pencegahan.", icon: "fa-fire text-orange-400" },
+                { title: "BANJIR BANDANG & HIDROLOGI", lat: -3.3667, lng: 126.6000, desc: "Akumulasi presipitasi curah hujan intensitas ekstrem di area tangkapan air hulu Pulau Buru pada fase puncak konvektif Muson Barat.", mitigation: "Segera lakukan evakuasi preventif bagi penduduk area bantaran sungai. Buka pintu spillway bendungan untuk mengurangi tekanan hidrostatik waduk.", icon: "fa-house-tsunami text-blue-400" }
+            ];
+            
+            const target = aiDisasters[Math.floor(Math.random() * aiDisasters.length)];
+            currentAIDisasterTarget = target; 
+
+            // Integrasi Sinkronisasi Suara Algoritma Dinamis Baru
+            const voiceExplanation = `Sistem Prediksi AI diaktifkan. Mendeteksi anomali: ${target.title}. Keterangan analisis: ${target.desc} Saran Mitigasi yang direkomendasikan: ${target.mitigation}`;
+            speakText(voiceExplanation);
+
+            const flipper = document.getElementById('mapWeatherFlipper');
+            if (flipper.classList.contains('flipped')) { toggleMapWeatherFlip('map'); }
+            if (!document.getElementById("gisFullScreenWrapper").classList.contains("hidden")) { switchFullScreenViewMode('map'); }
+            
+            map.flyTo([target.lat, target.lng], 6, { animate: true, duration: 1.5 });
+            if (fsMapInstance) fsMapInstance.flyTo([target.lat, target.lng], 6, { animate: true, duration: 1.5 });
+            
+            if(aiPulsarMarker) map.removeLayer(aiPulsarMarker);
+            if(aiFSPulsarMarker && fsMapInstance) fsMapInstance.removeLayer(aiFSPulsarMarker);
+            
+            const aiIcon = L.divIcon({
+                className: 'relative flex h-14 w-14 cursor-pointer',
+                html: `<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span><span class="relative inline-flex rounded-full h-14 w-14 bg-cyan-600 border-2 border-white flex items-center justify-center shadow-2xl"><i class="fa-solid fa-microchip text-white text-xl"></i></span>`,
+                iconSize: [56, 56], iconAnchor: [28, 28]
+            });
+
+            const popupHTML = `
+                <div class="bg-slate-900 p-4 rounded-xl border border-cyan-500 shadow-[0_10px_30px_rgba(6,182,212,0.4)] text-white w-[280px] md:w-[320px] pointer-events-auto">
+                    <div class="flex items-center gap-3 mb-3 pb-2 border-b border-cyan-500/50">
+                        <i class="fa-solid ${target.icon} text-2xl"></i>
+                        <div>
+                            <span class="text-[10px] font-tech text-cyan-400 font-bold block leading-none mb-1">AI PREDICTION SYNC</span>
+                            <h4 class="font-tech text-xs md:text-sm font-black text-white leading-tight uppercase">${target.title}</h4>
+                        </div>
+                    </div>
+                    <div class="text-[11px] md:text-xs font-mono text-slate-300 space-y-2">
+                        <p class="bg-slate-950 p-2 rounded border border-slate-700"><strong>📍 Koor:</strong> ${target.lat}, ${target.lng}</p>
+                        <p class="leading-relaxed">${target.desc}</p>
+                        <div class="bg-cyan-950/40 p-2 rounded border border-cyan-500/30">
+                            <strong class="text-cyan-400 block mb-1">🛡️ MITIGASI:</strong> ${target.mitigation}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            aiPulsarMarker = L.marker([target.lat, target.lng], {icon: aiIcon}).addTo(map).bindPopup(popupHTML, popupOptionsAI);
+            if(fsMapInstance) aiFSPulsarMarker = L.marker([target.lat, target.lng], {icon: aiIcon}).addTo(fsMapInstance).bindPopup(popupHTML, popupOptionsAI);
+
+            setTimeout(() => { aiPulsarMarker.openPopup(); }, 1500);
+        }
+
+        function toggleBmkg() {
+            isBmkgActive = !isBmkgActive;
+
+            if (isBmkgActive) {
+                bmkgTimer = 60;
+                updateBmkgUI();
+                fetchBmkgData(); 
+                
+                bmkgIntervalId = setInterval(() => {
+                    bmkgTimer--;
+                    if (bmkgTimer <= 0) {
+                        fetchBmkgData();
+                        bmkgTimer = 60; 
+                    }
+                    updateBmkgUI();
+                }, 1000);
+            } else {
+                if (bmkgIntervalId) {
+                    clearInterval(bmkgIntervalId);
+                    bmkgIntervalId = null;
+                }
+                updateBmkgUI();
+            }
+        }
+
+        function updateBmkgUI() {
+            const btnN = document.getElementById('btnBmkgNormal');
+            const txtN = document.getElementById('textBmkgNormal');
+            const icoN = document.getElementById('iconBmkgNormal');
+            const btnFS = document.getElementById('btnBmkgFS');
+            const txtFS = document.getElementById('textBmkgFS');
+            const icoFS = document.getElementById('iconBmkgFS');
+
+            if (isBmkgActive) {
+                btnN.className = "w-full sm:w-auto bg-red-950 border-2 border-red-500 text-[11px] font-mono font-black px-4 py-1.5 rounded-lg cursor-pointer transition-all text-white hover:bg-red-900 flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(239,68,68,0.6)]";
+                icoN.className = "fa-solid fa-satellite-dish animate-pulse";
+                txtN.innerText = `LIVE BMKG [${bmkgTimer}s]`;
+
+                if (btnFS) {
+                    btnFS.className = "px-3 py-1.5 bg-red-950 hover:bg-red-900 border border-red-500 text-white font-mono font-black text-xs rounded-lg transition-all shadow-[0_0_15px_rgba(239,68,68,0.6)] flex items-center gap-1.5 cursor-pointer";
+                    icoFS.className = "fa-solid fa-satellite-dish animate-pulse text-red-400";
+                    txtFS.innerText = `LIVE BMKG [${bmkgTimer}s]`;
+                }
+            } else {
+                btnN.className = "w-full sm:w-auto bg-slate-950 border-2 border-red-600/50 text-[11px] font-mono font-black px-4 py-1.5 rounded-lg cursor-pointer transition-all text-red-400 hover:bg-red-950/40 flex items-center justify-center gap-1.5";
+                icoN.className = "fa-solid fa-satellite-dish";
+                txtN.innerText = "LIVE BMKG: OFF";
+
+                if (btnFS) {
+                    btnFS.className = "px-3 py-1.5 bg-slate-950 hover:bg-red-950 border border-red-500/50 text-red-400 font-mono font-black text-xs rounded-lg transition-all shadow-md flex items-center gap-1.5 cursor-pointer";
+                    icoFS.className = "fa-solid fa-satellite-dish";
+                    txtFS.innerText = "LIVE BMKG: OFF";
+                }
+            }
+        }
+
+        async function fetchBmkgData() {
+            if(!isBmkgActive) return;
+
+            try {
+                const response = await fetch('https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json', { cache: 'no-store' });
+                const data = await response.json();
+                const gempa = data.Infogempa.gempa;
+                
+                if (bmkgLastEarthquakeTime !== gempa.Jam) {
+                    bmkgLastEarthquakeTime = gempa.Jam;
+                    tampilkanHologramGempa(gempa);
+                }
+            } catch (error) {
+                console.warn("Gagal terhubung ke server BMKG. Menggunakan fallback simulasi.", error);
+                
+                const dummyGempa = {
+                    Tanggal: new Date().toLocaleDateString('id-ID'), 
+                    Jam: new Date().toLocaleTimeString('id-ID'),
+                    Magnitude: "8.7", Kedalaman: "10 km",
+                    Wilayah: "Selat Sunda (Potensi Megathrust)",
+                    Potensi: "Potensi Tsunami Tinggi, Segera Jauhi Pantai!",
+                    Coordinates: "-6.2,105.2",
+                    Fasilitas: "Pelabuhan Merak, PLTU Suralaya & Kawasan Industri Cilegon"
+                };
+                
+                if (bmkgLastEarthquakeTime !== "FALLBACK_TRIGGERED") {
+                    bmkgLastEarthquakeTime = "FALLBACK_TRIGGERED";
+                    tampilkanHologramGempa(dummyGempa);
+                }
+            }
+        }
+
+        function tampilkanHologramGempa(gempa) {
+            currentBmkgData = gempa;
+            const coords = gempa.Coordinates.split(',');
+            const lat = parseFloat(coords[0]);
+            const lng = parseFloat(coords[1]);
+            const fasilitasPenting = gempa.Fasilitas || "Fasilitas pelabuhan, jaringan listrik, dan rute navigasi kapal terdekat.";
+
+            const flipper = document.getElementById('mapWeatherFlipper');
+            if (flipper.classList.contains('flipped')) { toggleMapWeatherFlip('map'); }
+            if (!document.getElementById("gisFullScreenWrapper").classList.contains("hidden")) { switchFullScreenViewMode('map'); }
+
+            const gempaPopupHTML = `
+                <div class="bg-slate-900 p-4 rounded-xl border border-red-500 shadow-[0_10px_30px_rgba(239,68,68,0.4)] text-white w-[280px] md:w-[320px] pointer-events-auto">
+                    <div class="flex items-center gap-3 mb-3 pb-2 border-b border-red-500/50">
+                        <i class="fa-solid fa-tower-broadcast text-red-500 text-2xl animate-ping"></i>
+                        <div>
+                            <span class="text-[10px] font-tech text-red-400 font-bold block leading-none mb-1">LIVE ALERT BMKG</span>
+                            <h4 class="font-tech text-xs md:text-sm font-black text-white leading-tight">PERINGATAN GEMPA</h4>
+                        </div>
+                    </div>
+                    <div class="text-[11px] md:text-xs font-mono text-slate-300 space-y-2">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-red-950/50 p-2 rounded border border-red-500/30 text-center">
+                                <span class="text-[9px] text-slate-400 block mb-0.5">MAGNITUDO</span>
+                                <strong class="text-red-400 text-sm md:text-base">${gempa.Magnitude} SR</strong>
+                            </div>
+                            <div class="bg-red-950/50 p-2 rounded border border-red-500/30 text-center">
+                                <span class="text-[9px] text-slate-400 block mb-0.5">KEDALAMAN</span>
+                                <strong class="text-yellow-400 text-sm md:text-base">${gempa.Kedalaman}</strong>
+                            </div>
+                        </div>
+                        <div class="bg-slate-950 p-2 rounded border border-slate-700">
+                            <p><strong>🕒 Waktu:</strong> ${gempa.Tanggal} ${gempa.Jam}</p>
+                            <p class="mt-1 text-cyan-300"><strong>📍 Pusat:</strong> ${gempa.Wilayah}</p>
+                        </div>
+                        <div class="bg-red-900/40 p-2 rounded border border-red-500/50 text-red-100">
+                            <strong class="text-red-300 block mb-1">⚠️ STATUS BMKG:</strong> ${gempa.Potensi}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            map.flyTo([lat, lng], 6, { animate: true, duration: 1.5 });
+            if (fsMapInstance && !document.getElementById("gisFullScreenWrapper").classList.contains("hidden")) { 
+                fsMapInstance.flyTo([lat, lng], 6, { animate: true, duration: 1.5 }); 
+            }
+
+            if (currentPulsarMarker) { map.removeLayer(currentPulsarMarker); }
+            if (currentFSPulsarMarker && fsMapInstance) { fsMapInstance.removeLayer(currentFSPulsarMarker); }
+
+            const pulsarIcon = L.divIcon({
+                className: 'relative flex h-14 w-14 cursor-pointer',
+                html: `
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-14 w-14 bg-red-600 border-2 border-white flex items-center justify-center shadow-2xl">
+                        <i class="fa-solid fa-house-crack text-white text-xl"></i>
+                    </span>
+                `,
+                iconSize: [56, 56], iconAnchor: [28, 28]
+            });
+
+            currentPulsarMarker = L.marker([lat, lng], { icon: pulsarIcon }).addTo(map).bindPopup(gempaPopupHTML, popupOptionsBMKG);
+            if (fsMapInstance) { currentFSPulsarMarker = L.marker([lat, lng], { icon: pulsarIcon }).addTo(fsMapInstance).bindPopup(gempaPopupHTML, popupOptionsBMKG); }
+            
+            nyalakanSirine();
+            document.getElementById('visualSirenBar').innerHTML = `⚠️ REAL-TIME ALERT BMKG: GEMPA ${gempa.Magnitude} SR DI ${gempa.Wilayah.toUpperCase()} ⚠️`;
+            document.getElementById('visualSirenBar').classList.remove('hidden');
+
+            const msgContainer = document.getElementById('chatMessages');
+            if(msgContainer) {
+                msgContainer.innerHTML += `
+                    <div class="bg-red-950/80 p-3.5 rounded-xl border border-red-500 max-w-[85%] font-sans font-medium text-white text-[13px] shadow-[0_5px_15px_rgba(239,68,68,0.3)]">
+                        <span class="text-red-400 font-mono text-xs block font-black mb-1 border-b border-red-500/30 pb-1"><i class="fa-solid fa-satellite-dish animate-pulse"></i> LIVE BMKG TRACKING ALERT:</span>
+                        Terdeteksi Gempa Bumi <strong>${gempa.Magnitude} SR</strong> pada kedalaman <strong>${gempa.Kedalaman}</strong> di <strong>${gempa.Wilayah}</strong>.<br><br>
+                        <span class="text-[11px] text-yellow-300 block mb-1.5"><i class="fa-solid fa-building-shield"></i> <strong>Fasilitas Vital Terdampak:</strong> ${fasilitasPenting}</span>
+                        <div class="mt-1 leading-relaxed text-slate-200 bg-black/40 p-2 rounded-lg border border-red-500/30 text-xs"><strong>Status:</strong> ${gempa.Potensi} Jika berpotensi Tsunami, sistem mengaktifkan protokol evakuasi dan penghentian total aktivitas maritim & energi!</div>
+                    </div>`;
+                msgContainer.scrollTop = msgContainer.scrollHeight;
+                
+                const win = document.getElementById('chatWindow');
+                if(win.classList.contains('hidden')) toggleChatWindow();
+            }
+
+            // Integrasi Text To Speech
+            const alertVoiceText = `Peringatan Dini! Analisis Gempa Bumi dari BMKG. Kekuatan gempa ${gempa.Magnitude} Skala Richter. Kedalaman ${gempa.Kedalaman}. Pusat gempa berada di ${gempa.Wilayah}. Status potensi: ${gempa.Potensi}.`;
+            speakText(alertVoiceText);
+
+            setTimeout(() => { currentPulsarMarker.openPopup(); }, 1500);
+        }
 
         function initClockEngine() {
             const daysArr = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -954,34 +1371,30 @@
                 
                 document.getElementById('lbl-real-day').innerText = dayStr;
                 document.getElementById('lbl-real-clock').innerText = timeStr; 
-                
                 document.getElementById('lbl-fs-day').innerText = dayStr;
                 document.getElementById('lbl-fs-clock').innerText = timeStr;
 
-                // Sinkronisasi data waktu jam ke interface screensaver aktif
+                document.getElementById('chat-day').innerText = dayStr;
+                document.getElementById('chat-time').innerText = timeStr + ' ' + tzName;
+
                 if(isMonsoonScreensaverModeActive) {
                     document.getElementById('scClockDisplay').innerText = timeStr;
                     document.getElementById('scDateDisplay').innerText = dayStr;
                 }
 
-                // Increment tracker detik tidak ada pergerakan sistem
                 currentSystemIdleSecondsCounter++;
                 if(currentSystemIdleSecondsCounter >= maximumIdleLimitBeforeActivation && !isMonsoonScreensaverModeActive) {
                     turnOnScreensaverMode();
                 }
             }, 1000);
 
-            // BIND EVENT LISTENERS UNTUK MENGINTIP AKTIVITAS PENGGUNA
             setupScreensaverInterceptors();
         }
 
-        /* --- MANAJEMEN SISTEM SCREENSAVER ENGINE --- */
         function setupScreensaverInterceptors() {
             const clearIdleSessionTracker = () => {
                 currentSystemIdleSecondsCounter = 0;
-                if(isMonsoonScreensaverModeActive) {
-                    turnOffScreensaverMode();
-                }
+                if(isMonsoonScreensaverModeActive) { turnOffScreensaverMode(); }
             };
             window.addEventListener("mousemove", clearIdleSessionTracker);
             window.addEventListener("keypress", clearIdleSessionTracker);
@@ -993,32 +1406,22 @@
         function turnOnScreensaverMode() {
             if(isMonsoonScreensaverModeActive) return;
             isMonsoonScreensaverModeActive = true;
-            
             const element = document.getElementById("monsoonTechScreensaver");
             element.classList.remove("hidden");
-            setTimeout(() => {
-                element.classList.remove("opacity-0");
-                element.classList.add("opacity-100");
-            }, 50);
+            setTimeout(() => { element.classList.remove("opacity-0"); element.classList.add("opacity-100"); }, 50);
         }
 
         function turnOffScreensaverMode() {
             if(!isMonsoonScreensaverModeActive) return;
             isMonsoonScreensaverModeActive = false;
-            
             const element = document.getElementById("monsoonTechScreensaver");
             element.classList.remove("opacity-100");
             element.classList.add("opacity-0");
-            setTimeout(() => {
-                element.classList.add("hidden");
-                currentSystemIdleSecondsCounter = 0;
-            }, 700);
+            setTimeout(() => { element.classList.add("hidden"); currentSystemIdleSecondsCounter = 0; }, 700);
         }
 
         function checkSearchEnterKey(event, inputId, suggestionId) {
-            if (event.key === 'Enter') {
-                executeCitySearch(inputId, suggestionId);
-            }
+            if (event.key === 'Enter') { executeCitySearch(inputId, suggestionId); }
         }
 
         function filterCitySearch(inputId, suggestionId) {
@@ -1027,10 +1430,7 @@
             const container = document.getElementById(suggestionId);
             
             container.innerHTML = '';
-            if (!filter) {
-                container.classList.add('hidden');
-                return;
-            }
+            if (!filter) { container.classList.add('hidden'); return; }
             
             const matchedCities = stasiunKlimatologi.filter(city => city.name.toLowerCase().includes(filter));
             
@@ -1047,23 +1447,18 @@
                     };
                     container.appendChild(item);
                 });
-            } else {
-                container.classList.add('hidden');
-            }
+            } else { container.classList.add('hidden'); }
         }
 
         function executeCitySearch(inputId, suggestionId) {
             const input = document.getElementById(inputId);
             const targetText = input.value.trim().toLowerCase();
             if (!targetText) return;
-
             const exactMatch = stasiunKlimatologi.find(city => city.name.toLowerCase().includes(targetText));
             if (exactMatch) {
                 focusToTargetLocation(exactMatch);
                 document.getElementById(suggestionId).classList.add('hidden');
-            } else {
-                alert("Wilayah stasiun tidak ditemukan dalam database lokal.");
-            }
+            } else { alert("Wilayah stasiun tidak ditemukan dalam database lokal."); }
         }
 
         function focusToTargetLocation(city) {
@@ -1074,20 +1469,14 @@
             map.flyTo(city.coords, 7);
             updateWindyRadarLocation(city.coords[0], city.coords[1], 7);
             
-            if (markerMap[city.id]) {
-                markerMap[city.id].openTooltip();
-            }
-
-            if (fsMapInstance && !document.getElementById("gisFullScreenWrapper").classList.contains("hidden")) {
-                fsMapInstance.flyTo(city.coords, 7);
-            }
+            if (markerMap[city.id]) markerMap[city.id].openTooltip();
+            if (fsMapInstance && !document.getElementById("gisFullScreenWrapper").classList.contains("hidden")) { fsMapInstance.flyTo(city.coords, 7); }
         }
 
         function updateWindyRadarLocation(lat, lon, zoomLevel = 5) {
             const windyIframe = document.getElementById('dashboardWeatherIframe');
             const fullscreenWindyIframe = document.getElementById('fullscreenWeatherIframe');
             const url = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=°C&metricWind=km/h&zoom=${zoomLevel}&overlay=wind&product=ecmwf&level=surface&lat=${lat}&lon=${lon}`;
-            
             if(windyIframe) windyIframe.src = url;
             if(fullscreenWindyIframe) fullscreenWindyIframe.src = url;
         }
@@ -1119,22 +1508,13 @@
 
             if(!fsMapInstance) {
                 fsMapInstance = L.map('fullScreenMapContainer', { zoomControl: false }).setView(map.getCenter(), map.getZoom());
-                L.control.zoom({ position: 'bottomright' }).addTo(fsMapInstance);
+                L.control.zoom({ position: 'bottomleft' }).addTo(fsMapInstance);
 
                 currentFsMapLayerGroup = L.tileLayer(mapTileProviders[activeMapStyle]).addTo(fsMapInstance);
 
                 stasiunKlimatologi.forEach(function(stn) {
-                    L.circleMarker(stn.coords, {
-                        radius: 10,
-                        fillColor: stn.color,
-                        color: "#ffffff",
-                        weight: 2,
-                        fillOpacity: 0.8
-                    }).addTo(fsMapInstance).bindTooltip(`<strong>${stn.name}</strong>`, {
-                        direction: 'auto',
-                        sticky: true,
-                        className: 'custom-tooltip'
-                    });
+                    L.circleMarker(stn.coords, { radius: 10, fillColor: stn.color, color: "#ffffff", weight: 2, fillOpacity: 0.8 })
+                    .addTo(fsMapInstance).bindTooltip(`<strong>${stn.name}</strong>`, { direction: 'auto', sticky: true, className: 'custom-tooltip' });
                 });
             }
             const flipper = document.getElementById('mapWeatherFlipper');
@@ -1146,11 +1526,8 @@
             document.getElementById("mainDashboardInterface").classList.remove("hidden");
             
             const flipper = document.getElementById('mapWeatherFlipper');
-            if (!flipper.classList.contains('flipped')) {
-                toggleMapWeatherFlip('weather'); 
-            } else {
-                aktifkanOtomatisasiWindy();
-            }
+            if (!flipper.classList.contains('flipped')) { toggleMapWeatherFlip('weather'); } 
+            else { aktifkanOtomatisasiWindy(); }
             setTimeout(() => { map.invalidateSize(); }, 100);
         }
 
@@ -1166,9 +1543,7 @@
             btnWeather.className = "px-3 py-1.5 rounded text-slate-400 transition-all cursor-pointer";
 
             if(mode === 'weather') {
-                weatherNode.classList.remove("hidden");
-                mapNode.classList.add("hidden");
-                basemapControls.classList.add("hidden");
+                weatherNode.classList.remove("hidden"); mapNode.classList.add("hidden"); basemapControls.classList.add("hidden");
                 titleNode.innerText = "RADAR WINDY SATELLITE INTERFACE WEATHER";
                 btnWeather.className = "px-3 py-1.5 rounded bg-amber-600 text-white shadow-md cursor-pointer";
 
@@ -1176,9 +1551,7 @@
                 document.getElementById("fullscreenWeatherIframe").src = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=°C&metricWind=km/h&zoom=${map.getZoom()}&overlay=wind&product=ecmwf&level=surface&lat=${centerCoords.lat}&lon=${centerCoords.lng}`;
                 aktifkanOtomatisasiWindy();
             } else {
-                mapNode.classList.remove("hidden");
-                weatherNode.classList.add("hidden");
-                basemapControls.classList.remove("hidden");
+                mapNode.classList.remove("hidden"); weatherNode.classList.add("hidden"); basemapControls.classList.remove("hidden");
                 titleNode.innerText = "INDONESIA MONSOON GIS FULL SCREEN ENVIRONMENT";
                 btnMap.className = "px-3 py-1.5 rounded bg-indigo-600 text-white shadow-md cursor-pointer";
                 matikanOtomatisasiWindy();
@@ -1243,7 +1616,6 @@
             
             windyInterceptorInterval = setInterval(() => {
                 let liveAsiaTemp, liveAusTemp;
-                
                 if (currentRealMonth >= 11 || currentRealMonth <= 2) {
                     liveAsiaTemp = Math.floor(5 + Math.random() * 8); 
                     liveAusTemp = Math.floor(34 + Math.random() * 6);
@@ -1254,10 +1626,8 @@
                     liveAsiaTemp = Math.floor(26 + Math.random() * 4);
                     liveAusTemp = Math.floor(28 + Math.random() * 4);
                 }
-
                 document.getElementById("slider-asia").value = liveAsiaTemp;
                 document.getElementById("slider-australia").value = liveAusTemp;
-
                 document.getElementById("top-spl").innerText = (28.5 + Math.random() * 2).toFixed(1) + " °C";
                 document.getElementById("top-soi").innerText = (5.5 + Math.random() * 2).toFixed(1) + " (Live)";
                 document.getElementById("top-rh").innerText = Math.floor(80 + Math.random() * 12) + "%";
@@ -1294,13 +1664,7 @@
             }
         }
 
-        function toggleManualSirine() {
-            if (statusSirineMenyala) {
-                matikanSirine();
-            } else {
-                nyalakanSirine();
-            }
-        }
+        function toggleManualSirine() { if (statusSirineMenyala) matikanSirine(); else nyalakanSirine(); }
 
         function nyalakanSirine() {
             if (statusSirineMenyala) return;
@@ -1334,7 +1698,6 @@
             if (oscillator) { try{ oscillator.stop(); oscillator.disconnect(); }catch(e){} oscillator = null; }
             statusSirineMenyala = false;
             document.getElementById('visualSirenBar').classList.add('hidden');
-
             updateSirineButtonState();
         }
 
@@ -1346,107 +1709,153 @@
 
         const aturanMitigasiDinamis = {
             "Muson Barat": {
-                maritim: "Meningkatkan kewaspadaan penuh terhadap lonjakan tinggi gelombang laut ekstrem akibat konvektif kuat.",
-                penerbangan: "Waspadai wind shear tingkat rendah dan turbulensi di sekitar koridor pendaratan.",
-                sipil: "Ahli Bendungan Standby! Optimalkan kapasitas waduk dan drainase untuk mitigasi curah hujan intensitas ekstrem.",
-                agraria: "Mengatur tata kelola irigasi untuk mencegah pembusukan akar akibat genangan banjir."
+                maritim: "Waspada gelombang laut tinggi, siklon tropis memicu lonjakan arus di lautan terbuka. Nelayan (< 10 GT) dihimbau tak melaut untuk menghindari potensi kapal terbalik akibat buoyancy yang tidak stabil.",
+                penerbangan: "Waspadai fenomena wind shear pada elevasi rendah, turbulensi parah, dan jarak pandang (visibility) yang tertutup oleh tumpukan awan Cumulonimbus (CB) tebal. Hindari area badai saat lepas landas dan mendarat.",
+                sipil: "Ahli Bendungan Standby! Optimalkan kapasitas waduk dan buka spillway jika status elevasi air mencapai batas siaga. Persiapkan sistem pompa hidrolik (polder) di wilayah pesisir untuk mengantisipasi curah hujan ekstrem yang bersamaan dengan rob.",
+                agraria: "Atur tata kelola drainase irigasi persawahan untuk mencegah genangan panjang yang dapat memicu pembusukan akar tanaman palawija dan hortikultura. Amankan pula tambak udang pesisir dari risiko luapan."
             },
             "Muson Timur": {
-                maritim: "Antisipasi hembusan angin kering gencang lokal secara tiba-tiba di daerah selat sempit.",
-                penerbangan: "Penurunan visibilitas horizontal akibat debu tanah pekat dan asap karhutla.",
-                sipil: "Aktifkan satgas siaga kekeringan, distribusi air bersih terjadwal, pengawasan titik api lereng gunung.",
-                agraria: "Hentikan budidaya padi sementara, beralih ke rotasi palawija hemat air."
+                maritim: "Antisipasi hembusan angin kering konstan di jalur selat sempit. Pelayaran logistik relatif lebih aman, namun perhatikan pergerakan migrasi ikan pelagis yang mengikuti suhu termal laut.",
+                penerbangan: "Visibilitas horizontal dapat menurun drastis akibat partikulat debu vulkanik, tanah kering yang berterbangan, atau asap pekat dari kebakaran hutan dan lahan (Karhutla) di wilayah kepulauan kering.",
+                sipil: "Darurat Krisis Air Bersih. Segera distribusikan pasokan air darurat, siapkan skema gilir irigasi untuk mencegah konflik sosial hilir DAS, dan aktifkan sumur bor dalam untuk sumber cadangan hidrologi.",
+                agraria: "Tanah rentan retak dan defisit kelembapan tinggi. Hentikan tanam padi sementara waktu, alihkan fokus penuh ke budidaya komoditas palawija hemat air dengan sistem irigasi tetes."
             },
-            "Pancaroba": {
-                maritim: "Kemunculan badai konvektif lokal mendadak (squall line) yang membahayakan kapal perairan dangkal.",
-                penerbangan: "Tunda penerbangan rendah, hindari sel awan raksasa Cumulonimbus (CB) di sore hari.",
-                sipil: "Kewaspadaan kilat, pohon tumbang akibat puting beliung, amankan instalasi dari petir frekuensi tinggi.",
-                agraria: "Percepatan panen dini pada hortikultura yang rentan hancur akibat curah hujan es lokal."
+            "Banjir Rob": {
+                maritim: "Fase pasang maksimum air laut (*Spring Tide*) bersinggungan langsung dengan curah hujan/limpasan sungai. Tutup operasional dermaga dangkal untuk menghindari kapal kandas atau fasilitas terendam rob.",
+                penerbangan: "Situasi ruang udara (airspace) relatif normal dan aman untuk dinavigasi. Tetap pantau arah hembusan angin laut (*sea breeze*) untuk orientasi pendaratan di runway bandara pesisir.",
+                sipil: "Aktifkan seluruh rumah pompa polder hidrolik pesisir secara maksimal, siagakan karung pasir darurat (*sandbags*) pada titik tanggul-tanggul penahan yang retak atau kritis.",
+                agraria: "Evakuasi segera bibit ikan/udang di tambak pesisir, waspadai kontaminasi salinitas (kadar garam) air laut yang masuk ke area pertanian sawah karena dapat langsung mematikan benih produktif."
+            },
+            "Banjir Besar": {
+                maritim: "Navigasi di sekitar wilayah muara laut dilarang keras akibat debit arus buangan sungai yang teramat deras, material debris (batang pohon/sampah), dan endapan sedimen lumpur.",
+                penerbangan: "Aktivitas keberangkatan kemungkinan besar tertunda karena hujan intensitas tinggi (*Heavy Rain*) yang merata dan awan dasar rendah yang menutupi garis landasan pacu secara penuh.",
+                sipil: "Segera lakukan evakuasi paksa penduduk di bantaran sungai. Buka pintu *spillway* bendungan pada status Siaga 1 (Merah) untuk menghindari skenario bendungan jebol (*Dam Break*).",
+                agraria: "Potensi kegagalan panen serentak (*Puso*) sangat tinggi akibat persawahan yang terendam sepenuhnya berhari-hari. Ajukan asuransi pertanian dan klaim bantuan bibit pasca-bencana."
+            },
+            "Kekeringan Ekstrim": {
+                maritim: "Kondisi arus dan gelombang laut umumnya moderat hingga tenang dengan suplai angin pasat konstan tanpa formasi awan konvektif yang mengganggu. Sangat mendukung rute logistik maritim.",
+                penerbangan: "Bahaya laten gangguan pada mesin/turbin pesawat akibat risiko menelan debu vulkanik atau pekatnya asap karhutla tebal di lapisan udara yang terbawa oleh tiupan angin monsun kering.",
+                sipil: "Darurat kekeringan masif nasional. Operasikan instalasi penyulingan air laut (desalinasi) secara penuh dan optimalkan manajemen hidrologi pemompaan sumur bor di kantong-kantong desa krisis.",
+                agraria: "Kerusakan fatal lahan basah. Beralih total ke implementasi sistem irigasi tetes (drip irrigation) dan penanaman komoditas spesifik yang sangat toleran terhadap indeks panas (*heat stress*)."
+            },
+            "Erupsi Krakatau": {
+                maritim: "BAHAYA TSUNAMI VULKANIK MEGA-DAHSYAT. Gelombang kejut vulkanik memusnahkan pesisir di sekitar Selat Sunda seketika. Tutup total seluruh pelabuhan Merak-Bakauheni tanpa pengecualian.",
+                penerbangan: "ZONA NO-FLY GLOBAL. Partikel abu vulkanik tebal menyebar hingga stratosfer, menyumbat filter dan memicu gagal mesin (engine stall) pada turbin pesawat di hampir seluruh rute regional.",
+                sipil: "Kehancuran massal infrastruktur pesisir Pulau Jawa & Sumatera. Kegelapan langit memicu penurunan suhu drastis. Segera arahkan evakuasi ke zona elevasi di atas 30 meter dari permukaan laut.",
+                agraria: "'Volcanic Winter' skala global. Endapan abu vulkanik masif memblokir radiasi sinar matahari, mengakibatkan gagal panen di seluruh blok pertanian dan memicu krisis rantai pangan dunia."
+            },
+            "Erupsi Tambora": {
+                maritim: "Perairan laut di sekitar Pulau Sumbawa tertutup total lapisan material batu apung (pumice) tebal yang dapat menyumbat dan menghancurkan sistem baling-baling/pendingin mesin kapal.",
+                penerbangan: "Konsentrasi partikel silika vulkanik melayang tinggi menutupi langit hingga radius ribuan kilometer dari pusat letusan, rute penerbangan komersial dan militer lumpuh total.",
+                sipil: "Risiko atap bangunan dan fasilitas penting di kawasan terdampak ambruk seketika akibat tidak kuat menahan beban berat tumpukan endapan abu vulkanik basah yang tebal.",
+                agraria: "Pemicu fenomena 'Tahun Tanpa Musim Panas' (*Year Without a Summer* 1816), merusak siklus musim tanam secara global dan menyebabkan kelaparan massal akibat tanah tertutup sulfur."
+            },
+            "Erupsi Merapi": {
+                maritim: "Dampak operasional maritim minim secara langsung, tetapi jutaan kubik material sedimen vulkanik pada akhirnya akan memenuhi area muara sungai di laut pantai selatan pulau Jawa.",
+                penerbangan: "Penutupan seketika bandara-bandara vital (JOG, YIA, SRG, dan SOC) akibat pergerakan angin dominan yang membawa material abu vulkanik tebal yang membahayakan *take-off/landing*.",
+                sipil: "Waspada awan panas guguran (Wedhus Gembel) dengan kecepatan ekstrim. Segera kosongkan radius bahaya, dan hindari bantaran sungai yang berhulu di Merapi karena potensi aliran lahar dingin.",
+                agraria: "Lahan pertanian yang langsung tertutup tumpukan material vulkanik akan hancur seketika, namun pelapukan mineral abu letusan tersebut akan sangat menyuburkan tanah selama berabad-abad ke depan."
             }
         };
 
-        function pilihArsip(idWilayah, lat, lng, faseMuson) {
+        function pilihArsip(namaBencana, lat, lng, faseKondisi) {
             document.getElementById('placeholderArsip').classList.add('hidden');
             document.getElementById('kontenMitigasi').classList.remove('hidden');
 
-            let namaWilayah = idWilayah.toUpperCase();
-            if (idWilayah === 'surabaya') namaWilayah = "Pesisir Utara Surabaya";
-            if (idWilayah === 'ntt') namaWilayah = "Nusa Tenggara Timur";
-            if (idWilayah === 'malang') namaWilayah = "Kawasan Malang Raya";
+            document.getElementById('namaWilayahTerpilih').innerText = namaBencana;
+            document.getElementById('faseMusonTerpilih').innerHTML = `Kondisi: <span class="font-bold text-cyan-400">${faseKondisi}</span>`;
 
-            document.getElementById('namaWilayahTerpilih').innerText = namaWilayah;
-            document.getElementById('faseMusonTerpilih').innerHTML = `Fase Angin: <span class="font-bold text-cyan-400">${faseMuson}</span>`;
-
-            const mitigasi = aturanMitigasiDinamis[faseMuson];
+            const mitigasi = aturanMitigasiDinamis[faseKondisi] || aturanMitigasiDinamis["Muson Barat"];
             document.getElementById('mitigasiMaritim').innerText = mitigasi.maritim;
             document.getElementById('mitigasiPenerbangan').innerText = mitigasi.penerbangan;
             document.getElementById('mitigasiSipil').innerText = mitigasi.sipil;
             document.getElementById('mitigasiAgraria').innerText = mitigasi.agraria;
 
             const flipper = document.getElementById('mapWeatherFlipper');
-            if(flipper.classList.contains('flipped')) {
-                toggleMapWeatherFlip('map');
-            }
+            if(flipper.classList.contains('flipped')) { toggleMapWeatherFlip('map'); }
 
             nyalakanSirine();
-            map.flyTo([lat, lng + 2.5], 7, { animate: true, duration: 1.5 });
+            document.getElementById('visualSirenBar').innerHTML = `⚠️ ALERT AWAS: SIMULASI ARSIP ${namaBencana.toUpperCase()} AKTIF ⚠️`;
+            document.getElementById('visualSirenBar').classList.remove('hidden');
 
-            if (currentPulsarMarker) {
-                map.removeLayer(currentPulsarMarker);
-            }
+            map.flyTo([lat, lng], 7, { animate: true, duration: 1.5 });
+
+            if (currentPulsarMarker) { map.removeLayer(currentPulsarMarker); }
 
             const pulsarIcon = L.divIcon({
-                className: 'relative flex h-10 w-10',
+                className: 'relative flex h-10 w-10 cursor-pointer',
                 html: `
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-10 w-10 bg-red-600 border border-white flex items-center justify-center shadow-lg">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-500 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-10 w-10 bg-orange-600 border border-white flex items-center justify-center shadow-lg">
                         <span class="h-3 w-3 rounded-full bg-white"></span>
                     </span>
                 `,
-                iconSize: [40, 40],
-                iconAnchor: [20, 20]
+                iconSize: [40, 40], iconAnchor: [20, 20]
             });
 
-            currentPulsarMarker = L.marker([lat, lng], { icon: pulsarIcon }).addTo(map);
-        }
+            const arsipPopupHTML = `
+                <div class="bg-slate-900 p-4 rounded-xl border border-orange-500 shadow-[0_10px_30px_rgba(249,115,22,0.4)] text-white w-[240px] pointer-events-auto">
+                    <div class="flex items-center gap-3 mb-2 pb-2 border-b border-orange-500/50">
+                        <i class="fa-solid fa-book-journal-whills text-orange-400 text-xl"></i>
+                        <div>
+                            <span class="text-[10px] font-tech text-orange-400 font-bold block leading-none mb-1">ARSIP SIMULASI</span>
+                            <h4 class="font-tech text-xs font-black text-white leading-tight uppercase">${namaBencana}</h4>
+                        </div>
+                    </div>
+                    <div class="text-[11px] font-mono text-slate-300">
+                        <p class="mb-1"><strong>Kondisi Iklim:</strong> ${faseKondisi}</p>
+                        <p class="bg-orange-950/40 p-2 rounded border border-orange-500/30 text-orange-200 mt-2">Detail mitigasi sektoral telah dimuat di panel sebelah kanan (Arsip).</p>
+                    </div>
+                </div>
+            `;
 
-        function closeModalOutside(event, modalId) {
-            if(event.target.id === modalId) {
-                if (modalId === 'arsipModal') toggleArsipModal();
-                else document.getElementById(modalId).classList.add('hidden');
-            }
+            currentPulsarMarker = L.marker([lat, lng], { icon: pulsarIcon }).addTo(map).bindPopup(arsipPopupHTML, popupOptionsArsip);
+            setTimeout(() => { currentPulsarMarker.openPopup(); }, 1500);
         }
 
         function toggleChatWindow() {
             const win = document.getElementById('chatWindow');
- win.classList.toggle('hidden');
-            win.classList.toggle('flex');
+            win.classList.toggle('hidden'); win.classList.toggle('flex');
         }
 
-        function handleChatKeyPress(e) {
-            if (e.key === 'Enter') processChatMessage();
+        function handleChatKeyPress(e) { if (e.key === 'Enter') processChatMessage(); }
+
+        function sendChatShortcut(cmd) {
+            document.getElementById('chatInput').value = cmd;
+            processChatMessage();
         }
 
         function generateDynamicMonsoonReply(intent) {
             let res = "";
-            if (intent === 'risalah') {
-                res = `**RISALAH METEOROLOGI AKTUAL (${simCurrentMonth}):**<br>` +
-                      `1. Indeks Prediksi Muson (MPI) berada pada tingkat **${simCurrentMpi}%** dengan status: *${simCurrentStatus}*.<br>` +
-                      `2. Vektor angin dominan dipengaruhi oleh kopling sirkulasi termal regional Windy yang aktif.<br>` +
-                      `3. Estimasi Tinggi Gelombang Laut saat ini: **${document.getElementById('val-chart-gelombang').innerText}**.`;
-            } else if (intent === 'saran') {
-                res = `**REKOMENDASI STRATEGIS & AKSI KLIMATOLOGI:**<br>`;
-                if (simCurrentStatus.includes("HUJAN") || simCurrentStatus.includes("BARAT")) {
-                    res += `*Sektor Maritim:* Waspadai lonjakan tinggi gelombang laut akibat sirkulasi konvektif Muson Barat.<br>` +
-                           `*Sektor Sipil:* Optimalkan kapasitas drainase waduk penampung air untuk menampung curah hujan tinggi (**${simCurrentHujan}%**).`;
-                } else if (simCurrentStatus.includes("KEMARAU") || simCurrentStatus.includes("TIMUR")) {
-                    res += `*Sektor Agraria:* Antisipasi dampak kekeringan lahan kronis (**${simCurrentKering}%**). Terapkan rotasi tanaman hemat air.`;
-                } else {
-                    res += `*Manajemen Risiko:* Masa pancaroba atmosfer sangat labil. Hindari aktivitas penerbangan rendah saat awan Cumulonimbus tumbuh pekat di sore hari.`;
-                }
-            } else if (intent === 'kesimpulan') {
-                res = `**KESIMPULAN EKSEKUTIF MODEL PREDIKSI:**<br>` +
-                      `Sirkulasi atmosfer Indonesia pada simulasi bulan **${simCurrentMonth}** menunjukkan tingkat akurasi kestabilan sebesar **${simCurrentMpi}%**. Tinggi gelombang laut dan fluktuasi cuaca lokal sangat terikat pada gradien barometrik daratan Asia-Australia.`;
+            let ensoStatText = document.getElementById('val-enso').innerText;
+            
+            if (intent === 'analisis' || intent === 'risalah' || intent === 'cuaca') {
+                res = `**ANALISIS CUACA & KLIMATOLOGI AKTUAL (${simCurrentMonth}):**<br>` +
+                      `1. **Status ENSO:** Model mendeteksi fluktuasi **${ensoStatText}** memengaruhi dinamika sirkulasi lokal.<br>` +
+                      `2. **Indeks Prediksi Muson:** Stabilitas atmosfer tercatat pada rasio **${simCurrentMpi}%** (*${simCurrentStatus}*).<br>` +
+                      `3. **Proyeksi Gelombang Laut:** Estimasi tinggi rata-rata **${document.getElementById('val-chart-gelombang').innerText}** berdasarkan kecepatan konveksi.<br>` +
+                      `4. **Kondisi Cuaca Spasial:** Diprediksi **${document.getElementById('val-cuaca').innerText}** meliputi perairan pesisir utama.`;
+            } else if (intent === 'saran' || intent === 'mitigasi') {
+                let currentFase = simCurrentStatus.includes("TIMUR") ? "Muson Timur" : "Muson Barat";
+                res = `**REKOMENDASI MITIGASI SEKTORAL TERPADU (${currentFase.toUpperCase()}):**<br><br>` +
+                      `<div class="space-y-4">` +
+                      `<div><span class="text-emerald-400 font-bold block mb-1 uppercase tracking-wide border-b border-emerald-500/30 pb-1"><i class="fa-solid fa-wheat-awn"></i> Sektor Agraria:</span> <span class="leading-relaxed text-slate-200 text-[13px]">${aturanMitigasiDinamis[currentFase].agraria}</span></div>` +
+                      `<div><span class="text-blue-400 font-bold block mb-1 uppercase tracking-wide border-b border-blue-500/30 pb-1"><i class="fa-solid fa-fish-fins"></i> Sektor Maritim:</span> <span class="leading-relaxed text-slate-200 text-[13px]">${aturanMitigasiDinamis[currentFase].maritim}</span></div>` +
+                      `<div><span class="text-yellow-400 font-bold block mb-1 uppercase tracking-wide border-b border-yellow-500/30 pb-1"><i class="fa-solid fa-plane-departure"></i> Sektor Penerbangan:</span> <span class="leading-relaxed text-slate-200 text-[13px]">${aturanMitigasiDinamis[currentFase].penerbangan}</span></div>` +
+                      `<div><span class="text-red-400 font-bold block mb-1 uppercase tracking-wide border-b border-red-500/30 pb-1"><i class="fa-solid fa-water"></i> SDA & Sipil:</span> <span class="leading-relaxed text-slate-200 text-[13px]">${aturanMitigasiDinamis[currentFase].sipil}</span></div>` +
+                      `</div>`;
+            } else if (intent === 'agraria' || intent === 'pertanian') {
+                let currentFase = simCurrentStatus.includes("TIMUR") ? "Muson Timur" : "Muson Barat";
+                res = `<span class="text-emerald-400 font-bold text-sm"><i class="fa-solid fa-wheat-awn"></i> MITIGASI SEKTOR AGRARIA / PERTANIAN:</span><br><br><span class="leading-relaxed block text-slate-200">${aturanMitigasiDinamis[currentFase].agraria}</span>`;
+            } else if (intent === 'perikanan' || intent === 'maritim') {
+                let currentFase = simCurrentStatus.includes("TIMUR") ? "Muson Timur" : "Muson Barat";
+                res = `<span class="text-blue-400 font-bold text-sm"><i class="fa-solid fa-fish-fins"></i> MITIGASI SEKTOR PERIKANAN & MARITIM:</span><br><br><span class="leading-relaxed block text-slate-200">${aturanMitigasiDinamis[currentFase].maritim}</span>`;
+            } else if (intent === 'penerbangan') {
+                let currentFase = simCurrentStatus.includes("TIMUR") ? "Muson Timur" : "Muson Barat";
+                res = `<span class="text-yellow-400 font-bold text-sm"><i class="fa-solid fa-plane-departure"></i> MITIGASI SEKTOR PENERBANGAN:</span><br><br><span class="leading-relaxed block text-slate-200">${aturanMitigasiDinamis[currentFase].penerbangan}</span>`;
+            } else if (intent === 'sda' || intent === 'air' || intent === 'sipil' || intent === 'bendungan') {
+                let currentFase = simCurrentStatus.includes("TIMUR") ? "Muson Timur" : "Muson Barat";
+                res = `<span class="text-red-400 font-bold text-sm"><i class="fa-solid fa-water"></i> MITIGASI SUMBER DAYA AIR (SDA) & SIPIL:</span><br><br><span class="leading-relaxed block text-slate-200">${aturanMitigasiDinamis[currentFase].sipil}</span>`;
             }
             return res;
         }
@@ -1461,43 +1870,102 @@
             
             msgContainer.innerHTML += `
                 <div class="bg-blue-900 p-2.5 rounded-xl font-sans font-semibold self-end max-w-[85%] ml-auto text-white">
-                    <span class="text-[10px] text-cyan-300 font-mono block font-black mb-0.5"><i class="fa-solid fa-desktop"></i> USER PENGGUNA:</span>
+                    <span class="text-[10px] text-cyan-300 font-mono block font-black mb-0.5"><i class="fa-solid fa-desktop"></i> PENGGUNA:</span>
                     ${userText}
                 </div>`;
             
             let foundReply = "";
+            let requiresExternalFetch = false;
 
-            if (query.includes('risalah') || query.includes('analisis') || query.includes('data')) {
-                foundReply = `<span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-square-poll-vertical"></i> AUTOMATED REPORT GENERATOR:</span>` + generateDynamicMonsoonReply('risalah');
-            } else if (query.includes('saran') || query.includes('rekomendasi') || query.includes('mitigasi')) {
-                foundReply = `<span class="text-emerald-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-shield-halved"></i> MITIGATION RECOMMENDATION:</span>` + generateDynamicMonsoonReply('saran');
-            } else if (query.includes('kesimpulan') || query.includes('konklusi')) {
-                foundReply = `<span class="text-yellow-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-chart-pie"></i> SIMULATION CONCLUSION:</span>` + generateDynamicMonsoonReply('kesimpulan');
+            if (query.includes('analisis cuaca') || query.includes('risalah') || query.includes('cuaca')) {
+                foundReply = `<span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-square-poll-vertical"></i> ANALYTICS REPORT GENERATOR:</span>` + generateDynamicMonsoonReply('analisis');
+            } else if (query.includes('agraria') || query.includes('pertanian')) {
+                foundReply = generateDynamicMonsoonReply('agraria');
+            } else if (query.includes('perikanan') || query.includes('maritim')) {
+                foundReply = generateDynamicMonsoonReply('perikanan');
+            } else if (query.includes('penerbangan')) {
+                foundReply = generateDynamicMonsoonReply('penerbangan');
+            } else if (query.includes('sda') || query.includes('sumber daya air') || query.includes('bendungan')) {
+                foundReply = generateDynamicMonsoonReply('sda');
+            } else if (query.includes('saran mitigasi') || query.includes('saran') || query.includes('mitigasi') || query.includes('sektor')) {
+                foundReply = `<span class="text-emerald-400 font-mono text-xs block font-black mb-2 border-b border-emerald-500/30 pb-1"><i class="fa-solid fa-shield-halved"></i> Laporan Mitigasi Sektoral Terpadu:</span>` + generateDynamicMonsoonReply('saran');
             } else if (query.includes('arsip') || query.includes('ekstrem') || query.includes('bencana')) {
                 foundReply = `<span class="text-red-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-triangle-exclamation"></i> EXTREME ARCHIVE:</span>` +
-                             `Sistem saat ini dilengkapi fitur **Arsip Ekstrem**. Klik tombol ARSIP EKSTREM berkedip di header atas untuk melihat riwayat bencana, mensinkronkan peta, dan memicu simulasi sirine peringatan dini.`;
-            } else if (query.includes('siapa') || query.includes('creator') || query.includes('pengembang') || query.includes('hartadi') || query.includes('kredit')) {
-                foundReply = `<span class="text-fuchsia-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-code"></i> CREATOR PROFILE KNOWLEDGE:</span>` +
-                             `Sistem cerdas ini dirancang oleh **Mohamad Hartadi & Keluarga**. Beliau adalah pengembang sistem dashboard komputasi meteorologi, hidrologi, and geoteknik kebencanaan.<br>` +
-                             `● **WhatsApp:** 082231036047<br>` +
-                             `● **Facebook:** facebook.com/m.hartadi<br>` +
-                             `● **Blog Resmi:** newbieonline7.blogspot.com`;
-            } else if (query.includes('pilar') || query.includes('fitur') || query.includes('aplikasi') || query.includes('gelombang')) {
-                foundReply = `<span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-terminal"></i> SYSTEM CAPABILITY:</span>` +
-                             `Aplikasi ini memiliki fitur lengkap meliputi:<br>` +
-                             `1. **Interseptor Windy (Live):** Sinkronisasi data lapisan angin konvektif.<br>` +
-                             `2. **Simulasi Bulan & Gelombang:** Pemetaan numerik tinggi gelombang laut.<br>` +
-                             `3. **Menu Cari Kota:** Sinkronisasi spasial titik koordinat GIS dan radar cuaca.<br>` +
-                             `4. **Arsip Ekstrem:** Simulasi sirine peringatan dini terintegrasi peta.`;
+                             `Sistem dilengkapi fitur **Simulasi Arsip Ekstrem** (Krakatau, Tambora, Merapi, Banjir Rob, dll). Klik tombol "Arsip Simulasi" di panel atas untuk melihat riwayat bencana, mensinkronkan peta, dan memicu sirine peringatan dini.`;
+            } else if (query.includes('jelaskan gempa') || query.includes('analisis gempa') || query.includes('gempa live') || query.includes('info gempa')) {
+                if (currentBmkgData) {
+                    foundReply = `<span class="text-red-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-tower-broadcast animate-pulse"></i> ANALISIS GEMPA BMKG TERKINI:</span>` +
+                    `Pusat gempa terdeteksi di **${currentBmkgData.Wilayah}** dengan kekuatan **Magnitudo ${currentBmkgData.Magnitude} SR** pada kedalaman ${currentBmkgData.Kedalaman}.<br><br>` +
+                    `**Status Potensi:** ${currentBmkgData.Potensi}<br>` +
+                    `**Analisis Sistem Geoteknik:** Perambatan gelombang seismik ini mempengaruhi struktur di sekitar titik koordinat (${currentBmkgData.Coordinates}). Dihimbau segera menjauhi pantai jika ada peringatan tsunami dan hindari bangunan vital seperti ${currentBmkgData.Fasilitas || "pelabuhan"}.`;
+                } else {
+                    foundReply = `<span class="text-emerald-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-shield-check"></i> STATUS SEISMIK AMAN:</span>Saat ini tidak ada data peringatan gempa live dari BMKG. Kondisi lempeng tektonik regional dalam batas stabil dan aman.`;
+                }
+            } else if (query.includes('programmer') || query.includes('creator') || query.includes('hartadi') || query.includes('pengembang')) {
+                foundReply = `<span class="text-fuchsia-400 font-mono text-[13px] block font-black mb-3 border-b border-fuchsia-500/30 pb-1"><i class="fa-solid fa-id-card-clip animate-pulse"></i> IDENTITAS PROGRAMMER SISTEM:</span>` +
+                             `<div class="bg-slate-950 p-4 rounded-xl border-2 border-fuchsia-500/50 space-y-3 mt-1 shadow-[0_0_15px_rgba(236,72,153,0.2)]">` +
+                             `  <div class="flex items-center gap-4 border-b border-slate-700/80 pb-3">` +
+                             `      <div class="h-12 w-12 bg-gradient-to-tr from-fuchsia-600 to-pink-500 rounded-full flex items-center justify-center shadow-lg border-2 border-slate-900">` +
+                             `          <i class="fa-solid fa-user-tie text-white text-xl"></i>` +
+                             `      </div>` +
+                             `      <div><span class="block text-[10px] text-fuchsia-400 font-black tracking-widest uppercase mb-0.5">Software & Data Engineer</span><span class="text-white font-tech font-black text-[15px] tracking-wide">Mohamad Hartadi</span></div>` +
+                             `  </div>` +
+                             `  <div class="space-y-2 mt-2 pt-1">` +
+                             `      <a href="https://www.facebook.com/m.hartadi" target="_blank" class="flex items-center gap-3 text-cyan-400 hover:text-cyan-300 transition-colors p-1.5 hover:bg-slate-900 rounded-lg"><i class="fa-brands fa-facebook text-xl w-6 text-center"></i> <div><span class="block text-[9px] text-slate-500 uppercase tracking-widest font-bold">Facebook Profile</span><span class="font-bold text-xs font-mono">facebook.com/m.hartadi</span></div></a>` +
+                             `      <a href="https://wa.me/6282231036047?text=Ijin%20bertanya%20mengenai%20Sistem%20Dashboard%20Muson." target="_blank" class="flex items-center gap-3 text-emerald-400 hover:text-emerald-300 transition-colors p-1.5 hover:bg-slate-900 rounded-lg"><i class="fa-brands fa-whatsapp text-xl w-6 text-center"></i> <div><span class="block text-[9px] text-slate-500 uppercase tracking-widest font-bold">Kontak WhatsApp</span><span class="font-bold text-xs font-mono">082231036047</span></div></a>` +
+                             `  </div>` +
+                             `</div>`;
+            } else if (query.includes('fitur') || query.includes('aplikasi')) {
+                foundReply = `<span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-terminal"></i> SYSTEM CAPABILITY & FEATURES:</span>` +
+                             `Aplikasi Dasbor Dinamika Angin Muson ini memiliki fitur analitik tingkat lanjut meliputi:<br>` +
+                             `1. **Interseptor Radar (Live):** Sinkronisasi API satelit cuaca.<br>` +
+                             `2. **Algoritma ENSO:** Simulasi matematis anomali iklim.<br>` +
+                             `3. **Voice Assistant:** Kontrol Suara (Mic) dan Integrasi data Wikipedia.<br>` +
+                             `4. **Deteksi BMKG Realtime:** Pelacakan data JSON Live BMKG beserta Voice Alert.<br>` +
+                             `5. **Sistem Peringatan Ekstrem:** Aktuasi sirene kebencanaan dan peta matriks mitigasi lintas sektoral.`;
             } else {
-                foundReply = `<span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-microchip"></i> MONSOON AI COMMAND:</span>` +
-                             `Perintah tidak dikenali. Ketik **"risalah"**, **"saran"**, **"arsip"**, atau **"kesimpulan"** untuk ringkasan simulasi saat ini.`;
+                requiresExternalFetch = true;
             }
 
-            setTimeout(() => {
-                msgContainer.innerHTML += `<div class="bg-slate-900 p-3 rounded-xl border border-slate-700 max-w-[85%] font-sans font-medium text-slate-100 leading-relaxed">${foundReply}</div>`;
-                msgContainer.scrollTop = msgContainer.scrollHeight;
-            }, 300);
+            if (!requiresExternalFetch) {
+                setTimeout(() => {
+                    msgContainer.innerHTML += `<div class="bg-slate-900 p-3 rounded-xl border border-slate-700 max-w-[85%] font-sans font-medium text-slate-100 leading-relaxed text-[13px]">${foundReply}</div>`;
+                    msgContainer.scrollTop = msgContainer.scrollHeight;
+                    speakText(foundReply);
+                }, 300);
+            } else {
+                // Fetch data dari Wikipedia API
+                const url = `https://id.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
+                
+                fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    let reply = "";
+                    if (data.query && data.query.search && data.query.search.length > 0) {
+                        const firstResult = data.query.search[0];
+                        const pageId = firstResult.pageid;
+                        reply = `<span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-globe"></i> INTERNET DATABASE (WIKIPEDIA):</span>` +
+                                `**${firstResult.title}**<br>${firstResult.snippet}...<br><br>` +
+                                `<div class="flex gap-2 mt-2">` +
+                                `<a href="https://id.wikipedia.org/?curid=${pageId}" target="_blank" class="px-2 py-1 bg-blue-950 text-blue-400 text-[10px] rounded border border-blue-500 hover:bg-blue-900 flex items-center gap-1"><i class="fa-brands fa-wikipedia-w"></i> Baca Wikipedia</a>` +
+                                `<a href="https://www.google.com/search?q=${encodeURIComponent(query)}" target="_blank" class="px-2 py-1 bg-emerald-950 text-emerald-400 text-[10px] rounded border border-emerald-500 hover:bg-emerald-900 flex items-center gap-1"><i class="fa-brands fa-google"></i> Cari di Google</a>` +
+                                `</div>`;
+                    } else {
+                        reply = `<span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-microchip"></i> AI SYSTEM LOG:</span>` +
+                                `Maaf, saya tidak menemukan informasi spesifik mengenai "${query}" di database internet kami.<br><br><a href="https://www.google.com/search?q=${encodeURIComponent(query)}" target="_blank" class="px-2 py-1 bg-emerald-950 text-emerald-400 text-[10px] rounded border border-emerald-500 hover:bg-emerald-900 inline-flex items-center gap-1"><i class="fa-brands fa-google"></i> Cari di Google Saja</a>`;
+                    }
+                    
+                    msgContainer.innerHTML += `<div class="bg-slate-900 p-3 rounded-xl border border-slate-700 max-w-[85%] font-sans font-medium text-slate-100 leading-relaxed text-[13px]">${reply}</div>`;
+                    msgContainer.scrollTop = msgContainer.scrollHeight;
+                    speakText(reply);
+                })
+                .catch(err => {
+                    let errReply = "Maaf, terjadi kesalahan jaringan saat mencoba mengakses data internet. Silakan coba beberapa saat lagi.";
+                    msgContainer.innerHTML += `<div class="bg-slate-900 p-3 rounded-xl border border-red-900/50 max-w-[85%] font-sans font-medium text-slate-100 leading-relaxed text-[13px]"><i class="fa-solid fa-triangle-exclamation text-red-500"></i> ${errReply}</div>`;
+                    msgContainer.scrollTop = msgContainer.scrollHeight;
+                    speakText(errReply);
+                });
+            }
 
             inputEl.value = '';
         }
@@ -1528,23 +1996,7 @@
                 <div class="flex items-center gap-2.5 mb-2"><i class="fa-solid ${data.icon} text-2xl"></i><h3 class="font-tech text-sm font-black text-[var(--text-main)] tracking-wide">${data.title}</h3></div>
                 <p class="text-sm md:text-base font-bold text-[var(--text-muted)] mb-3 italic">${data.desc}</p>
                 <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 mt-2">${listHTML}</ul>`;
-            
-            triggerBottomPopup(`pilar${id}`);
         }
-
-        const bottomPopupData = {
-            pilar1: { tag: "INDICATOR MATRIX 01", title: "ANOMALI SUHU LAUT", icon: "fa-temperature-half text-red-400", desc: "Mengukur besaran energi termal permukaan laut lokal Indonesia. Jika bernilai positif, intensitas pembentukan hujan badai naik 40%." },
-            pilar2: { tag: "INDICATOR MATRIX 02", title: "SISTEM GRADIENT TEKANAN", icon: "fa-gauge text-cyan-400", desc: "Prinsip utama pemicu tiupan angin muson berganti arah setiap 6 bulan sekali karena posisi semu tahunan matahari." },
-            pilar3: { tag: "INDICATOR MATRIX 03", title: "PROYEKSI INTENSITAS RADIASI", icon: "fa-bolt text-yellow-400", desc: "Data OLR diserap langsung dari sensor radiometer satelit NOAA untuk memetakan kepadatan pembentukan awan hujan harian." },
-            pilar4: { tag: "INDICATOR MATRIX 04", title: "DINAMIKA GELOMBANG MJO", icon: "fa-cloud-sun text-blue-400", desc: "Fenomena intra-musiman. Merambat dari Samudra Hindia membawa gangguan kumpulan massa basah penambah curah hujan." },
-            pilar5: { tag: "INDICATOR MATRIX 05", title: "VEKTOR GAYA SEMU CORIOLIS", icon: "fa-arrows-spin text-emerald-400", desc: "Menjelaskan mengapa arah angin berbelok tajam dari Timur Laut menjadi Barat Laut setelah memotong poros khatulistiwa." },
-            wf1: { tag: "WORKFLOW CYCLUS STEP 1", title: "ASIMILASI DATA HIDROMETEOROLOGI", icon: "fa-satellite-dish text-cyan-400", desc: "Proses penarikan data mentah otomatis seketika (*real-time*) dari stasiun Automatic Weather Station (AWS), radar cuaca maritim, dan satelit Himawari-9." },
-            wf2: { tag: "WORKFLOW CYCLUS STEP 2", title: "PERHITUNGAN GRADIENT TEKANAN BAROMETRIK", icon: "fa-calculator text-red-400", desc: "Menghitung selisih tekanan hidrostatik udara antar benua $\Delta P = P_{\text{asia}} - P_{\text{aus}}$ untuk memprediksi kecepatan konveksi angin." },
-            wf3: { tag: "WORKFLOW CYCLUS STEP 3", title: "PROYEKSI VEKTOR GEOSENTRIS", icon: "fa-compass text-yellow-400", desc: "Mensimulasikan arah belokan mata angin menggunakan komponen percepatan fisis $2\omega v \sin\phi$ akibat lintasan rotasi sferis bumi." },
-            wf4: { tag: "WORKFLOW CYCLUS STEP 4", title: "PREDIKSI DAMPAK HIDROLOGIS", icon: "fa-droplet text-purple-400", desc: "Komputasi permodelan numerik untuk menentukan estimasi curah hujan (mm/hari), tingkat evaporasi tanah gersang, dan peta rawan bencana banjir rob." },
-            wf5: { tag: "WORKFLOW CYCLUS STEP 5", title: "RENDER SPASIAL PETA LAYER GIS", icon: "fa-map text-blue-400", desc: "Mengonversi matriks array baris numerik menjadi visualisasi spasial interaktif Leaflet berbentuk garis isobar (tekanan) dan isoterm (suhu)." },
-            wf6: { tag: "WORKFLOW CYCLUS STEP 6", title: "EARLY WARNING METEOROLOGICAL SYSTEM", icon: "fa-triangle-exclamation text-emerald-400", desc: "Diseminasi sinyal dini bahaya otomatis jika model mendeteksi anomali cu cuaca ekstrem pemicu puting beliung, kekeringan El-Nino, atau gelombang rob badai." }
-        };
 
         function toggleThemeInterface() {
             const body = document.getElementById('appBody');
@@ -1567,33 +2019,6 @@
             currentMapLayer.redraw();
         }
 
-        function triggerBottomPopup(key) {
-            if(bottomPopupTimer) clearTimeout(bottomPopupTimer);
-            const data = bottomPopupData[key];
-            if(!data) return;
-
-            document.getElementById('popup-tag').innerText = data.tag;
-            document.getElementById('popup-title').innerText = data.title;
-            document.getElementById('popup-desc').innerText = data.desc;
-            document.getElementById('popup-icon').className = `fa-solid ${data.icon} text-xl`;
-            
-            const popup = document.getElementById('bottom-matrix-popup');
-            popup.classList.remove('hidden');
-            setTimeout(() => { 
-                popup.classList.remove('translate-y-40', 'opacity-0'); 
-                popup.classList.add('translate-y-0', 'opacity-100'); 
-            }, 10);
-
-            bottomPopupTimer = setTimeout(() => { closeBottomPopup(); }, 7000);
-        }
-
-        function closeBottomPopup() {
-            if(bottomPopupTimer) clearTimeout(bottomPopupTimer);
-            const popup = document.getElementById('bottom-matrix-popup');
-            popup.classList.add('translate-y-40', 'opacity-0');
-            setTimeout(() => { popup.classList.add('hidden'); }, 300);
-        }
-
         function jalankanKalkulasiDinamis() {
             const blnIdx = parseInt(document.getElementById("slider-bulan").value) - 1;
             const tempAsia = parseInt(document.getElementById("slider-asia").value);
@@ -1604,78 +2029,112 @@
             document.getElementById("lbl-asia").innerText = tempAsia;
             document.getElementById("lbl-australia").innerText = tempAus;
 
-            let mpiScore = 0;
-            let statusStr = "";
-            let curahHujan = 0;
-            let kekeringan = 0;
+            const selisihAsiaKeAus = tempAus - tempAsia;
+            const selisihAusKeAsia = tempAsia - tempAus;
             
-            let gelombangMin = 0.50;
-            let gelombangMax = 1.25;
-            let gelombangStatus = "Aman";
-            let barWidthPercent = 35;
+            let ensoIndex = (Math.sin((blnIdx + 1) / 12 * Math.PI * 2) * 1.5) + ((tempAus - 30) * 0.08) - ((tempAsia - 20) * 0.05);
+            ensoIndex = parseFloat(ensoIndex.toFixed(2));
+            
+            let ensoText = "NETRAL";
+            let ensoBarClass = "bg-emerald-500";
+            let ensoTextColor = "text-emerald-400";
+            
+            if (ensoIndex >= 0.8) {
+                ensoText = `<i class="fa-solid fa-sun text-orange-400 animate-spin" style="animation-duration: 3s;"></i> EL NIÑO (+${ensoIndex}) [KERING]`;
+                ensoBarClass = "bg-gradient-to-r from-orange-400 to-red-500 animate-pulse";
+                ensoTextColor = "text-orange-400";
+            } else if (ensoIndex <= -0.8) {
+                ensoText = `<i class="fa-solid fa-cloud-showers-heavy text-blue-400 animate-bounce"></i> LA NIÑA (${ensoIndex}) [BASAH]`;
+                ensoBarClass = "bg-gradient-to-r from-cyan-400 to-blue-600 animate-pulse";
+                ensoTextColor = "text-blue-400";
+            } else {
+                ensoText = `NETRAL (${ensoIndex > 0 ? '+'+ensoIndex : ensoIndex})`;
+                ensoBarClass = "bg-slate-400";
+                ensoTextColor = "text-slate-400";
+            }
 
-            const selisihAsiaKeAus = tempAus - tempAsia; 
-            const selisihAusKeAsia = tempAsia - tempAus; 
+            let ensoBarPercentage = Math.max(0, Math.min(100, ((ensoIndex + 3) / 6) * 100));
+
+            let mpiScore = 0, statusStr = "", curahHujan = 0, kekeringan = 0;
+            let gelombangMin = 0.50, gelombangMax = 1.25, gelombangStatus = "Aman", barWidthPercent = 35;
+            let cuacaStr = "BERAWAN";
 
             if (blnIdx === 10 || blnIdx === 11 || blnIdx === 0 || blnIdx === 1) { 
                 mpiScore = Math.min(100, Math.max(20, 50 + (selisihAsiaKeAus * 2)));
                 statusStr = mpiScore > 70 ? "INTENSITAS MUSON BARAT MAPAN (MUSIM HUJAN)" : "MUSON BARAT LEMAH (ANOMALI CUACA)";
-                curahHujan = Math.min(100, mpiScore + 10);
-                kekeringan = Math.max(5, 110 - curahHujan);
                 
-                gelombangMin = (1.20 + (selisihAsiaKeAus * 0.04)).toFixed(2);
-                gelombangMax = (3.20 + (selisihAsiaKeAus * 0.08)).toFixed(2);
-                gelombangStatus = gelombangMax > 4.0 ? "BAHAYA EKSTREM" : "WASPADA";
+                let baseHujan = Math.min(100, mpiScore + 10);
+                curahHujan = Math.max(10, Math.min(100, baseHujan - (ensoIndex * 15))); 
+                kekeringan = Math.max(5, Math.min(100, 110 - curahHujan));
+                
+                cuacaStr = curahHujan > 80 ? "HUJAN LEBAT (PETIR)" : (curahHujan > 50 ? "HUJAN SEDANG" : "BERAWAN TEBAL");
+
+                gelombangMin = Math.max(0.5, (1.20 + (selisihAsiaKeAus * 0.04) - (ensoIndex * 0.1))).toFixed(2);
+                gelombangMax = Math.max(1.0, (3.20 + (selisihAsiaKeAus * 0.08) - (ensoIndex * 0.2))).toFixed(2);
+                gelombangStatus = gelombangMax > 3.5 ? "BAHAYA EKSTREM" : "WASPADA";
                 barWidthPercent = Math.min(100, mpiScore + 10);
+
             } else if (blnIdx === 4 || blnIdx === 5 || blnIdx === 6 || blnIdx === 7) { 
                 mpiScore = Math.min(100, Math.max(20, 50 + (selisihAusKeAsia * 2)));
                 statusStr = mpiScore > 70 ? "INTENSITAS MUSON TIMUR MAPAN (MUSIM KEMARAU)" : "MUSON TIMUR MELEMAH (KEMARAU BASAH)";
-                kekeringan = Math.min(100, mpiScore + 15);
-                curahHujan = Math.max(5, 105 - kekeringan);
                 
-                gelombangMin = (0.80 + (selisihAusKeAsia * 0.02)).toFixed(2);
-                gelombangMax = (2.20 + (selisihAusKeAsia * 0.04)).toFixed(2);
+                let baseKering = Math.min(100, mpiScore + 15);
+                kekeringan = Math.max(10, Math.min(100, baseKering + (ensoIndex * 15)));
+                curahHujan = Math.max(5, Math.min(100, 105 - kekeringan));
+                
+                cuacaStr = kekeringan > 80 ? "CERAH EKSTREM (TERIK)" : (kekeringan > 50 ? "CERAH BERAWAN" : "BERAWAN");
+
+                gelombangMin = Math.max(0.5, (0.80 + (selisihAusKeAsia * 0.02) + (ensoIndex * 0.05))).toFixed(2);
+                gelombangMax = Math.max(1.0, (2.20 + (selisihAusKeAsia * 0.04) + (ensoIndex * 0.1))).toFixed(2);
                 gelombangStatus = gelombangMax > 2.5 ? "WASPADA MARITIM" : "MODERAT";
                 barWidthPercent = Math.min(100, mpiScore);
+
             } else { 
                 mpiScore = Math.min(50, Math.max(10, Math.abs(tempAsia - tempAus)));
                 statusStr = "PERIODE TRANSISI (MASA PANCAROBA KONDISI TIDAK STABIL)";
-                curahHujan = 45;
-                kekeringan = 45;
                 
-                gelombangMin = 0.40;
-                gelombangMax = 1.25;
-                gelombangStatus = "Aman";
-                barWidthPercent = 35;
+                curahHujan = Math.max(20, Math.min(80, 45 - (ensoIndex * 10)));
+                kekeringan = Math.max(20, Math.min(80, 45 + (ensoIndex * 10)));
+                
+                cuacaStr = "FLUKTUATIF (POTENSI BADAI LOKAL)";
+                gelombangMin = 0.40; gelombangMax = 1.25; gelombangStatus = "Aman"; barWidthPercent = 35;
             }
 
-            simCurrentMpi = mpiScore;
-            simCurrentStatus = statusStr;
-            simCurrentHujan = curahHujan;
-            simCurrentKering = kekeringan;
+            simCurrentMpi = mpiScore; 
+            simCurrentStatus = statusStr; 
+            simCurrentHujan = Math.round(curahHujan); 
+            simCurrentKering = Math.round(kekeringan);
 
             document.getElementById("mpi-score-display").innerText = `${mpiScore}%`;
             document.getElementById("mpi-status-display").innerText = statusStr;
 
             if(mpiStatusColor(statusStr) === 'rain') {
                 document.getElementById("mpi-score-display").className = "font-tech text-3xl font-black text-cyan-400 glow-text";
-                document.getElementById("mpi-status-display").className = "block text-xs font-mono font-bold text-cyan-400 mt-0.5";
+                document.getElementById("mpi-status-display").className = "block text-[11px] font-mono font-bold text-cyan-400 mt-0.5";
             } else if (mpiStatusColor(statusStr) === 'dry') {
                 document.getElementById("mpi-score-display").className = "font-tech text-3xl font-black text-orange-400 glow-text";
-                document.getElementById("mpi-status-display").className = "block text-xs font-mono font-bold text-orange-400 mt-0.5";
+                document.getElementById("mpi-status-display").className = "block text-[11px] font-mono font-bold text-orange-400 mt-0.5";
             } else {
                 document.getElementById("mpi-score-display").className = "font-tech text-3xl font-black text-yellow-400 glow-text";
-                document.getElementById("mpi-status-display").className = "block text-xs font-mono font-bold text-yellow-400 mt-0.5";
+                document.getElementById("mpi-status-display").className = "block text-[11px] font-mono font-bold text-yellow-400 mt-0.5";
             }
 
-            document.getElementById("val-chart-hujan").innerText = `${curahHujan}%`;
-            document.getElementById("bar-chart-hujan").style.width = `${curahHujan}%`;
-
-            document.getElementById("val-chart-kering").innerText = `${kekeringan}%`;
-            document.getElementById("bar-chart-kering").style.width = `${kekeringan}%`;
-
+            document.getElementById("val-chart-hujan").innerText = `${simCurrentHujan}%`;
+            document.getElementById("bar-chart-hujan").style.width = `${simCurrentHujan}%`;
+            
+            document.getElementById("val-chart-kering").innerText = `${simCurrentKering}%`;
+            document.getElementById("bar-chart-kering").style.width = `${simCurrentKering}%`;
+            
             document.getElementById("val-chart-gelombang").innerText = `${gelombangMin} - ${gelombangMax} M (${gelombangStatus})`;
             document.getElementById("bar-chart-gelombang").style.width = `${barWidthPercent}%`;
+
+            document.getElementById("val-cuaca").innerText = cuacaStr;
+            document.getElementById("val-enso").innerHTML = ensoText;
+            document.getElementById("val-enso").className = `font-tech uppercase text-[10px] ${ensoTextColor}`;
+            
+            let ensoBar = document.getElementById("bar-chart-enso");
+            ensoBar.className = `bar-chart-value h-full ${ensoBarClass}`;
+            ensoBar.style.width = `${ensoBarPercentage}%`;
         }
 
         function mpiStatusColor(status) {
@@ -1686,30 +2145,20 @@
 
         const dragPanel = document.getElementById("draggablePanel");
         const dragHandle = document.getElementById("dragHandle");
-        let isDragging = false;
-        let startX, startY, initialX, initialY;
+        let isDragging = false, startX, startY, initialX, initialY;
 
         if (dragHandle && dragPanel) {
             dragHandle.addEventListener("mousedown", (e) => {
-                isDragging = true;
-                startX = e.clientX; startY = e.clientY;
-                initialX = dragPanel.offsetLeft; initialY = dragPanel.offsetTop;
-                e.preventDefault();
+                isDragging = true; startX = e.clientX; startY = e.clientY;
+                initialX = dragPanel.offsetLeft; initialY = dragPanel.offsetTop; e.preventDefault();
             });
             document.addEventListener("mousemove", (e) => {
                 if (!isDragging) return;
-                const dx = e.clientX - startX;
-                const dy = e.clientY - startY;
-                dragPanel.style.left = (initialX + dx) + "px";
-                dragPanel.style.top = (initialY + dy) + "px";
+                dragPanel.style.left = (initialX + (e.clientX - startX)) + "px";
+                dragPanel.style.top = (initialY + (e.clientY - startY)) + "px";
                 dragPanel.style.right = "auto"; dragPanel.style.bottom = "auto";
             });
             document.addEventListener("mouseup", () => { isDragging = false; });
-        }
-
-        for(let i = 1; i <= 6; i++) {
-            const el = document.getElementById(`wf-btn-${i}`);
-            if(el) { el.addEventListener('mouseenter', () => { triggerBottomPopup(`wf${i}`); }); }
         }
 
         function openCreatorModal() { document.getElementById('creatorModal').classList.remove('hidden'); }
@@ -1718,6 +2167,12 @@
         function closeHelpModal() { document.getElementById('helpModal').classList.add('hidden'); }
 
         window.onload = function() {
+            setTimeout(() => {
+                const loader = document.getElementById('startupLoader');
+                loader.classList.add('opacity-0');
+                setTimeout(() => loader.classList.add('hidden'), 700);
+            }, 3000);
+
             initClockEngine(); 
             switchPilar(1);
             aktifkanOtomatisasiWindy(); 
