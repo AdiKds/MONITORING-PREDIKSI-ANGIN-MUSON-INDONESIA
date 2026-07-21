@@ -99,8 +99,11 @@
         .cat-ear-anim-r { animation: cat-ear-right 4s infinite; transform-origin: bottom left; }
         .cat-tongue-anim-ss { animation: cat-tongue-out 3.5s infinite ease-in-out; transform-origin: top; }
 
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* CUSTOM SCROLLBAR BARU AGAR SHORTCUT CHATBOT TIDAK TERPOTONG */
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.3); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(6, 182, 212, 0.4); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(6, 182, 212, 0.8); }
 
         .custom-map-popup .leaflet-popup-content-wrapper,
         .custom-gempa-popup .leaflet-popup-content-wrapper,
@@ -245,7 +248,6 @@
                 </div>
 
                 <div class="flex flex-col items-end gap-2 w-full md:w-auto">
-                    <!-- Baris Atas Menu (Kerapihan Tumpang Tindih Diperbaiki) -->
                     <div class="flex flex-wrap items-center gap-2 w-full justify-stretch sm:justify-end">
                         <button type="button" onclick="toggleArsipModal()" class="bg-red-950 text-red-400 text-[11px] font-mono font-black px-4 py-1.5 rounded-lg border-2 border-[var(--border-color)] hover:bg-red-900 cursor-pointer transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-none whitespace-nowrap" title="Buka Simulasi Arsip Bencana Iklim">
                             <i class="fa-solid fa-book-journal-whills"></i> <span>ARSIP SIMULASI</span>
@@ -261,7 +263,6 @@
                         </button>
                     </div>
                     
-                    <!-- Baris Bawah Menu -->
                     <div class="flex flex-wrap items-center gap-2 w-full justify-stretch sm:justify-end">
                         <button type="button" onclick="rotateTTSVoice()" class="w-full sm:w-auto bg-slate-950 border-2 border-[var(--border-color)] theme-light:bg-slate-200 theme-light:hover:bg-slate-300 theme-light:text-slate-900 text-[11px] font-mono font-black px-4 py-1.5 rounded-lg cursor-pointer transition-all text-blue-400 hover:bg-slate-900 flex items-center justify-center gap-1.5" title="Ganti gaya suara asisten (TTS)">
                             <i class="fa-solid fa-headphones"></i> <span id="ttsVoiceText">🎧 SUARA</span>
@@ -473,7 +474,6 @@
                                     </div>
                                 </div>
                                 
-                                <!-- KETERANGAN AUTO MODE DIPINDAHKAN KE BAWAH ENSO SESUAI PERMINTAAN -->
                                 <div class="bg-cyan-950/30 p-2.5 rounded-lg border border-cyan-800/40 text-[9px] text-[var(--text-muted)] mt-4 font-medium leading-relaxed shadow-inner">
                                     <span id="bottom-note"><i class="fa-solid fa-satellite-dish text-cyan-400 mr-1 animate-spin"></i> **Mode Otomatis Berjalan:** Angka simulasi dikunci oleh matriks interseptor Windy.</span>
                                 </div>
@@ -580,23 +580,28 @@
                 </div>
             </div>
             
-            <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-4 font-mono text-sm text-white bg-slate-950 scroll-smooth">
+            <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-4 font-mono text-sm text-white bg-slate-950 custom-scrollbar">
                 <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700 max-w-[85%] font-sans font-medium text-[13px]">
                     <span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-terminal"></i> ASSISTANT INITIALIZED:</span>
                     Halo! Saya asisten cerdas berfitur suara. Saya dapat memberikan analisis muson, rincian <b>Gempa Live BMKG</b>, hingga mencari data spesifik dari Wikipedia. Tekan ikon <b>Mic</b> untuk bicara!
                 </div>
             </div>
 
-            <div class="px-3 py-2 bg-slate-900 border-t border-slate-800 flex gap-2 overflow-x-auto hide-scrollbar shrink-0">
-                <button onclick="sendChatShortcut('jelaskan gempa')" class="whitespace-nowrap px-3 py-1 bg-red-950 hover:bg-red-900 text-red-400 text-[10px] font-mono font-bold rounded-lg border border-red-700/50 transition-colors cursor-pointer"><i class="fa-solid fa-tower-broadcast animate-pulse"></i> Live Gempa BMKG</button>
+            <!-- CONTAINER SHORTCUT YANG BISA DIGESER (SCROLLABLE) -->
+            <div class="px-3 py-2 pb-3 bg-slate-900 border-t border-slate-800 flex gap-2 overflow-x-auto custom-scrollbar shrink-0">
+                <button onclick="sendChatShortcut('jelaskan gempa')" class="shrink-0 whitespace-nowrap px-3 py-1 bg-red-950 hover:bg-red-900 text-red-400 text-[10px] font-mono font-bold rounded-lg border border-red-700/50 transition-colors cursor-pointer"><i class="fa-solid fa-tower-broadcast animate-pulse"></i> Live Gempa BMKG</button>
                 
-                <!-- SHORTCUT MY APLIKASI TELAH DITAMBAHKAN -->
-                <button onclick="sendChatShortcut('my aplikasi')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-amber-900 text-amber-400 text-[10px] font-mono font-bold rounded-lg border border-amber-700/50 transition-colors cursor-pointer"><i class="fa-solid fa-layer-group"></i> My Aplikasi</button>
+                <button onclick="sendChatShortcut('my aplikasi')" class="shrink-0 whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-amber-900 text-amber-400 text-[10px] font-mono font-bold rounded-lg border border-amber-700/50 transition-colors cursor-pointer"><i class="fa-solid fa-layer-group"></i> My Aplikasi</button>
                 
-                <button onclick="sendChatShortcut('fitur aplikasi ini')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-cyan-900 text-cyan-400 text-[10px] font-mono font-bold rounded-lg border border-cyan-700/50 transition-colors cursor-pointer">Fitur Aplikasi</button>
-                <button onclick="sendChatShortcut('analisis cuaca')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-emerald-900 text-emerald-400 text-[10px] font-mono font-bold rounded-lg border border-emerald-700/50 transition-colors cursor-pointer">Analisis Cuaca</button>
-                <button onclick="sendChatShortcut('data programmer')" class="whitespace-nowrap px-3 py-1 bg-fuchsia-950 hover:bg-fuchsia-900 text-fuchsia-400 text-[10px] font-mono font-black rounded-lg border border-fuchsia-500/80 shadow-[0_0_8px_rgba(236,72,153,0.4)] transition-colors cursor-pointer"><i class="fa-solid fa-code"></i> Programmer</button>
-                <button onclick="sendChatShortcut('saran mitigasi')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-orange-900 text-orange-400 text-[10px] font-mono font-bold rounded-lg border border-orange-700/50 transition-colors cursor-pointer">Saran Mitigasi</button>
+                <!-- SHORTCUT FITUR APLIKASI -->
+                <button onclick="sendChatShortcut('fitur aplikasi ini')" class="shrink-0 whitespace-nowrap px-3 py-1 bg-indigo-950 hover:bg-indigo-900 text-indigo-400 text-[10px] font-mono font-bold rounded-lg border border-indigo-700/50 transition-colors cursor-pointer"><i class="fa-solid fa-circle-info"></i> Fitur Aplikasi</button>
+                
+                <button onclick="sendChatShortcut('analisis cuaca')" class="shrink-0 whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-emerald-900 text-emerald-400 text-[10px] font-mono font-bold rounded-lg border border-emerald-700/50 transition-colors cursor-pointer">Analisis Cuaca</button>
+                
+                <!-- SHORTCUT PROGRAMMER -->
+                <button onclick="sendChatShortcut('data programmer')" class="shrink-0 whitespace-nowrap px-3 py-1 bg-fuchsia-950 hover:bg-fuchsia-900 text-fuchsia-400 text-[10px] font-mono font-black rounded-lg border border-fuchsia-500/80 shadow-[0_0_8px_rgba(236,72,153,0.4)] transition-colors cursor-pointer"><i class="fa-solid fa-code"></i> Programmer</button>
+                
+                <button onclick="sendChatShortcut('saran mitigasi')" class="shrink-0 whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-orange-900 text-orange-400 text-[10px] font-mono font-bold rounded-lg border border-orange-700/50 transition-colors cursor-pointer">Saran Mitigasi</button>
             </div>
             
             <div class="p-3 bg-slate-900 border-t border-slate-800 flex gap-2 shrink-0">
@@ -1994,11 +1999,12 @@
                              `      <div><span class="block text-[10px] text-fuchsia-400 font-black tracking-widest uppercase mb-0.5">Software & Data Engineer</span><span class="text-white font-tech font-black text-[15px] tracking-wide">Mohamad Hartadi</span></div>` +
                              `  </div>` +
                              `  <div class="space-y-2 mt-2 pt-1">` +
-                             `      <a href="https://www.facebook.com/m.hartadi" target="_blank" class="flex items-center gap-3 text-cyan-400 hover:text-cyan-300 transition-colors p-1.5 hover:bg-slate-900 rounded-lg"><i class="fa-brands fa-facebook text-xl w-6 text-center"></i> <div><span class="block text-[9px] text-slate-500 uppercase tracking-widest font-bold">Facebook Profile</span><span class="font-bold text-xs font-mono">facebook.com/m.hartadi</span></div></a>` +
-                             `      <a href="https://wa.me/6282231036047?text=Ijin%20bertanya%20mengenai%20Sistem%20Dashboard%20Muson." target="_blank" class="flex items-center gap-3 text-emerald-400 hover:text-emerald-300 transition-colors p-1.5 hover:bg-slate-900 rounded-lg"><i class="fa-brands fa-whatsapp text-xl w-6 text-center"></i> <div><span class="block text-[9px] text-slate-500 uppercase tracking-widest font-bold">Kontak WhatsApp</span><span class="font-bold text-xs font-mono">082231036047</span></div></a>` +
+                             `      <a href="https://www.facebook.com/m.hartadi" target="_blank" class="flex items-center gap-3 text-cyan-400 hover:text-cyan-300 transition-colors p-1.5 hover:bg-slate-900 rounded-lg"><i class="fa-brands fa-facebook text-xl w-6 text-center"></i> <div><span class="block text-[9px] text-slate-500 uppercase tracking-widest font-bold">Facebook Profile</span><span class="font-bold text-xs font-mono break-all">facebook.com/m.hartadi</span></div></a>` +
+                             `      <a href="https://wa.me/6282231036047?text=Ijin%20bertanya%20mengenai%20Sistem%20Dashboard%20Muson." target="_blank" class="flex items-center gap-3 text-emerald-400 hover:text-emerald-300 transition-colors p-1.5 hover:bg-slate-900 rounded-lg"><i class="fa-brands fa-whatsapp text-xl w-6 text-center"></i> <div><span class="block text-[9px] text-slate-500 uppercase tracking-widest font-bold">Kontak WhatsApp</span><span class="font-bold text-xs font-mono break-all">082231036047</span></div></a>` +
+                             `      <a href="https://newbieonline7.blogspot.com/" target="_blank" class="flex items-center gap-3 text-pink-400 hover:text-pink-300 transition-colors p-1.5 hover:bg-slate-900 rounded-lg"><i class="fa-solid fa-globe text-xl w-6 text-center"></i> <div><span class="block text-[9px] text-slate-500 uppercase tracking-widest font-bold">Portal Blog Resmi</span><span class="font-bold text-xs font-mono break-all">newbieonline7.blogspot.com</span></div></a>` +
                              `  </div>` +
                              `</div>`;
-            } else if (query.includes('my aplikasi') || query.includes('aplikasi') || query.includes('portofolio')) {
+            } else if (query.includes('my aplikasi') || query.includes('portofolio')) {
                 let appsHtml = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">';
                 apps.forEach(app => {
                     appsHtml += `
@@ -2014,15 +2020,19 @@
                 
                 foundReply = `<span class="text-cyan-400 font-mono text-[13px] block font-black mb-2 border-b border-cyan-500/30 pb-1"><i class="fa-solid fa-layer-group"></i> MY APPLICATIONS DIRECTORY:</span>` +
                              `<p class="text-[10px] text-slate-300 font-sans mb-2">Pilih aplikasi untuk membukanya di tab baru:</p>` +
-                             `<div class="max-h-56 overflow-y-auto hide-scrollbar pr-1 pb-1">${appsHtml}</div>`;
-            } else if (query.includes('fitur')) {
-                foundReply = `<span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-terminal"></i> SYSTEM CAPABILITY & FEATURES:</span>` +
-                             `Aplikasi Dasbor Dinamika Angin Muson ini memiliki fitur analitik tingkat lanjut meliputi:<br>` +
-                             `1. **Interseptor Radar (Live):** Sinkronisasi API satelit cuaca.<br>` +
-                             `2. **Algoritma ENSO:** Simulasi matematis anomali iklim.<br>` +
-                             `3. **Voice Assistant:** Kontrol Suara (Mic) dan Integrasi data Wikipedia.<br>` +
-                             `4. **Deteksi BMKG Realtime:** Pelacakan data JSON Live BMKG beserta Voice Alert.<br>` +
-                             `5. **Sistem Peringatan Ekstrem:** Aktuasi sirene kebencanaan dan peta matriks mitigasi lintas sektoral.`;
+                             `<div class="max-h-56 overflow-y-auto custom-scrollbar pr-1 pb-1">${appsHtml}</div>`;
+            } else if (query.includes('fitur') || query.includes('aplikasi') || query.includes('tentang')) {
+                foundReply = `<span class="text-cyan-400 font-mono text-[13px] block font-black mb-2 border-b border-cyan-500/30 pb-1"><i class="fa-solid fa-layer-group"></i> TENTANG APLIKASI INI:</span>` +
+                             `<div class="bg-slate-950 p-3 rounded-xl border border-cyan-500/30 shadow-inner">` +
+                             `<p class="text-slate-300 text-[11px] sm:text-xs leading-relaxed mb-2"><b>Sistem Prediksi & Analisis Dinamika Angin Muson Indonesia</b> adalah dasbor analitik cerdas (*intelligent system*) yang dirancang untuk memantau sirkulasi atmosfer, anomali iklim, dan memberikan peringatan dini bencana secara real-time.</p>` +
+                             `<span class="text-cyan-400 font-bold text-[10px] uppercase tracking-wider block mb-1">Fitur Utama:</span>` +
+                             `<ul class="space-y-1.5 text-[11px] sm:text-xs text-slate-300 list-disc list-inside">` +
+                             `<li><b>Windy Live-Sync:</b> Interseptor radar cuaca satelit presisi tinggi.</li>` +
+                             `<li><b>Live Gempa BMKG:</b> Pelacakan data seismik realtime dengan aktuasi sirine dan suara.</li>` +
+                             `<li><b>Asisten AI (Voice):</b> Chatbot interaktif dengan dukungan perintah suara dan pembaca TTS.</li>` +
+                             `<li><b>Simulasi Arsip Ekstrem:</b> Matriks mitigasi bencana masa lalu (Erupsi Krakatau, Tsunami, dll).</li>` +
+                             `<li><b>Indeks ENSO & Muson:</b> Kalkulator analitik untuk prediksi curah hujan dan gelombang laut.</li>` +
+                             `</ul></div>`;
             } else {
                 requiresExternalFetch = true;
             }
