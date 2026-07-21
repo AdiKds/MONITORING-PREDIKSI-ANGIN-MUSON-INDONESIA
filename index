@@ -76,7 +76,6 @@
         .sc-drift-animation { animation: drift-slow-motion 5.5s ease-in-out infinite; }
 
         @keyframes face-blink { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
-        @keyframes tail-wag { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(15deg); } }
         @keyframes ear-twitch-left { 0%, 92%, 98% { transform: rotate(-15deg); } 95% { transform: rotate(-30deg); } }
         @keyframes ear-twitch-right { 0%, 88%, 96% { transform: rotate(15deg); } 92% { transform: rotate(30deg); } }
         @keyframes tongue-stick { 0%, 100% { transform: translateY(-8px) scaleY(0); opacity: 0; } 40%, 60% { transform: translateY(0) scaleY(1); opacity: 1; } }
@@ -103,7 +102,6 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* KUSTOMISASI POPUP LEAFLET AGAR MENGIKUTI TEMA DAN TITIK PETA */
         .custom-map-popup .leaflet-popup-content-wrapper,
         .custom-gempa-popup .leaflet-popup-content-wrapper,
         .custom-arsip-popup .leaflet-popup-content-wrapper {
@@ -205,7 +203,6 @@
         </div>
     </div>
 
-
     <div id="mainDashboardInterface" class="w-full flex flex-col justify-between flex-1 gap-5">
         <header class="w-full bg-[var(--bg-header)] backdrop-blur-md p-5 rounded-2xl border-2 border-[var(--border-color)] flex flex-col xl:flex-row justify-between items-center gap-5 transition-all shadow-md">
             <div class="flex items-center gap-4 w-full xl:w-5/12 min-w-0">
@@ -248,21 +245,27 @@
                 </div>
 
                 <div class="flex flex-col items-end gap-2 w-full md:w-auto">
-                    <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full justify-stretch sm:justify-end">
-                        <button type="button" onclick="toggleArsipModal()" class="bg-red-950 text-red-400 text-xs font-mono font-black px-4 py-2.5 rounded-xl border-2 border-[var(--border-color)] hover:bg-red-900 cursor-pointer transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-none whitespace-nowrap" title="Buka Simulasi Arsip Bencana Iklim">
+                    <!-- Baris Atas Menu (Kerapihan Tumpang Tindih Diperbaiki) -->
+                    <div class="flex flex-wrap items-center gap-2 w-full justify-stretch sm:justify-end">
+                        <button type="button" onclick="toggleArsipModal()" class="bg-red-950 text-red-400 text-[11px] font-mono font-black px-4 py-1.5 rounded-lg border-2 border-[var(--border-color)] hover:bg-red-900 cursor-pointer transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-none whitespace-nowrap" title="Buka Simulasi Arsip Bencana Iklim">
                             <i class="fa-solid fa-book-journal-whills"></i> <span>ARSIP SIMULASI</span>
                         </button>
-                        <button type="button" onclick="openCreatorModal()" class="bg-slate-800 hover:bg-slate-700 theme-light:bg-slate-900 theme-light:hover:bg-slate-800 text-white text-xs font-mono font-black px-4 py-2.5 rounded-xl border-2 border-[var(--border-color)] cursor-pointer transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-none whitespace-nowrap" title="Kredit Sistem Pengembang Komputasi">
+                        <button type="button" onclick="openCreatorModal()" class="bg-slate-800 hover:bg-slate-700 theme-light:bg-slate-900 theme-light:hover:bg-slate-800 text-white text-[11px] font-mono font-black px-4 py-1.5 rounded-lg border-2 border-[var(--border-color)] cursor-pointer transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-none whitespace-nowrap" title="Kredit Sistem Pengembang Komputasi">
                             <i class="fa-solid fa-code text-cyan-400"></i> <span>CREATOR</span>
                         </button>
-                        <button type="button" onclick="toggleThemeInterface()" class="bg-slate-950 border-2 border-[var(--border-color)] theme-light:bg-slate-200 theme-light:hover:bg-slate-300 theme-light:text-slate-900 text-xs font-mono font-black px-4 py-2.5 rounded-xl cursor-pointer transition-all text-slate-300 hover:bg-slate-900 flex items-center justify-center gap-1.5 flex-1 sm:flex-none whitespace-nowrap" title="Ganti visual antarmuka">
+                        <button type="button" onclick="toggleThemeInterface()" class="bg-slate-950 border-2 border-[var(--border-color)] theme-light:bg-slate-200 theme-light:hover:bg-slate-300 theme-light:text-slate-900 text-[11px] font-mono font-black px-4 py-1.5 rounded-lg cursor-pointer transition-all text-slate-300 hover:bg-slate-900 flex items-center justify-center gap-1.5 flex-1 sm:flex-none whitespace-nowrap" title="Ganti visual antarmuka">
                             <i id="themeIcon" class="fa-solid fa-moon"></i> <span id="themeText">DARK</span>
                         </button>
-                        <button type="button" onclick="openHelpModal()" class="bg-slate-950 border-2 border-emerald-600 text-xs font-mono font-black px-4 py-2.5 rounded-xl cursor-pointer transition-all text-emerald-400 theme-light:text-emerald-700 theme-light:bg-emerald-100 theme-light:hover:bg-emerald-200 hover:bg-emerald-950/40 flex items-center justify-center gap-1.5 flex-1 sm:flex-none whitespace-nowrap" title="Buka manual penggunaan dasbor iklim">
+                        <button type="button" onclick="openHelpModal()" class="bg-slate-950 border-2 border-emerald-600 text-[11px] font-mono font-black px-4 py-1.5 rounded-lg cursor-pointer transition-all text-emerald-400 theme-light:text-emerald-700 theme-light:bg-emerald-100 theme-light:hover:bg-emerald-200 hover:bg-emerald-950/40 flex items-center justify-center gap-1.5 flex-1 sm:flex-none whitespace-nowrap" title="Buka manual penggunaan dasbor iklim">
                             <i class="fa-solid fa-circle-question"></i> <span>HELP</span>
                         </button>
                     </div>
+                    
+                    <!-- Baris Bawah Menu -->
                     <div class="flex flex-wrap items-center gap-2 w-full justify-stretch sm:justify-end">
+                        <button type="button" onclick="rotateTTSVoice()" class="w-full sm:w-auto bg-slate-950 border-2 border-[var(--border-color)] theme-light:bg-slate-200 theme-light:hover:bg-slate-300 theme-light:text-slate-900 text-[11px] font-mono font-black px-4 py-1.5 rounded-lg cursor-pointer transition-all text-blue-400 hover:bg-slate-900 flex items-center justify-center gap-1.5" title="Ganti gaya suara asisten (TTS)">
+                            <i class="fa-solid fa-headphones"></i> <span id="ttsVoiceText">🎧 SUARA</span>
+                        </button>
                         <button id="btnSirineTest" onclick="toggleManualSirine()" class="w-full sm:w-auto bg-slate-950 border-2 border-red-600/50 text-[11px] font-mono font-black px-4 py-1.5 rounded-lg cursor-pointer transition-all text-red-400 hover:bg-red-950/40 flex items-center justify-center gap-1.5" title="Test/Mute Audio Sirine Peringatan Dini">
                             <i id="iconSirine" class="fa-solid fa-volume-xmark"></i> <span id="textSirine">TEST SIRINE: MUTED</span>
                         </button>
@@ -469,12 +472,14 @@
                                         <div id="bar-chart-enso" class="bar-chart-value h-full bg-blue-500" style="width: 30%; margin-left: 0;"></div>
                                     </div>
                                 </div>
+                                
+                                <!-- KETERANGAN AUTO MODE DIPINDAHKAN KE BAWAH ENSO SESUAI PERMINTAAN -->
+                                <div class="bg-cyan-950/30 p-2.5 rounded-lg border border-cyan-800/40 text-[9px] text-[var(--text-muted)] mt-4 font-medium leading-relaxed shadow-inner">
+                                    <span id="bottom-note"><i class="fa-solid fa-satellite-dish text-cyan-400 mr-1 animate-spin"></i> **Mode Otomatis Berjalan:** Angka simulasi dikunci oleh matriks interseptor Windy.</span>
+                                </div>
                             </div>
 
                         </div>
-                    </div>
-                    <div class="bg-cyan-950/30 p-2.5 rounded-lg border border-cyan-800/40 text-[10px] text-[var(--text-muted)] mt-4 font-medium leading-relaxed">
-                        <i class="fa-solid fa-satellite-dish text-cyan-400 mr-1 animate-spin"></i> <span id="bottom-note">**Mode Otomatis:** Algoritma analitik disinkronisasi oleh interseptor data Windy.</span>
                     </div>
                 </div>
             </section>
@@ -584,11 +589,13 @@
 
             <div class="px-3 py-2 bg-slate-900 border-t border-slate-800 flex gap-2 overflow-x-auto hide-scrollbar shrink-0">
                 <button onclick="sendChatShortcut('jelaskan gempa')" class="whitespace-nowrap px-3 py-1 bg-red-950 hover:bg-red-900 text-red-400 text-[10px] font-mono font-bold rounded-lg border border-red-700/50 transition-colors cursor-pointer"><i class="fa-solid fa-tower-broadcast animate-pulse"></i> Live Gempa BMKG</button>
+                
+                <!-- SHORTCUT MY APLIKASI TELAH DITAMBAHKAN -->
+                <button onclick="sendChatShortcut('my aplikasi')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-amber-900 text-amber-400 text-[10px] font-mono font-bold rounded-lg border border-amber-700/50 transition-colors cursor-pointer"><i class="fa-solid fa-layer-group"></i> My Aplikasi</button>
+                
                 <button onclick="sendChatShortcut('fitur aplikasi ini')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-cyan-900 text-cyan-400 text-[10px] font-mono font-bold rounded-lg border border-cyan-700/50 transition-colors cursor-pointer">Fitur Aplikasi</button>
                 <button onclick="sendChatShortcut('analisis cuaca')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-emerald-900 text-emerald-400 text-[10px] font-mono font-bold rounded-lg border border-emerald-700/50 transition-colors cursor-pointer">Analisis Cuaca</button>
-                
                 <button onclick="sendChatShortcut('data programmer')" class="whitespace-nowrap px-3 py-1 bg-fuchsia-950 hover:bg-fuchsia-900 text-fuchsia-400 text-[10px] font-mono font-black rounded-lg border border-fuchsia-500/80 shadow-[0_0_8px_rgba(236,72,153,0.4)] transition-colors cursor-pointer"><i class="fa-solid fa-code"></i> Programmer</button>
-                
                 <button onclick="sendChatShortcut('saran mitigasi')" class="whitespace-nowrap px-3 py-1 bg-slate-800 hover:bg-orange-900 text-orange-400 text-[10px] font-mono font-bold rounded-lg border border-orange-700/50 transition-colors cursor-pointer">Saran Mitigasi</button>
             </div>
             
@@ -599,7 +606,6 @@
             </div>
         </div>
 
-        <!-- PERBAIKAN STRUKTUR HTML GRUP TOMBOL MELAYANG -->
         <div class="flex flex-row items-center gap-3 pointer-events-auto relative">
             <div id="wrapperToggleFloating" class="transition-transform duration-500 z-20 shrink-0">
                 <button onclick="toggleFloatingGroup()" id="btnToggleFloating" class="h-8 w-8 rounded-full bg-slate-800 border border-cyan-500/50 flex items-center justify-center text-cyan-400 cursor-pointer hover:scale-110 transition-transform shadow-[0_0_10px_rgba(6,182,212,0.3)] relative" title="Sembunyikan/Tampilkan Menu Melayang">
@@ -638,7 +644,6 @@
                 </button>
             </div>
         </div>
-        <!-- AKHIR PERBAIKAN STRUKTUR HTML GRUP TOMBOL MELAYANG -->
 
     </div>
 
@@ -893,6 +898,44 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     <script>
+        // DAFTAR APLIKASI UNTUK FITUR CHATBOT "MY APLIKASI"
+        const apps = [
+            {u:"https://adikds.github.io/jarvis-ai/",i:"fa-robot",n:"JARVIS AI"},
+            {u:"https://adikds.github.io/edu-market-pro/",i:"fa-graduation-cap",n:"EduMarket Pro"},
+            {u:"https://adikds.github.io/iptv-terminal/",i:"fa-tv",n:"IPTV Terminal"},
+            {u:"https://adikds.github.io/TV-streaming-live/",i:"fa-signal",n:"TV Streaming Live"},
+            {u:"https://adikds.github.io/Al-Quran-Karim/",i:"fa-book-quran",n:"Al-Quran Karim"},
+            {u:"https://adikds.github.io/-MEGA-ATLAS-FKG/",i:"fa-tooth",n:"Mega Atlas FKG"},
+            {u:"https://adikds.github.io/SISTEM-MONITORING-SEISMIK-PERINGATAN-TSUNAMI/",i:"fa-wave-square",n:"Tsunami Alert"},
+            {u:"https://adikds.github.io/MONITORING-PREDIKSI-STATUS-EI-NI-O-LA-NI-A/",i:"fa-temperature-half",n:"El Nino La Nina"},
+            {u:"https://adikds.github.io/MONITORING-PREDIKSI-ANGIN-MUSON-INDONESIA/",i:"fa-wind",n:"Angin Muson"},
+            {u:"https://adikds.github.io/INTEGRATED-DAM-ANALYTICS-ASSESSMENT-SYSTEM/",i:"fa-water",n:"Dam Analytics"},
+            {u:"https://adikds.github.io/WAY-APU-DAM/",i:"fa-building-shield",n:"Way Apu Dam"},
+            {u:"https://adikds.github.io/EVENT-DRIVEN-ARCHITECTURE-FOR-AI-AGENTS/",i:"fa-sitemap",n:"EDA AI Agents"},
+            {u:"https://adikds.github.io/GeoStructPro-15-Essential-Geotechnical-Formulas/",i:"fa-mountain",n:"GeoStructPro 15"},
+            {u:"https://adikds.github.io/GEOSTRUCT-PRO-20-FORMULA-GEOTECHNICAL/",i:"fa-layer-group",n:"GeoStruct Pro 20"},
+            {u:"https://adikds.github.io/UNIFIED-SOIL-CLASSIFICATION-SYSTEM/",i:"fa-cubes",n:"USCS Soil"},
+            {u:"https://adikds.github.io/AERORADAR-PRO/",i:"fa-plane",n:"AeroRadar Pro"},
+            {u:"https://adikds.github.io/HYDRACANAL-PRO-GEOMETRIC-DESIGN/",i:"fa-water-ladder",n:"HydraCanal Pro"},
+            {u:"https://adikds.github.io/financial-planner/",i:"fa-chart-line",n:"Financial Planner"},
+            {u:"https://adikds.github.io/business-suite/",i:"fa-chart-bar",n:"Business Suite"},
+            {u:"https://adikds.github.io/stock-manager/",i:"fa-boxes-stacked",n:"Stock Manager"},
+            {u:"https://adikds.github.io/Aplikasi_Point_of_Sale_-POS-_atau_sistem_kasir/",i:"fa-cash-register",n:"POS Terminal Pro"},
+            {u:"https://adikds.github.io/KEUANGANKU/",i:"fa-cash-register",n:"Keuanganku"},
+            {u:"https://adikds.github.io/DARUSSYIFA-MEDIKA/",i: "fa-hospital",n:"DARUSSYIFA"},
+            {u:"https://adikds.github.io/SKIN_SYIFA_AI/",i: "fa-magnifying-glass-chart",n:"SKIN SYIFA"},
+            {u:"https://adikds.github.io/NEURO-PSYCH_AI/",i: "fa-brain",n:"NEURO-PSYCH"},
+            {u:"https://adikds.github.io/SMILE-SYIFA-AI/",i: "fa-face-smile",n:"SMILE SYIFA"},
+            {u:"https://adikds.github.io/DOKTER-AI/",i: "fa-user-doctor",n:"DOKTER AI"},
+            {u: "https://www.f15library.com/", i: "fa-book-open-reader",n: "F15 Library"},
+            {u: "https://adikds.github.io/ATLAS-GEOTEKNIK/", i: "fa-earth-americas",n: "Geotechnical"},
+            {u: "https://adikds.github.io/STATISTICS_for_ENGINEERS-/", i: "fa-chart-pie",n: "Stats Engineers"},
+            {u: "https://famelack.com/radio/id", i: "fa-radio", n: "Radio Online"},
+            {u: "https://famelack.com/tv/id", i: "fa-tv",n: "TV Famelack"},
+            {u: "https://adikds.github.io/Mega-Atlas-Kedokteran-Neurologi-Bedah-Syaraf/", i: "fa-brain",n: "Neurology"},
+            {u: "https://adikds.github.io/Adi_Newbie/", i: "fa-user-astronaut",n: "Adi Newbie" }
+        ];
+
         let currentTheme = 'dark';
         let currentMapLayer = null;
         let fsMapInstance = null;
@@ -934,7 +977,45 @@
         
         let isVoiceMuted = false;
 
-        // OPSI POPUP UNTUK MENCEGAH OVERLAP DENGAN 4 TOMBOL (autoPanPadding Bottom-Right)
+        // VARIABEL DAN LOGIKA BARU DUKUNGAN KONTROL SUARA TTS
+        let availableTTSVoices = [];
+        let currentVoiceIndex = 0;
+
+        function loadTTSVoices() {
+            if (!('speechSynthesis' in window)) return;
+            let voices = window.speechSynthesis.getVoices();
+            availableTTSVoices = voices.filter(v => v.lang.includes('id') || v.lang.includes('ID'));
+            if (availableTTSVoices.length === 0) { availableTTSVoices = voices; }
+        }
+
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = loadTTSVoices;
+            loadTTSVoices();
+        }
+
+        function rotateTTSVoice() {
+            if (!('speechSynthesis' in window)) {
+                alert("Browser Anda tidak mendukung fitur Web Speech Synthesis (TTS).");
+                return;
+            }
+            if (availableTTSVoices.length === 0) loadTTSVoices();
+            
+            if (availableTTSVoices.length <= 1) {
+                alert("Hanya ada 1 atau tidak ada opsi gaya suara TTS bawaan di perangkat ini.");
+                return;
+            }
+
+            currentVoiceIndex = (currentVoiceIndex + 1) % availableTTSVoices.length;
+            const selectedVoice = availableTTSVoices[currentVoiceIndex];
+            
+            const btnText = document.getElementById('ttsVoiceText');
+            if (btnText) {
+                btnText.innerText = `SUARA (${currentVoiceIndex + 1}/${availableTTSVoices.length})`;
+            }
+
+            speakText(`Gaya suara diganti ke ${selectedVoice.name || 'opsi baru'}`);
+        }
+
         const popupOptionsAI = { className: 'custom-map-popup', maxWidth: 350, offset: [0, -15], autoPanPaddingBottomRight: [50, 300] };
         const popupOptionsBMKG = { className: 'custom-gempa-popup', maxWidth: 350, offset: [0, -15], autoPanPaddingBottomRight: [50, 300] };
         const popupOptionsArsip = { className: 'custom-arsip-popup', maxWidth: 300, offset: [0, -10], autoPanPaddingBottomRight: [50, 300] };
@@ -1000,7 +1081,6 @@
             });
         });
 
-        // FUNGSI TTS & STT (WEB SPEECH API)
         function toggleVoiceMute() {
             isVoiceMuted = !isVoiceMuted;
             const icon = document.getElementById('iconVoiceMute');
@@ -1019,6 +1099,9 @@
             const cleanText = text.replace(/<[^>]*>?/gm, '').replace(/\*/g, '');
             const utterance = new SpeechSynthesisUtterance(cleanText);
             utterance.lang = 'id-ID';
+            if (availableTTSVoices.length > 0) {
+                utterance.voice = availableTTSVoices[currentVoiceIndex];
+            }
             window.speechSynthesis.speak(utterance);
         }
 
@@ -1053,7 +1136,6 @@
             };
         }
 
-        // PERBAIKAN LOGIKA JS HIDE / UNHIDE TOMBOL MENU
         let isFloatingGroupHidden = false;
         function toggleFloatingGroup() {
             const group = document.getElementById('floatingButtonGroup');
@@ -1062,22 +1144,17 @@
             isFloatingGroupHidden = !isFloatingGroupHidden;
 
             if (isFloatingGroupHidden) {
-                // Memudarkan elemen dan menghilangkan fungsi klik
                 group.classList.add('opacity-0', 'pointer-events-none');
-                
-                // Kalkulasi pergeseran (Lebar grup tersembunyi + nilai kompensasi gap)
                 const shiftRight = group.offsetWidth + 12; 
                 wrapper.style.transform = `translateX(${shiftRight}px)`;
                 icon.className = "fa-solid fa-angles-left text-sm";
             } else {
-                // Mengembalikan elemen
                 group.classList.remove('opacity-0', 'pointer-events-none');
                 wrapper.style.transform = 'translateX(0)';
                 icon.className = "fa-solid fa-angles-right text-sm"; 
             }
         }
 
-        // PERBAIKAN LOGIKA JS SUARA ALGORITMA PREDIKSI AI
         function toggleAITracking() {
             isAITrackingActive = !isAITrackingActive;
             const btn = document.getElementById('btnAiTracking');
@@ -1120,7 +1197,6 @@
             const target = aiDisasters[Math.floor(Math.random() * aiDisasters.length)];
             currentAIDisasterTarget = target; 
 
-            // Integrasi Sinkronisasi Suara Algoritma Dinamis Baru
             const voiceExplanation = `Sistem Prediksi AI diaktifkan. Mendeteksi anomali: ${target.title}. Keterangan analisis: ${target.desc} Saran Mitigasi yang direkomendasikan: ${target.mitigation}`;
             speakText(voiceExplanation);
 
@@ -1336,7 +1412,6 @@
                 if(win.classList.contains('hidden')) toggleChatWindow();
             }
 
-            // Integrasi Text To Speech
             const alertVoiceText = `Peringatan Dini! Analisis Gempa Bumi dari BMKG. Kekuatan gempa ${gempa.Magnitude} Skala Richter. Kedalaman ${gempa.Kedalaman}. Pusat gempa berada di ${gempa.Wilayah}. Status potensi: ${gempa.Potensi}.`;
             speakText(alertVoiceText);
 
@@ -1607,7 +1682,11 @@
             document.getElementById("badge-windy-mode").className = "bg-emerald-950 text-[9px] text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-700 font-mono animate-pulse";
             document.getElementById("sync-status-dot").className = "inline-block w-3 h-3 rounded-full bg-cyan-400 animate-bounce";
             document.getElementById("sync-status-text").innerText = "Kopling Siber: Mengasimilasi data telemetri sirkulasi Windy.com";
-            document.getElementById("bottom-note").innerHTML = "<i class='fa-solid fa-satellite-dish animate-spin'></i> **Mode Otomatis Berjalan:** Angka simulasi dikunci oleh matriks interseptor Windy.";
+            
+            const bottomNoteEl = document.getElementById("bottom-note");
+            if (bottomNoteEl) {
+                bottomNoteEl.innerHTML = "<i class='fa-solid fa-satellite-dish text-cyan-400 mr-1 animate-spin'></i> **Mode Otomatis Berjalan:** Angka simulasi dikunci oleh matriks interseptor Windy.";
+            }
 
             const currentRealMonth = new Date().getMonth() + 1; 
             document.getElementById("slider-bulan").value = currentRealMonth;
@@ -1645,7 +1724,11 @@
             document.getElementById("badge-windy-mode").className = "bg-slate-950 text-[9px] text-slate-400 px-1.5 py-0.5 rounded border border-slate-700 font-mono";
             document.getElementById("sync-status-dot").className = "inline-block w-3 h-3 rounded-full bg-amber-500 animate-ping";
             document.getElementById("sync-status-text").innerText = "Sistem Analisis Spasial Siklus Muson Barat, Muson Timur, & Masa Pancaroba";
-            document.getElementById("bottom-note").innerText = "**Kopling Atmosfer:** Mengalirkan data kalkulasi termal regional sirkulasi udara.";
+            
+            const bottomNoteEl = document.getElementById("bottom-note");
+            if (bottomNoteEl) {
+                bottomNoteEl.innerHTML = "<i class='fa-solid fa-satellite-dish text-cyan-400 mr-1'></i> **Kopling Atmosfer:** Mengalirkan data kalkulasi termal regional sirkulasi udara.";
+            }
         }
 
         function updateSirineButtonState() {
@@ -1915,7 +1998,24 @@
                              `      <a href="https://wa.me/6282231036047?text=Ijin%20bertanya%20mengenai%20Sistem%20Dashboard%20Muson." target="_blank" class="flex items-center gap-3 text-emerald-400 hover:text-emerald-300 transition-colors p-1.5 hover:bg-slate-900 rounded-lg"><i class="fa-brands fa-whatsapp text-xl w-6 text-center"></i> <div><span class="block text-[9px] text-slate-500 uppercase tracking-widest font-bold">Kontak WhatsApp</span><span class="font-bold text-xs font-mono">082231036047</span></div></a>` +
                              `  </div>` +
                              `</div>`;
-            } else if (query.includes('fitur') || query.includes('aplikasi')) {
+            } else if (query.includes('my aplikasi') || query.includes('aplikasi') || query.includes('portofolio')) {
+                let appsHtml = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">';
+                apps.forEach(app => {
+                    appsHtml += `
+                        <a href="${app.u}" target="_blank" class="flex items-center gap-2 p-2 bg-slate-900 hover:bg-slate-800 border border-cyan-500/30 hover:border-cyan-400 rounded-lg transition-colors text-decoration-none shadow-sm cursor-pointer">
+                            <div class="w-6 h-6 flex items-center justify-center bg-cyan-950 rounded-full shrink-0 text-cyan-400 text-[10px]">
+                                <i class="fa-solid ${app.i}"></i>
+                            </div>
+                            <span class="text-[9px] sm:text-[10px] font-bold text-slate-200 font-sans truncate">${app.n}</span>
+                        </a>
+                    `;
+                });
+                appsHtml += '</div>';
+                
+                foundReply = `<span class="text-cyan-400 font-mono text-[13px] block font-black mb-2 border-b border-cyan-500/30 pb-1"><i class="fa-solid fa-layer-group"></i> MY APPLICATIONS DIRECTORY:</span>` +
+                             `<p class="text-[10px] text-slate-300 font-sans mb-2">Pilih aplikasi untuk membukanya di tab baru:</p>` +
+                             `<div class="max-h-56 overflow-y-auto hide-scrollbar pr-1 pb-1">${appsHtml}</div>`;
+            } else if (query.includes('fitur')) {
                 foundReply = `<span class="text-cyan-400 font-mono text-xs block font-black mb-1"><i class="fa-solid fa-terminal"></i> SYSTEM CAPABILITY & FEATURES:</span>` +
                              `Aplikasi Dasbor Dinamika Angin Muson ini memiliki fitur analitik tingkat lanjut meliputi:<br>` +
                              `1. **Interseptor Radar (Live):** Sinkronisasi API satelit cuaca.<br>` +
@@ -1931,10 +2031,9 @@
                 setTimeout(() => {
                     msgContainer.innerHTML += `<div class="bg-slate-900 p-3 rounded-xl border border-slate-700 max-w-[85%] font-sans font-medium text-slate-100 leading-relaxed text-[13px]">${foundReply}</div>`;
                     msgContainer.scrollTop = msgContainer.scrollHeight;
-                    speakText(foundReply);
+                    speakText(foundReply.replace(/<[^>]*>?/gm, ''));
                 }, 300);
             } else {
-                // Fetch data dari Wikipedia API
                 const url = `https://id.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
                 
                 fetch(url)
@@ -1957,7 +2056,7 @@
                     
                     msgContainer.innerHTML += `<div class="bg-slate-900 p-3 rounded-xl border border-slate-700 max-w-[85%] font-sans font-medium text-slate-100 leading-relaxed text-[13px]">${reply}</div>`;
                     msgContainer.scrollTop = msgContainer.scrollHeight;
-                    speakText(reply);
+                    speakText(reply.replace(/<[^>]*>?/gm, ''));
                 })
                 .catch(err => {
                     let errReply = "Maaf, terjadi kesalahan jaringan saat mencoba mengakses data internet. Silakan coba beberapa saat lagi.";
@@ -2176,6 +2275,7 @@
             initClockEngine(); 
             switchPilar(1);
             aktifkanOtomatisasiWindy(); 
+            loadTTSVoices();
         };
     </script>
 </body>
